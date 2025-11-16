@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AppIcons } from "@/config/icons";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ export const DashboardHeader = () => {
   const [userName, setUserName] = useState<string>("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
 
   useEffect(() => {
@@ -61,11 +62,17 @@ export const DashboardHeader = () => {
         {isHomePage ? (
           <div className="flex items-center gap-3 sm:gap-4">
             {/* Avatar */}
-            <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20">
-              <AvatarFallback className="bg-mint-tint text-primary font-semibold">
-                {getInitials()}
-              </AvatarFallback>
-            </Avatar>
+            <button
+              onClick={() => navigate("/profile")}
+              className="rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              aria-label="Go to profile"
+            >
+              <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 cursor-pointer">
+                <AvatarFallback className="bg-mint-tint text-primary font-semibold">
+                  {getInitials()}
+                </AvatarFallback>
+              </Avatar>
+            </button>
 
             {/* Greeting */}
             <div>
