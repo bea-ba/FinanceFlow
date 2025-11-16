@@ -137,7 +137,7 @@ export const CategoryBreakdown = () => {
 
         {/* Chart Visualization */}
         {chartType === "donut" ? (
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={280} className="min-h-[220px] h-[35vh] max-h-[320px]">
             <PieChart>
               <Pie
                 data={chartData}
@@ -165,7 +165,7 @@ export const CategoryBreakdown = () => {
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={280} className="min-h-[220px] h-[35vh] max-h-[320px]">
             <BarChart data={chartData} layout="vertical" margin={{ left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis type="number" className="text-xs" />

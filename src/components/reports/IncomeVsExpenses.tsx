@@ -16,7 +16,7 @@ export const IncomeVsExpenses = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={350} className="min-h-[280px] h-[40vh] max-h-[400px]">
           <BarChart data={monthlyTrends}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis dataKey="month" className="text-xs" />

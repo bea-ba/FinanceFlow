@@ -161,7 +161,7 @@ export const SpendingTrends = () => {
               </p>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={240} className="min-h-[200px] h-[35vh] max-h-[280px]">
             <AreaChart data={cumulativeNetData}>
               <defs>
                 <linearGradient id="colorPositive" x1="0" y1="0" x2="0" y2="1">
@@ -196,7 +196,7 @@ export const SpendingTrends = () => {
         {/* Secondary Chart: Day of Week Pattern */}
         <div className="border-t border-border pt-6">
           <h3 className="text-sm font-semibold text-foreground mb-3">Spending by Day of Week</h3>
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={180} className="min-h-[160px] h-[25vh] max-h-[220px]">
             <BarChart data={dayOfWeekData}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="day" className="text-xs" />
