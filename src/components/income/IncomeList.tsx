@@ -38,6 +38,17 @@ export const IncomeList = () => {
 
   useEffect(() => {
     fetchIncomeTransactions();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchIncomeTransactions();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   useEffect(() => {

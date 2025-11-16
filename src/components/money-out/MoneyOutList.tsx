@@ -38,6 +38,17 @@ export const MoneyOutList = () => {
 
   useEffect(() => {
     fetchExpenses();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchExpenses();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   useEffect(() => {

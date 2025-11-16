@@ -22,6 +22,17 @@ export const ReportsSummary = () => {
 
   useEffect(() => {
     fetchSummaryData();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchSummaryData();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchSummaryData = async () => {

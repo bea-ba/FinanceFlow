@@ -32,6 +32,17 @@ export const CategoryBreakdown = () => {
 
   useEffect(() => {
     fetchCategoryData();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchCategoryData();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchCategoryData = async () => {

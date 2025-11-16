@@ -22,6 +22,17 @@ export const MonthlyComparison = () => {
 
   useEffect(() => {
     fetchMonthlyData();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchMonthlyData();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchMonthlyData = async () => {
