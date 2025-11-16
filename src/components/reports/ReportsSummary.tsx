@@ -150,7 +150,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
-            <AppIcons.financial.money className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+            <AppIcons.financial.euro className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">

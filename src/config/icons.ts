@@ -9,6 +9,7 @@ import {
   // Financial
   Wallet,
   DollarSign,
+  Euro,
   ArrowDownCircle,
   ArrowUpCircle,
   TrendingUp,
@@ -87,6 +88,7 @@ export const AppIcons = {
   financial: {
     balance: Wallet,
     money: DollarSign,
+    euro: Euro,
     income: Plus,
     expense: Minus,
     incomeAlt: ArrowDownCircle,
