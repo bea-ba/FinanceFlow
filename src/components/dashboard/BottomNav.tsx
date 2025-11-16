@@ -1,12 +1,12 @@
-import { Home, Wallet, Receipt, Waves, User } from "lucide-react";
+import { Home, Plus, Minus, Sparkles, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Wallet, label: "Money In", path: "/income" },
-  { icon: Receipt, label: "Money Out", path: "/money-out" },
-  { icon: Waves, label: "My Flow", path: "/reports" },
+  { icon: Plus, label: "Money In", path: "/income" },
+  { icon: Minus, label: "Money Out", path: "/money-out" },
+  { icon: Sparkles, label: "Insights", path: "/reports" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
