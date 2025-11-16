@@ -167,7 +167,31 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category">Where from?</Label>
+            <Label htmlFor="amount">Amount</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-muted-foreground">
+                €
+              </span>
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                max="1000000"
+                required
+                value={formData.amount}
+                onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                placeholder="0.00"
+                className="pl-8 text-lg"
+              />
+            </div>
+            {parseFloat(formData.amount) > 10000 && (
+              <p className="text-xs text-amber-600">Large amount - you'll be asked to confirm</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
               <SelectTrigger>
                 <SelectValue />
@@ -182,22 +206,14 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount (€)</Label>
+            <Label htmlFor="date">Date</Label>
             <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              min="0.01"
-              max="1000000"
+              id="date"
+              type="date"
               required
-              value={formData.amount}
-              onChange={(e) => setFormData({...formData, amount: e.target.value})}
-              placeholder="0.00"
-              className="text-lg"
+              value={formData.transaction_date}
+              onChange={(e) => setFormData({...formData, transaction_date: e.target.value})}
             />
-            {parseFloat(formData.amount) > 10000 && (
-              <p className="text-xs text-amber-600">Large amount - you'll be asked to confirm</p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -211,17 +227,6 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
             {parseFloat(formData.amount) > 1000 && !formData.description && formData.category !== 'salary' && (
               <p className="text-xs text-amber-600">💡 Tip: Adding a description helps track large amounts</p>
             )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              type="date"
-              required
-              value={formData.transaction_date}
-              onChange={(e) => setFormData({...formData, transaction_date: e.target.value})}
-            />
           </div>
 
           <div className="flex gap-3 pt-4">

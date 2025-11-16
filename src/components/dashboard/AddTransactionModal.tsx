@@ -232,25 +232,23 @@ export const AddTransactionModal = ({ open, onOpenChange, onSuccess }: AddTransa
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="transaction_date">Date</Label>
-              <Input
-                id="transaction_date"
-                type="date"
-                {...register("transaction_date")}
-              />
-              {errors.transaction_date && (
-                <p className="text-sm text-destructive">{errors.transaction_date.message}</p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="transaction_date">Date</Label>
+            <Input
+              id="transaction_date"
+              type="date"
+              {...register("transaction_date")}
+            />
+            {errors.transaction_date && (
+              <p className="text-sm text-destructive">{errors.transaction_date.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Note (optional)</Label>
+            <Label htmlFor="description">Description (optional)</Label>
             <Input
               id="description"
-              placeholder="Add a note..."
+              placeholder="Add a description..."
               {...register("description")}
             />
           </div>
