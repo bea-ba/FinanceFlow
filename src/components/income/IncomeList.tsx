@@ -166,8 +166,9 @@ export const IncomeList = () => {
         />
         <AddIncomeModal
           open={showAddModal}
-          onOpenChange={setShowAddModal}
+          onOpenChange={handleCloseModal}
           onSuccess={fetchIncomeTransactions}
+          editTransaction={editTransaction}
         />
       </>
     );

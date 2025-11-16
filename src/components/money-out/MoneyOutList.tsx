@@ -192,8 +192,9 @@ export const MoneyOutList = () => {
         />
         <AddExpenseModal
           open={isAddModalOpen}
-          onOpenChange={setIsAddModalOpen}
+          onOpenChange={handleCloseModal}
           onSuccess={fetchExpenses}
+          editTransaction={editTransaction}
         />
       </>
     );
