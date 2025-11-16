@@ -87,7 +87,7 @@ export const ThemeSettings = () => {
               <div className="space-y-0.5">
                 <p className="font-medium">System Default</p>
                 <p className="text-sm text-muted-foreground">
-                  Follow my device settings
+                  Follow device settings
                 </p>
               </div>
             </Label>

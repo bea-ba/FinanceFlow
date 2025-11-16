@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 export const ImportFromDrive = () => {
   const handleImportClick = () => {
-    toast.info("Let's connect to my Google Drive", {
-      description: "We'll scan for invoices and extract my income data automatically",
+    toast.info("Connecting to Google Drive", {
+      description: "We'll scan for invoices and extract your income data automatically",
     });
   };
 
@@ -26,7 +26,7 @@ export const ImportFromDrive = () => {
           <div className="flex-1">
             <h3 className="font-semibold mb-1">Connect Google Drive</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Link my Google Drive and we'll find my invoices automatically. Our AI reads them, 
+              Link Google Drive and we'll find your invoices automatically. Our AI reads them, 
               pulls out the important stuff, and keeps everything organized. Zero manual work!
             </p>
             <Button onClick={handleImportClick} className="w-full sm:w-auto">
@@ -42,7 +42,7 @@ export const ImportFromDrive = () => {
             What happens automatically
           </h4>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Finds all invoices in my Drive</li>
+            <li>• Finds all invoices in your Drive</li>
             <li>• Reads amounts, dates, and client names</li>
             <li>• Shows you everything before it's added</li>
             <li>• Imports multiple invoices in one go</li>

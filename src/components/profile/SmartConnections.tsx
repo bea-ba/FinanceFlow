@@ -34,7 +34,7 @@ const connections = [
 const availableConnections = [
   { name: "Google Drive", description: "Import receipts automatically" },
   { name: "Email Scanner", description: "Detect bills from inbox" },
-  { name: "Calendar Sync", description: "Bill reminders on my calendar" }
+  { name: "Calendar Sync", description: "Bill reminders on calendar" }
 ];
 
 export const SmartConnections = () => {
@@ -52,7 +52,7 @@ export const SmartConnections = () => {
           Smart Connections
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Automatic integrations that keep my finances flowing
+          Automatic integrations that keep your finances flowing
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
