@@ -1,9 +1,11 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/skeleton-loaders";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
 
@@ -19,6 +21,7 @@ interface MonthData {
 export const MonthlyComparison = () => {
   // Use centralized context instead of local queries
   const { monthlyTrends, loading } = useTransactions();
+  const navigate = useNavigate();
 
   // Transform context data to add savings, savingsRate, and trend
   const comparisonData = useMemo<MonthData[]>(() => {
@@ -81,8 +84,22 @@ export const MonthlyComparison = () => {
             Monthly Comparison
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center py-12">
-          <p className="text-muted-foreground">No transaction data available for comparison</p>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+          <Calendar className="h-12 w-12 text-muted-foreground mb-2" />
+          <div>
+            <p className="text-muted-foreground font-medium">No transaction data available for comparison</p>
+            <p className="text-sm text-muted-foreground">Build history to compare months</p>
+          </div>
+          <div className="flex gap-3 mt-4">
+            <Button onClick={() => navigate("/income")} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Income
+            </Button>
+            <Button onClick={() => navigate("/money-out")} variant="outline" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Expense
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

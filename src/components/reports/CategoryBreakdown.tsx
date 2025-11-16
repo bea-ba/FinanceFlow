@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
-import { Target, ChevronDown, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
+import { Target, ChevronDown, PieChart as PieChartIcon, BarChart3, Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type ChartType = "donut" | "bar";
 
@@ -31,6 +32,7 @@ const CATEGORY_COLORS = [
 
 export const CategoryBreakdown = () => {
   const { incomeBreakdownMonthly, expenseBreakdownMonthly, loading } = useTransactions();
+  const navigate = useNavigate();
   const [incomeDetailsOpen, setIncomeDetailsOpen] = useState(false);
   const [expenseDetailsOpen, setExpenseDetailsOpen] = useState(false);
   const [chartType, setChartType] = useState<ChartType>("donut");
@@ -61,8 +63,22 @@ export const CategoryBreakdown = () => {
             Category Breakdown
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center py-12">
-          <p className="text-muted-foreground">No transaction data available for this month</p>
+        <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+          <Target className="h-12 w-12 text-muted-foreground mb-2" />
+          <div>
+            <p className="text-muted-foreground font-medium">No transaction data available for this month</p>
+            <p className="text-sm text-muted-foreground">Start tracking to see your breakdown</p>
+          </div>
+          <div className="flex gap-3 mt-4">
+            <Button onClick={() => navigate("/income")} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Income
+            </Button>
+            <Button onClick={() => navigate("/money-out")} variant="outline" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Expense
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

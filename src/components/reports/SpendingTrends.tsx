@@ -1,13 +1,16 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { Activity, TrendingUp } from "lucide-react";
+import { Activity, TrendingUp, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const SpendingTrends = () => {
   const { dailyTrendsMonthly, loading } = useTransactions();
+  const navigate = useNavigate();
 
   // Calculate cumulative net position
   const cumulativeNetData = useMemo(() => {
@@ -108,10 +111,22 @@ export const SpendingTrends = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Activity className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No transactions this month yet</p>
-            <p className="text-sm text-muted-foreground">Add some to see your flow</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+            <Activity className="h-12 w-12 text-muted-foreground mb-2" />
+            <div>
+              <p className="text-muted-foreground font-medium">No transactions this month yet</p>
+              <p className="text-sm text-muted-foreground">Add some to see your flow</p>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <Button onClick={() => navigate("/income")} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Income
+              </Button>
+              <Button onClick={() => navigate("/money-out")} variant="outline" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Expense
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
