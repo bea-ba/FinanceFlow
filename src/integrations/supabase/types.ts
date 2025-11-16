@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          created_at: string
+          description: string | null
+          id: string
+          transaction_date: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          transaction_date?: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["transaction_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          transaction_date?: string
+          type?: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -46,7 +82,21 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      transaction_category:
+        | "salary"
+        | "freelance"
+        | "gift"
+        | "other_income"
+        | "groceries"
+        | "dining"
+        | "transport"
+        | "utilities"
+        | "entertainment"
+        | "shopping"
+        | "health"
+        | "education"
+        | "other_expense"
+      transaction_type: "income" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -173,6 +223,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      transaction_category: [
+        "salary",
+        "freelance",
+        "gift",
+        "other_income",
+        "groceries",
+        "dining",
+        "transport",
+        "utilities",
+        "entertainment",
+        "shopping",
+        "health",
+        "education",
+        "other_expense",
+      ],
+      transaction_type: ["income", "expense"],
+    },
   },
 } as const
