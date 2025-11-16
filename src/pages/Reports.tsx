@@ -1,14 +1,32 @@
+import { lazy, Suspense } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { ReportsSummary } from "@/components/reports/ReportsSummary";
-import { AIInsights } from "@/components/reports/AIInsights";
-import { SmartPredictions } from "@/components/reports/SmartPredictions";
-import { IncomeVsExpenses } from "@/components/reports/IncomeVsExpenses";
-import { SpendingTrends } from "@/components/reports/SpendingTrends";
-import { CategoryBreakdown } from "@/components/reports/CategoryBreakdown";
-import { MonthlyComparison } from "@/components/reports/MonthlyComparison";
 import { ExportReports } from "@/components/reports/ExportReports";
 import { DateRangeFilter } from "@/components/reports/DateRangeFilter";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load chart components to reduce initial bundle size
+const AIInsights = lazy(() => import("@/components/reports/AIInsights").then(m => ({ default: m.AIInsights })));
+const SmartPredictions = lazy(() => import("@/components/reports/SmartPredictions").then(m => ({ default: m.SmartPredictions })));
+const IncomeVsExpenses = lazy(() => import("@/components/reports/IncomeVsExpenses").then(m => ({ default: m.IncomeVsExpenses })));
+const SpendingTrends = lazy(() => import("@/components/reports/SpendingTrends").then(m => ({ default: m.SpendingTrends })));
+const CategoryBreakdown = lazy(() => import("@/components/reports/CategoryBreakdown").then(m => ({ default: m.CategoryBreakdown })));
+const MonthlyComparison = lazy(() => import("@/components/reports/MonthlyComparison").then(m => ({ default: m.MonthlyComparison })));
+
+// Loading skeleton for charts
+const ChartSkeleton = () => (
+  <Card>
+    <CardHeader>
+      <Skeleton className="h-6 w-48" />
+      <Skeleton className="h-4 w-32 mt-2" />
+    </CardHeader>
+    <CardContent>
+      <Skeleton className="h-64 w-full" />
+    </CardContent>
+  </Card>
+);
 
 const Reports = () => {
   return (
@@ -32,21 +50,33 @@ const Reports = () => {
         </div>
 
         <ReportsSummary />
-        
+
         {/* AI Intelligence Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AIInsights />
-          <SmartPredictions />
+          <Suspense fallback={<ChartSkeleton />}>
+            <AIInsights />
+          </Suspense>
+          <Suspense fallback={<ChartSkeleton />}>
+            <SmartPredictions />
+          </Suspense>
         </div>
 
-        <IncomeVsExpenses />
+        <Suspense fallback={<ChartSkeleton />}>
+          <IncomeVsExpenses />
+        </Suspense>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <SpendingTrends />
-          <CategoryBreakdown />
+          <Suspense fallback={<ChartSkeleton />}>
+            <SpendingTrends />
+          </Suspense>
+          <Suspense fallback={<ChartSkeleton />}>
+            <CategoryBreakdown />
+          </Suspense>
         </div>
 
-        <MonthlyComparison />
+        <Suspense fallback={<ChartSkeleton />}>
+          <MonthlyComparison />
+        </Suspense>
       </div>
       <QuickActions />
     </DashboardLayout>
