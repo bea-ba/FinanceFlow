@@ -47,6 +47,7 @@ export const IncomeList = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [editTransaction, setEditTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
     fetchIncomeTransactions();
@@ -132,6 +133,16 @@ export const IncomeList = () => {
 
   const handleDelete = (id: string) => {
     setDeleteId(id);
+  };
+
+  const handleEdit = (transaction: Transaction) => {
+    setEditTransaction(transaction);
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setEditTransaction(null);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -271,6 +282,10 @@ export const IncomeList = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(transaction)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(transaction.id)}
                           className="text-destructive focus:text-destructive"
@@ -290,8 +305,9 @@ export const IncomeList = () => {
 
       <AddIncomeModal
         open={showAddModal}
-        onOpenChange={setShowAddModal}
+        onOpenChange={handleCloseModal}
         onSuccess={fetchIncomeTransactions}
+        editTransaction={editTransaction}
       />
 
       <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>

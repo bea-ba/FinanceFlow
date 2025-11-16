@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -17,13 +17,22 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+interface Transaction {
+  id: string;
+  category: string;
+  amount: number;
+  description: string;
+  transaction_date: string;
+}
+
 interface AddExpenseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  editTransaction?: Transaction | null;
 }
 
-export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseModalProps) => {
+export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction }: AddExpenseModalProps) => {
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,40 +42,79 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
-  const saveExpense = async () => {
-    setLoading(true);
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      toast.error("You must be logged in");
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.from('transactions').insert([{
-      user_id: session.user.id,
-      type: 'expense' as const,
-      category: formData.category as any,
-      amount: parseFloat(formData.amount),
-      description: formData.description,
-      transaction_date: formData.transaction_date
-    }]);
-
-    if (error) {
-      toast.error("Failed to add expense");
-      console.error(error);
+  // Populate form when editing
+  useEffect(() => {
+    if (editTransaction) {
+      setFormData({
+        category: editTransaction.category,
+        amount: editTransaction.amount.toString(),
+        description: editTransaction.description || "",
+        transaction_date: editTransaction.transaction_date
+      });
     } else {
-      toast.success("Expense added successfully");
-      onOpenChange(false);
+      // Reset form when adding new
       setFormData({
         category: "other_expense",
         amount: "",
         description: "",
         transaction_date: new Date().toISOString().split('T')[0]
       });
-      onSuccess();
     }
-    setLoading(false);
+  }, [editTransaction, open]);
+
+  const saveExpense = async () => {
+    setLoading(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("You must be logged in");
+        return;
+      }
+
+      const transactionData = {
+        type: 'expense' as const,
+        category: formData.category as any,
+        amount: parseFloat(formData.amount),
+        description: formData.description,
+        transaction_date: formData.transaction_date
+      };
+
+      let error;
+      if (editTransaction) {
+        // Update existing transaction
+        const { error: updateError } = await supabase
+          .from('transactions')
+          .update(transactionData)
+          .eq('id', editTransaction.id);
+        error = updateError;
+      } else {
+        // Insert new transaction
+        const { error: insertError } = await supabase
+          .from('transactions')
+          .insert([{ ...transactionData, user_id: session.user.id }]);
+        error = insertError;
+      }
+
+      if (error) throw error;
+
+      toast.success(editTransaction ? "Expense updated successfully" : "Expense added successfully");
+      onOpenChange(false);
+      onSuccess();
+      // Dispatch event to refresh all components
+      window.dispatchEvent(new Event('transaction-added'));
+      setFormData({
+        category: "other_expense",
+        amount: "",
+        description: "",
+        transaction_date: new Date().toISOString().split('T')[0]
+      });
+    } catch (error) {
+      console.error('Error saving expense:', error);
+      toast.error(editTransaction ? "Failed to update expense" : "Failed to add expense");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,7 +163,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add expense manually</DialogTitle>
+            <DialogTitle>{editTransaction ? "Edit expense" : "Add expense manually"}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -182,7 +230,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
                 Cancel
               </Button>
               <Button type="submit" disabled={loading} className="flex-1">
-                {loading ? "Adding..." : "Add expense"}
+                {loading ? (editTransaction ? "Saving..." : "Adding...") : (editTransaction ? "Save changes" : "Add expense")}
               </Button>
             </div>
           </form>

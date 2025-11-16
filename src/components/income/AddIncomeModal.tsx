@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -17,13 +17,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+interface Transaction {
+  id: string;
+  category: string;
+  amount: number;
+  description: string;
+  transaction_date: string;
+}
+
 interface AddIncomeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  editTransaction?: Transaction | null;
 }
 
-export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModalProps) => {
+export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction }: AddIncomeModalProps) => {
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,30 +42,67 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
+  // Populate form when editing
+  useEffect(() => {
+    if (editTransaction) {
+      setFormData({
+        category: editTransaction.category,
+        amount: editTransaction.amount.toString(),
+        description: editTransaction.description || "",
+        transaction_date: editTransaction.transaction_date
+      });
+    } else {
+      // Reset form when adding new
+      setFormData({
+        category: "salary",
+        amount: "",
+        description: "",
+        transaction_date: new Date().toISOString().split('T')[0]
+      });
+    }
+  }, [editTransaction, open]);
+
   const saveIncome = async () => {
     setLoading(true);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Please sign in to add income");
+        toast.error("Please sign in to save income");
         return;
       }
 
-      const { error } = await supabase.from('transactions').insert([{
-        user_id: session.user.id,
+      const transactionData = {
         type: 'income' as const,
         category: formData.category as "salary" | "freelance" | "gift" | "other_income",
         amount: parseFloat(formData.amount),
         description: formData.description,
         transaction_date: formData.transaction_date
-      }]);
+      };
+
+      let error;
+      if (editTransaction) {
+        // Update existing transaction
+        const { error: updateError } = await supabase
+          .from('transactions')
+          .update(transactionData)
+          .eq('id', editTransaction.id);
+        error = updateError;
+      } else {
+        // Insert new transaction
+        const { error: insertError } = await supabase
+          .from('transactions')
+          .insert([{ ...transactionData, user_id: session.user.id }]);
+        error = insertError;
+      }
 
       if (error) throw error;
 
-      toast.success("Income added successfully");
+      toast.success(editTransaction ? "Income updated successfully" : "Income added successfully");
       onOpenChange(false);
       onSuccess();
+      // Dispatch event to refresh all components
+      window.dispatchEvent(new Event('transaction-added'));
       setFormData({
         category: "salary",
         amount: "",
@@ -64,8 +110,8 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
         transaction_date: new Date().toISOString().split('T')[0]
       });
     } catch (error) {
-      console.error('Error adding income:', error);
-      toast.error("Failed to add income");
+      console.error('Error saving income:', error);
+      toast.error(editTransaction ? "Failed to update income" : "Failed to add income");
     } finally {
       setLoading(false);
     }
@@ -116,7 +162,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add income manually</DialogTitle>
+          <DialogTitle>{editTransaction ? "Edit income" : "Add income manually"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -173,7 +219,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? "Adding..." : "Add income"}
+              {loading ? (editTransaction ? "Saving..." : "Adding...") : (editTransaction ? "Save changes" : "Add income")}
             </Button>
           </div>
         </form>
