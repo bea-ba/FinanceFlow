@@ -8,9 +8,12 @@ import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
 export const DateRangeFilter = () => {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2024, 10, 1), // Nov 1, 2024
-    to: new Date(2024, 10, 30),  // Nov 30, 2024
+  const [date, setDate] = useState<DateRange | undefined>(() => {
+    const now = new Date();
+    return {
+      from: startOfMonth(now),
+      to: endOfMonth(now),
+    };
   });
 
   // Preset functions
