@@ -45,6 +45,23 @@ export function formatCurrency(value: number, decimals: number = 2): string {
 }
 
 /**
+ * Format a number as currency with sign and symbol
+ * @param value - The number to format
+ * @param type - Transaction type ('income' or 'expense')
+ * @param decimals - Number of decimal places (default: 2)
+ * @returns Formatted string with sign and currency symbol (e.g., "+€1.234,56" or "-€1.234,56")
+ */
+export function formatCurrencyWithSign(
+  value: number,
+  type: "income" | "expense",
+  decimals: number = 2
+): string {
+  const formatted = formatCurrency(value, decimals);
+  const sign = type === "income" ? "+" : "-";
+  return `${sign}€${formatted}`;
+}
+
+/**
  * Wraps a promise with a timeout
  * Throws an error if the promise doesn't resolve within the specified time
  * @param promise - The promise to wrap

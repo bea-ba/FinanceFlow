@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { ArrowUpCircle, MoreHorizontal } from "lucide-react";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrencyWithSign } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { categoryIcons, categoryColors } from "@/config/categoryIcons";
 
@@ -59,7 +59,6 @@ export const RecentTransactions = () => {
         {transactions.map((transaction) => {
           const Icon = categoryIcons[transaction.category] || MoreHorizontal;
           const colorClass = categoryColors[transaction.category] || "bg-slate-100 text-slate-600";
-          const isIncome = transaction.type === "income";
 
           return (
             <div
@@ -69,7 +68,7 @@ export const RecentTransactions = () => {
               <div className={cn("p-3 rounded-xl", colorClass)}>
                 <Icon className="h-5 w-5" />
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-foreground capitalize truncate">
                   {transaction.description || transaction.category.replace(/_/g, " ")}
@@ -81,12 +80,12 @@ export const RecentTransactions = () => {
                   })}
                 </p>
               </div>
-              
+
               <p className={cn(
                 "font-semibold text-base whitespace-nowrap",
-                isIncome ? "text-success" : "text-destructive"
+                transaction.type === "income" ? "text-success" : "text-destructive"
               )}>
-                {isIncome ? "+" : "-"}€{formatCurrency(Number(transaction.amount))}
+                {formatCurrencyWithSign(transaction.amount, transaction.type)}
               </p>
             </div>
           );
