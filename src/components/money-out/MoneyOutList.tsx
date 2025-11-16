@@ -20,12 +20,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, MoreVertical, Trash2, ArrowUpDown, Loader2, Edit, Filter, Copy } from "lucide-react";
+import { Plus, Search, MoreVertical, Trash2, ArrowUpDown, Loader2, Edit, Filter, Copy, Calendar } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
 import { SpendingEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, startOfDay, endOfDay } from "date-fns";
 import { AppIcons } from "@/config/icons";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import Fuse from "fuse.js";
@@ -53,6 +53,9 @@ export const MoneyOutList = () => {
   const [minAmount, setMinAmount] = useState(() => localStorage.getItem("expenseMinAmount") || "");
   const [maxAmount, setMaxAmount] = useState(() => localStorage.getItem("expenseMaxAmount") || "");
   const [showFilters, setShowFilters] = useState(false);
+  const [dateFilter, setDateFilter] = useState(() => localStorage.getItem("expenseDateFilter") || "all");
+  const [customStartDate, setCustomStartDate] = useState(() => localStorage.getItem("expenseCustomStartDate") || "");
+  const [customEndDate, setCustomEndDate] = useState(() => localStorage.getItem("expenseCustomEndDate") || "");
 
   // Persist filter preferences to localStorage
   useEffect(() => {
@@ -75,6 +78,18 @@ export const MoneyOutList = () => {
     localStorage.setItem("expenseMaxAmount", maxAmount);
   }, [maxAmount]);
 
+  useEffect(() => {
+    localStorage.setItem("expenseDateFilter", dateFilter);
+  }, [dateFilter]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseCustomStartDate", customStartDate);
+  }, [customStartDate]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseCustomEndDate", customEndDate);
+  }, [customEndDate]);
+
   // Initialize Fuse.js for fuzzy search
   const fuse = useMemo(() => {
     return new Fuse(expenseTransactions, {
@@ -83,6 +98,43 @@ export const MoneyOutList = () => {
       ignoreLocation: true,
     });
   }, [expenseTransactions]);
+
+  // Helper function to calculate date range based on filter
+  const getDateRange = (filter: string): { start: Date | null; end: Date | null } => {
+    const now = new Date();
+
+    switch (filter) {
+      case "today":
+        return {
+          start: startOfDay(now),
+          end: endOfDay(now)
+        };
+      case "this-week":
+        return {
+          start: startOfWeek(now, { weekStartsOn: 1 }), // Monday
+          end: endOfWeek(now, { weekStartsOn: 1 })
+        };
+      case "this-month":
+        return {
+          start: startOfMonth(now),
+          end: endOfMonth(now)
+        };
+      case "last-month":
+        const lastMonth = subMonths(now, 1);
+        return {
+          start: startOfMonth(lastMonth),
+          end: endOfMonth(lastMonth)
+        };
+      case "custom":
+        if (!customStartDate && !customEndDate) return { start: null, end: null };
+        return {
+          start: customStartDate ? new Date(customStartDate) : null,
+          end: customEndDate ? new Date(customEndDate) : null
+        };
+      default:
+        return { start: null, end: null };
+    }
+  };
 
   // Apply filters and sort using fuzzy search
   const filteredExpenses = useMemo(() => {
@@ -107,6 +159,24 @@ export const MoneyOutList = () => {
       filtered = filtered.filter(e => e.amount <= parseFloat(maxAmount));
     }
 
+    // Date range filter
+    if (dateFilter !== "all") {
+      const { start, end } = getDateRange(dateFilter);
+      if (start || end) {
+        filtered = filtered.filter(e => {
+          const transactionDate = new Date(e.transaction_date);
+          if (start && end) {
+            return transactionDate >= start && transactionDate <= end;
+          } else if (start) {
+            return transactionDate >= start;
+          } else if (end) {
+            return transactionDate <= end;
+          }
+          return true;
+        });
+      }
+    }
+
     // Sort by date
     filtered.sort((a, b) => {
       const dateA = new Date(a.transaction_date).getTime();
@@ -115,7 +185,7 @@ export const MoneyOutList = () => {
     });
 
     return filtered;
-  }, [expenseTransactions, searchTerm, categoryFilter, sortOrder, minAmount, maxAmount, fuse]);
+  }, [expenseTransactions, searchTerm, categoryFilter, sortOrder, minAmount, maxAmount, dateFilter, customStartDate, customEndDate, fuse]);
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
@@ -130,7 +200,7 @@ export const MoneyOutList = () => {
     return filteredExpenses.reduce((sum, t) => sum + t.amount, 0);
   }, [filteredExpenses]);
 
-  const hasActiveFilters = searchTerm || categoryFilter !== "all" || minAmount || maxAmount;
+  const hasActiveFilters = searchTerm || categoryFilter !== "all" || minAmount || maxAmount || dateFilter !== "all";
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -246,12 +316,14 @@ export const MoneyOutList = () => {
                     searchTerm && 'Search',
                     categoryFilter !== 'all' && 'Category',
                     minAmount && 'Min amount',
-                    maxAmount && 'Max amount'
+                    maxAmount && 'Max amount',
+                    dateFilter !== 'all' && 'Date'
                   ].filter(Boolean).length} {[
                     searchTerm && 'Search',
                     categoryFilter !== 'all' && 'Category',
                     minAmount && 'Min amount',
-                    maxAmount && 'Max amount'
+                    maxAmount && 'Max amount',
+                    dateFilter !== 'all' && 'Date'
                   ].filter(Boolean).length === 1 ? 'filter' : 'filters'} active
                 </span>
                 <button
@@ -260,6 +332,9 @@ export const MoneyOutList = () => {
                     setCategoryFilter("all");
                     setMinAmount("");
                     setMaxAmount("");
+                    setDateFilter("all");
+                    setCustomStartDate("");
+                    setCustomEndDate("");
                   }}
                   className="ml-auto text-primary hover:text-primary/80 font-medium"
                 >
@@ -314,40 +389,132 @@ export const MoneyOutList = () => {
 
             {/* Advanced Filters */}
             {showFilters && (
-              <div className="flex flex-col sm:flex-row gap-3 p-4 bg-muted/50 rounded-xl">
-                <div className="flex-1">
-                  <label className="text-xs text-muted-foreground mb-1 block">Min Amount (€)</label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={minAmount}
-                    onChange={(e) => setMinAmount(e.target.value)}
-                    className="rounded-xl"
-                  />
+              <div className="flex flex-col gap-3 p-4 bg-muted/50 rounded-xl">
+                {/* Date Filter */}
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Date Range
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant={dateFilter === "today" ? "default" : "outline"}
+                      onClick={() => setDateFilter("today")}
+                      className="rounded-xl"
+                    >
+                      Today
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={dateFilter === "this-week" ? "default" : "outline"}
+                      onClick={() => setDateFilter("this-week")}
+                      className="rounded-xl"
+                    >
+                      This Week
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={dateFilter === "this-month" ? "default" : "outline"}
+                      onClick={() => setDateFilter("this-month")}
+                      className="rounded-xl"
+                    >
+                      This Month
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={dateFilter === "last-month" ? "default" : "outline"}
+                      onClick={() => setDateFilter("last-month")}
+                      className="rounded-xl"
+                    >
+                      Last Month
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={dateFilter === "custom" ? "default" : "outline"}
+                      onClick={() => setDateFilter("custom")}
+                      className="rounded-xl"
+                    >
+                      Custom
+                    </Button>
+                    {dateFilter !== "all" && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setDateFilter("all");
+                          setCustomStartDate("");
+                          setCustomEndDate("");
+                        }}
+                        className="rounded-xl text-muted-foreground"
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
+                  {dateFilter === "custom" && (
+                    <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                      <div className="flex-1">
+                        <label className="text-xs text-muted-foreground mb-1 block">From</label>
+                        <Input
+                          type="date"
+                          value={customStartDate}
+                          onChange={(e) => setCustomStartDate(e.target.value)}
+                          className="rounded-xl"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-xs text-muted-foreground mb-1 block">To</label>
+                        <Input
+                          type="date"
+                          value={customEndDate}
+                          onChange={(e) => setCustomEndDate(e.target.value)}
+                          className="rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1">
-                  <label className="text-xs text-muted-foreground mb-1 block">Max Amount (€)</label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="No limit"
-                    value={maxAmount}
-                    onChange={(e) => setMaxAmount(e.target.value)}
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="flex items-end">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setMinAmount("");
-                      setMaxAmount("");
-                    }}
-                    className="rounded-xl"
-                  >
-                    Clear
-                  </Button>
+
+                {/* Amount Range */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-border/50">
+                  <div className="flex-1">
+                    <label className="text-xs text-muted-foreground mb-1 block">Min Amount (€)</label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={minAmount}
+                      onChange={(e) => setMinAmount(e.target.value)}
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-muted-foreground mb-1 block">Max Amount (€)</label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="No limit"
+                      value={maxAmount}
+                      onChange={(e) => setMaxAmount(e.target.value)}
+                      className="rounded-xl"
+                    />
+                  </div>
+                  {(minAmount || maxAmount) && (
+                    <div className="flex items-end">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setMinAmount("");
+                          setMaxAmount("");
+                        }}
+                        className="rounded-xl"
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -382,6 +549,9 @@ export const MoneyOutList = () => {
                   setCategoryFilter("all");
                   setMinAmount("");
                   setMaxAmount("");
+                  setDateFilter("all");
+                  setCustomStartDate("");
+                  setCustomEndDate("");
                 }}
                 className="text-info mt-2"
               >
