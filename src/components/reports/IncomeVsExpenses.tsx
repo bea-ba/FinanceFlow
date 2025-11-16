@@ -14,7 +14,7 @@ export const IncomeVsExpenses = () => {
   ];
 
   return (
-    <Card>
+    <Card className="shadow-card rounded-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
@@ -27,11 +27,12 @@ export const IncomeVsExpenses = () => {
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis dataKey="month" className="text-xs" />
             <YAxis className="text-xs" />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: 'hsl(var(--background))', 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--background))',
                 border: '1px solid hsl(var(--border))',
-                borderRadius: '8px'
+                borderRadius: '16px',
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
               }}
               formatter={(value: number) => `$${value.toFixed(2)}`}
             />

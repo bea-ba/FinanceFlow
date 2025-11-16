@@ -11,7 +11,7 @@ export const ReportsSummary = () => {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Income</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
@@ -28,7 +28,7 @@ export const ReportsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
@@ -45,7 +45,7 @@ export const ReportsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card className="group border-primary/30 bg-gradient-to-br from-primary/10 to-transparent hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Card className="group border-primary/30 bg-gradient-to-br from-primary/10 to-transparent hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
@@ -62,7 +62,7 @@ export const ReportsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Top Category</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors">

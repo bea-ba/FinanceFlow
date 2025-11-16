@@ -18,7 +18,7 @@ export const CategoryBreakdown = () => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <Card>
+    <Card className="shadow-card rounded-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="h-5 w-5 text-primary" />
@@ -43,12 +43,12 @@ export const CategoryBreakdown = () => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'hsl(var(--background))', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--background))',
                   border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  borderRadius: '16px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                 }}
                 formatter={(value: number) => [
                   `$${value.toFixed(2)} (${((value / total) * 100).toFixed(1)}%)`,
@@ -72,7 +72,7 @@ export const CategoryBreakdown = () => {
             return (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-accent/50 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1">
                   <div
