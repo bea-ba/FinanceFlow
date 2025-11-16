@@ -8,7 +8,8 @@ import { formatCurrency } from "@/lib/utils";
 
 interface DayData {
   day: string;
-  amount: number;
+  income: number;
+  expenses: number;
 }
 
 export const SpendingTrends = () => {
@@ -33,7 +34,6 @@ export const SpendingTrends = () => {
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('type', 'expense')
         .gte('transaction_date', startOfMonth)
         .lte('transaction_date', endOfMonth)
         .order('transaction_date', { ascending: true });
@@ -44,24 +44,34 @@ export const SpendingTrends = () => {
         return;
       }
 
-      // Aggregate by day
-      const dailyTotals: Record<string, number> = {};
+      // Aggregate by day and type
+      const dailyIncome: Record<string, number> = {};
+      const dailyExpenses: Record<string, number> = {};
+
       transactions.forEach(t => {
         const day = new Date(t.transaction_date).getDate().toString();
-        dailyTotals[day] = (dailyTotals[day] || 0) + Number(t.amount);
+        if (t.type === 'income') {
+          dailyIncome[day] = (dailyIncome[day] || 0) + Number(t.amount);
+        } else {
+          dailyExpenses[day] = (dailyExpenses[day] || 0) + Number(t.amount);
+        }
       });
 
+      // Get all unique days
+      const allDays = new Set([...Object.keys(dailyIncome), ...Object.keys(dailyExpenses)]);
+
       // Convert to chart format and sort by day
-      const chartData: DayData[] = Object.entries(dailyTotals)
-        .map(([day, amount]) => ({
+      const chartData: DayData[] = Array.from(allDays)
+        .map(day => ({
           day,
-          amount
+          income: dailyIncome[day] || 0,
+          expenses: dailyExpenses[day] || 0
         }))
         .sort((a, b) => parseInt(a.day) - parseInt(b.day));
 
       setData(chartData);
     } catch (error) {
-      console.error("Error fetching spending trends:", error);
+      console.error("Error fetching financial trends:", error);
     } finally {
       setLoading(false);
     }
@@ -77,11 +87,11 @@ export const SpendingTrends = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-primary" />
-            Daily Spending Trends
+            Daily Financial Trends
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center py-12">
-          <p className="text-muted-foreground">No spending data available for this month</p>
+          <p className="text-muted-foreground">No transaction data available for this month</p>
         </CardContent>
       </Card>
     );
@@ -92,7 +102,7 @@ export const SpendingTrends = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-primary" />
-          Daily Spending Trends
+          Daily Financial Trends
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -110,12 +120,22 @@ export const SpendingTrends = () => {
               }}
               formatter={(value: number) => `€${formatCurrency(value)}`}
             />
-            <Line 
-              type="monotone" 
-              dataKey="amount" 
-              stroke="hsl(var(--primary))" 
+            <Line
+              type="monotone"
+              dataKey="income"
+              name="Income"
+              stroke="hsl(var(--success))"
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+              dot={{ fill: 'hsl(var(--success))', r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="expenses"
+              name="Expenses"
+              stroke="hsl(var(--destructive))"
+              strokeWidth={2}
+              dot={{ fill: 'hsl(var(--destructive))', r: 4 }}
               activeDot={{ r: 6 }}
             />
           </LineChart>
