@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingDown, Calendar, CalendarRange } from "lucide-react";
+import { ArrowUpCircle, Calendar, CalendarRange } from "lucide-react";
 
 export const MoneyOutSummary = () => {
   const [monthlyTotal, setMonthlyTotal] = useState(0);
@@ -61,7 +61,7 @@ export const MoneyOutSummary = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-destructive" />
+              <ArrowUpCircle className="h-5 w-5 text-destructive" />
               Money Out this month
             </CardTitle>
           </CardHeader>
@@ -81,7 +81,7 @@ export const MoneyOutSummary = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-destructive" />
+              <ArrowUpCircle className="h-5 w-5 text-destructive" />
               Money Out this year
             </CardTitle>
           </CardHeader>

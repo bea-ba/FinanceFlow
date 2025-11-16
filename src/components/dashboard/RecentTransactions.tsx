@@ -12,8 +12,8 @@ import {
   Briefcase,
   Gift,
   MoreHorizontal,
-  TrendingUp,
-  TrendingDown
+  ArrowDownCircle,
+  ArrowUpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,7 @@ interface Transaction {
 
 const categoryIcons: Record<string, any> = {
   salary: Briefcase,
-  freelance: TrendingUp,
+  freelance: ArrowDownCircle,
   gift: Gift,
   other_income: MoreHorizontal,
   groceries: ShoppingBag,
@@ -107,7 +107,7 @@ export const RecentTransactions = () => {
     return (
       <Card className="p-8 text-center">
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-          <TrendingDown className="h-8 w-8 text-muted-foreground" />
+          <ArrowUpCircle className="h-8 w-8 text-muted-foreground" />
         </div>
         <h3 className="text-lg font-semibold mb-2">Nothing here yet</h3>
         <p className="text-sm text-muted-foreground">
