@@ -72,6 +72,21 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate amount
+    const amount = parseFloat(formData.amount);
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Amount must be greater than €0");
+      return;
+    }
+    if (amount < 0.01) {
+      toast.error("Amount must be at least €0.01");
+      return;
+    }
+    if (amount > 1000000) {
+      toast.error("Amount cannot exceed €1,000,000");
+      return;
+    }
+
     // Check if date is in the future
     const selectedDate = new Date(formData.transaction_date);
     const today = new Date();

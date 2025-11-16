@@ -36,7 +36,17 @@ import { Loader2 } from "lucide-react";
 const transactionSchema = z.object({
   type: z.enum(["income", "expense"]),
   category: z.string().min(1, "Category is required"),
-  amount: z.string().min(1, "Amount is required"),
+  amount: z.string()
+    .min(1, "Amount is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Amount must be greater than €0",
+    })
+    .refine((val) => Number(val) >= 0.01, {
+      message: "Amount must be at least €0.01",
+    })
+    .refine((val) => Number(val) <= 1000000, {
+      message: "Amount cannot exceed €1,000,000",
+    }),
   description: z.string().optional(),
   transaction_date: z.string().min(1, "Date is required"),
 });
