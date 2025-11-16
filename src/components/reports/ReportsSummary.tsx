@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Minus, DollarSign, PieChart } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 
 export const ReportsSummary = () => {
   // Mockup data for current period
@@ -15,7 +15,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
           <div className="p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
-            <Plus className="h-4 w-4 text-success" />
+            <AppIcons.financial.income className="h-4 w-4 text-success" />
           </div>
         </CardHeader>
         <CardContent>
@@ -32,7 +32,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
           <div className="p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
-            <Minus className="h-4 w-4 text-destructive" />
+            <AppIcons.financial.expense className="h-4 w-4 text-destructive" />
           </div>
         </CardHeader>
         <CardContent>
@@ -49,7 +49,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
           <div className="p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
-            <DollarSign className="h-4 w-4 text-primary" />
+            <AppIcons.financial.money className="h-4 w-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent>
@@ -66,7 +66,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Top Category</CardTitle>
           <div className="p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors">
-            <PieChart className="h-4 w-4 text-muted-foreground" />
+            <AppIcons.analytics.pieChart className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardHeader>
         <CardContent>

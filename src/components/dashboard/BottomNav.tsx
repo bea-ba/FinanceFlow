@@ -1,14 +1,6 @@
-import { Home, Plus, Minus, Sparkles, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { icon: Home, label: "Home", path: "/" },
-  { icon: Plus, label: "Money In", path: "/income" },
-  { icon: Minus, label: "Money Out", path: "/money-out" },
-  { icon: Sparkles, label: "Insights", path: "/reports" },
-  { icon: User, label: "Profile", path: "/profile" },
-];
+import { navItems } from "@/config/icons";
 
 export const BottomNav = () => {
   const location = useLocation();

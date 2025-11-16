@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AddTransactionModal } from "./AddTransactionModal";
@@ -13,7 +13,7 @@ export const QuickActions = () => {
         className="fixed bottom-20 right-4 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 text-slate-900 shadow-lg z-40"
         size="icon"
       >
-        <Plus className="h-6 w-6" />
+        <AppIcons.actions.add className="h-6 w-6" />
       </Button>
 
       <AddTransactionModal 

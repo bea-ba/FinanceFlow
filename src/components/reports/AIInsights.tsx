@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, TrendingUp, AlertCircle, Lightbulb } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 import { Badge } from "@/components/ui/badge";
 
 export const AIInsights = () => {
   const insights = [
     {
       type: "opportunity",
-      icon: TrendingUp,
+      icon: AppIcons.financial.trendingUp,
       title: "Savings opportunity detected",
       description: "Your spending on dining is 23% higher this month. Small adjustments could save $200.",
       confidence: "high",
@@ -15,7 +15,7 @@ export const AIInsights = () => {
     },
     {
       type: "pattern",
-      icon: Lightbulb,
+      icon: AppIcons.status.idea,
       title: "Pattern noticed",
       description: "Your grocery spending peaks mid-month. Consider weekly shopping to smooth out the flow.",
       confidence: "medium",
@@ -24,7 +24,7 @@ export const AIInsights = () => {
     },
     {
       type: "alert",
-      icon: AlertCircle,
+      icon: AppIcons.status.alert,
       title: "Unusual activity",
       description: "Your entertainment spending is 45% higher than usual. Keep an eye on subscriptions.",
       confidence: "high",
@@ -38,7 +38,7 @@ export const AIInsights = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/10">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <AppIcons.analytics.ai className="h-5 w-5 text-primary" />
           </div>
           AI Insights
         </CardTitle>
@@ -82,7 +82,7 @@ export const AIInsights = () => {
         
         <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-border/50">
           <p className="text-xs text-muted-foreground flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <AppIcons.analytics.ai className="h-3.5 w-3.5 text-primary" />
             Insights update automatically as your spending patterns change
           </p>
         </div>
