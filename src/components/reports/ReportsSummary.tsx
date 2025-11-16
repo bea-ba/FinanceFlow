@@ -1,114 +1,20 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardSkeleton } from "@/components/ui/skeleton-loaders";
 import { AppIcons } from "@/config/icons";
 import { formatCurrency } from "@/lib/utils";
-
-interface SummaryData {
-  totalIncome: number;
-  totalExpenses: number;
-  netSavings: number;
-  savingsRate: string;
-  topCategory: string;
-  topCategoryAmount: number;
-}
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const ReportsSummary = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<SummaryData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchSummaryData();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchSummaryData();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
-  const fetchSummaryData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Get current month date range
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-
-      // Fetch all transactions for current period
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startOfMonth)
-        .lte('transaction_date', endOfMonth);
-
-      if (!transactions) {
-        setData({
-          totalIncome: 0,
-          totalExpenses: 0,
-          netSavings: 0,
-          savingsRate: '0.0',
-          topCategory: 'None',
-          topCategoryAmount: 0
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Calculate totals
-      const income = transactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
-
-      const expenses = transactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
-
-      // Calculate top expense category
-      const categoryTotals: Record<string, number> = {};
-      transactions
-        .filter(t => t.type === 'expense')
-        .forEach(t => {
-          categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Number(t.amount);
-        });
-
-      const topCategoryEntry = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
-      const topCategory = topCategoryEntry ? topCategoryEntry[0] : 'None';
-      const topCategoryAmount = topCategoryEntry ? topCategoryEntry[1] : 0;
-
-      // Format category name
-      const formatCategory = (cat: string) => {
-        return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      };
-
-      const savings = income - expenses;
-      const rate = income > 0 ? ((savings / income) * 100).toFixed(1) : '0.0';
-
-      setData({
-        totalIncome: income,
-        totalExpenses: expenses,
-        netSavings: savings,
-        savingsRate: rate,
-        topCategory: formatCategory(topCategory),
-        topCategoryAmount
-      });
-    } catch (error) {
-      console.error("Error fetching summary data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    incomeMonthly,
+    expenseMonthly,
+    netSavingsMonthly,
+    savingsRateMonthly,
+    topExpenseCategoryMonthly,
+    loading,
+  } = useTransactions();
 
   if (loading) {
     return (
@@ -120,8 +26,6 @@ export const ReportsSummary = () => {
       </div>
     );
   }
-
-  if (!data) return null;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -137,7 +41,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{formatCurrency(data.totalIncome)}
+            €{formatCurrency(incomeMonthly)}
           </div>
           <p className="text-xs text-muted-foreground">
             This month • Click to view
@@ -157,7 +61,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{formatCurrency(data.totalExpenses)}
+            €{formatCurrency(expenseMonthly)}
           </div>
           <p className="text-xs text-muted-foreground">
             This month • Click to view
@@ -174,10 +78,10 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
-            €{formatCurrency(data.netSavings)}
+            €{formatCurrency(netSavingsMonthly)}
           </div>
           <p className="text-xs text-muted-foreground">
-            {data.savingsRate}% savings rate
+            {savingsRateMonthly.toFixed(1)}% savings rate
           </p>
         </CardContent>
       </Card>
@@ -190,9 +94,11 @@ export const ReportsSummary = () => {
           </div>
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
-          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">{data.topCategory}</div>
+          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
+            {topExpenseCategoryMonthly?.category || 'None'}
+          </div>
           <p className="text-xs text-muted-foreground">
-            €{formatCurrency(data.topCategoryAmount)} spent
+            €{formatCurrency(topExpenseCategoryMonthly?.amount || 0)} spent
           </p>
         </CardContent>
       </Card>
