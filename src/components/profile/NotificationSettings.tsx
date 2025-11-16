@@ -39,7 +39,7 @@ export const NotificationSettings = () => {
         {/* Financial Alerts */}
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <AppIcons.financial.money className="h-4 w-4 text-primary" />
+            <AppIcons.financial.euro className="h-4 w-4 text-primary" />
             Financial Alerts
           </h3>
 
