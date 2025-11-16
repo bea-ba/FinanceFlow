@@ -1,11 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
-import { Target, ChevronDown } from "lucide-react";
+import { Target, ChevronDown, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
+
+type ChartType = "donut" | "bar";
 
 interface CategoryData {
   name: string;
@@ -30,6 +33,7 @@ export const CategoryBreakdown = () => {
   const { incomeBreakdownMonthly, expenseBreakdownMonthly, loading } = useTransactions();
   const [incomeDetailsOpen, setIncomeDetailsOpen] = useState(false);
   const [expenseDetailsOpen, setExpenseDetailsOpen] = useState(false);
+  const [chartType, setChartType] = useState<ChartType>("donut");
 
   if (loading) {
     return <ChartSkeleton />;
@@ -96,11 +100,13 @@ export const CategoryBreakdown = () => {
 
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
-    // Add percentage to data
-    const chartData = data.map(item => ({
-      ...item,
-      percentage: ((item.value / total) * 100).toFixed(1)
-    }));
+    // Add percentage to data and sort by value descending for bar chart
+    const chartData = data
+      .map(item => ({
+        ...item,
+        percentage: ((item.value / total) * 100).toFixed(1)
+      }))
+      .sort((a, b) => b.value - a.value); // Sort for better bar chart readability
 
     return (
       <div className="space-y-4">
@@ -113,34 +119,50 @@ export const CategoryBreakdown = () => {
           </span>
         </div>
 
-        {/* Donut Chart */}
-        <ResponsiveContainer width="100%" height={280}>
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={90}
-              paddingAngle={2}
-              dataKey="value"
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              verticalAlign="bottom"
-              height={36}
-              formatter={(value, entry: any) => (
-                <span className="text-sm">
-                  {value} ({entry.payload.percentage}%)
-                </span>
-              )}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+        {/* Chart Visualization */}
+        {chartType === "donut" ? (
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                formatter={(value, entry: any) => (
+                  <span className="text-sm">
+                    {value} ({entry.payload.percentage}%)
+                  </span>
+                )}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={chartData} layout="vertical" margin={{ left: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis type="number" className="text-xs" />
+              <YAxis dataKey="name" type="category" className="text-xs" width={80} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
 
         {/* Collapsible Detailed List */}
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -182,10 +204,34 @@ export const CategoryBreakdown = () => {
   return (
     <Card className="shadow-card rounded-xl">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5 text-primary" />
-          Category Breakdown
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Category Breakdown
+          </CardTitle>
+
+          {/* Chart Type Toggle */}
+          <div className="flex items-center gap-1 bg-accent/50 rounded-lg p-1">
+            <Button
+              variant={chartType === "donut" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setChartType("donut")}
+              className="h-8 px-3"
+            >
+              <PieChartIcon className="h-4 w-4 mr-1" />
+              <span className="text-xs">Donut</span>
+            </Button>
+            <Button
+              variant={chartType === "bar" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setChartType("bar")}
+              className="h-8 px-3"
+            >
+              <BarChart3 className="h-4 w-4 mr-1" />
+              <span className="text-xs">Bar</span>
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Income Section */}
