@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { parseLocalDate } from "@/lib/utils";
+import { parseLocalDate, withTimeout } from "@/lib/utils";
 
 // Types
 export interface Transaction {
@@ -104,25 +104,35 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
   // Fetch all transactions (memoized to prevent unnecessary re-renders)
   const refreshTransactions = useCallback(async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await withTimeout(
+        supabase.auth.getUser(),
+        10000,
+        "Authentication check timed out"
+      );
+
       if (!user) {
         setTransactions([]);
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("transaction_date", { ascending: false });
+      const { data, error } = await withTimeout(
+        supabase
+          .from("transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("transaction_date", { ascending: false }),
+        15000,
+        "Loading transactions timed out. Please check your connection."
+      );
 
       if (error) throw error;
 
       setTransactions(data || []);
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      toast.error("Failed to load transactions");
+      const message = error instanceof Error ? error.message : "Failed to load transactions";
+      toast.error(message);
     } finally {
       setLoading(false);
     }

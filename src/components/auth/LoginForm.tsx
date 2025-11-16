@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
+import { withTimeout } from "@/lib/utils";
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -36,10 +37,14 @@ export const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
+      const { error } = await withTimeout(
+        supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        }),
+        20000,
+        "Login timed out. Please check your connection and try again."
+      );
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
@@ -51,7 +56,8 @@ export const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
         toast.success("Welcome back!");
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

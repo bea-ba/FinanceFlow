@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Lock, User, Loader2, Eye, EyeOff, Check, X } from "lucide-react";
+import { withTimeout } from "@/lib/utils";
 
 // Password strength calculator
 const calculatePasswordStrength = (password: string): {
@@ -75,16 +76,20 @@ export const SignupForm = () => {
   const onSubmit = async (data: SignupFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: data.fullName,
+      const { error } = await withTimeout(
+        supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              full_name: data.fullName,
+            },
           },
-        },
-      });
+        }),
+        20000,
+        "Signup timed out. Please check your connection and try again."
+      );
 
       if (error) {
         if (error.message.includes("already registered")) {
@@ -100,7 +105,8 @@ export const SignupForm = () => {
         navigate("/");
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

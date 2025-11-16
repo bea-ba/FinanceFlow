@@ -43,3 +43,24 @@ export function formatCurrency(value: number, decimals: number = 2): string {
   // Join with comma as decimal separator
   return decimalPart ? `${formattedInteger},${decimalPart}` : formattedInteger;
 }
+
+/**
+ * Wraps a promise with a timeout
+ * Throws an error if the promise doesn't resolve within the specified time
+ * @param promise - The promise to wrap
+ * @param timeoutMs - Timeout in milliseconds (default: 30000 = 30 seconds)
+ * @param errorMessage - Custom error message
+ * @returns Promise that rejects if timeout is reached
+ */
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = 30000,
+  errorMessage: string = "Operation timed out. Please check your connection and try again."
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    ),
+  ]);
+}
