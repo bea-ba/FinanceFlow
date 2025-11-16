@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2, Loader2, Filter } from "lucide-react";
 import { AddIncomeModal } from "./AddIncomeModal";
 import { IncomeEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { AppIcons } from "@/config/icons";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import Fuse from "fuse.js";
 
 interface Transaction {
   id: string;
@@ -41,7 +42,6 @@ export const IncomeList = () => {
   // Use centralized context instead of local state and queries
   const { incomeTransactions, loading, deleteTransaction } = useTransactions();
 
-  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -49,33 +49,51 @@ export const IncomeList = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | null>(null);
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Apply filters and sort whenever transactions or filters change
-  useEffect(() => {
-    applyFiltersAndSort();
-  }, [incomeTransactions, searchTerm, categoryFilter, sortOrder]);
+  // Initialize Fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    return new Fuse(incomeTransactions, {
+      keys: ['description', 'category'],
+      threshold: 0.3, // 0 = exact match, 1 = match anything
+      ignoreLocation: true,
+    });
+  }, [incomeTransactions]);
 
-  const applyFiltersAndSort = () => {
+  // Apply filters and sort using fuzzy search
+  const filteredTransactions = useMemo(() => {
     let filtered = [...incomeTransactions];
 
-    if (searchTerm) {
-      filtered = filtered.filter(t =>
-        t.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    // Fuzzy search on description
+    if (searchTerm.trim()) {
+      const results = fuse.search(searchTerm);
+      filtered = results.map(r => r.item);
     }
 
+    // Category filter
     if (categoryFilter !== "all") {
       filtered = filtered.filter(t => t.category === categoryFilter);
     }
 
+    // Amount range filter
+    if (minAmount) {
+      filtered = filtered.filter(t => t.amount >= parseFloat(minAmount));
+    }
+    if (maxAmount) {
+      filtered = filtered.filter(t => t.amount <= parseFloat(maxAmount));
+    }
+
+    // Sort by date
     filtered.sort((a, b) => {
       const dateA = new Date(a.transaction_date).getTime();
       const dateB = new Date(b.transaction_date).getTime();
       return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
 
-    setFilteredTransactions(filtered);
-  };
+    return filtered;
+  }, [incomeTransactions, searchTerm, categoryFilter, sortOrder, minAmount, maxAmount, fuse]);
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
@@ -156,36 +174,86 @@ export const IncomeList = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search income..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 rounded-xl"
-              />
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search income... (try fuzzy: 'sal' finds 'Salary')"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 rounded-xl"
+                />
+              </div>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full sm:w-[180px] rounded-xl">
+                  <SelectValue placeholder="All Sources" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sources</SelectItem>
+                  <SelectItem value="salary">Salary</SelectItem>
+                  <SelectItem value="freelance">Freelance</SelectItem>
+                  <SelectItem value="gift">Gift</SelectItem>
+                  <SelectItem value="other_income">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="rounded-xl"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                Filters
+              </Button>
+              <Button
+                variant="outline"
+                onClick={toggleSortOrder}
+                className="rounded-xl"
+              >
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                {sortOrder === "desc" ? "Newest" : "Oldest"}
+              </Button>
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-[180px] rounded-xl">
-                <SelectValue placeholder="All Sources" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Sources</SelectItem>
-                <SelectItem value="salary">Salary</SelectItem>
-                <SelectItem value="freelance">Freelance</SelectItem>
-                <SelectItem value="gift">Gift</SelectItem>
-                <SelectItem value="other_income">Other</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              onClick={toggleSortOrder}
-              className="rounded-xl"
-            >
-              <ArrowUpDown className="mr-2 h-4 w-4" />
-              {sortOrder === "desc" ? "Newest" : "Oldest"}
-            </Button>
+
+            {/* Advanced Filters */}
+            {showFilters && (
+              <div className="flex flex-col sm:flex-row gap-3 p-4 bg-muted/50 rounded-xl">
+                <div className="flex-1">
+                  <label className="text-xs text-muted-foreground mb-1 block">Min Amount (€)</label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={minAmount}
+                    onChange={(e) => setMinAmount(e.target.value)}
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-xs text-muted-foreground mb-1 block">Max Amount (€)</label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="No limit"
+                    value={maxAmount}
+                    onChange={(e) => setMaxAmount(e.target.value)}
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setMinAmount("");
+                      setMaxAmount("");
+                    }}
+                    className="rounded-xl"
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* List */}
@@ -201,10 +269,12 @@ export const IncomeList = () => {
                 onClick={() => {
                   setSearchTerm("");
                   setCategoryFilter("all");
+                  setMinAmount("");
+                  setMaxAmount("");
                 }}
                 className="text-info mt-2"
               >
-                Clear filters
+                Clear all filters
               </Button>
             </div>
           ) : (
