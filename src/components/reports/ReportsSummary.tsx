@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardSkeleton } from "@/components/ui/skeleton-loaders";
@@ -15,6 +16,7 @@ interface SummaryData {
 }
 
 export const ReportsSummary = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -112,7 +114,10 @@ export const ReportsSummary = () => {
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
+      <Card
+        className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl cursor-pointer"
+        onClick={() => navigate("/income")}
+      >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Income</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
@@ -124,12 +129,15 @@ export const ReportsSummary = () => {
             €{formatCurrency(data.totalIncome)}
           </div>
           <p className="text-xs text-muted-foreground">
-            This month
+            This month • Click to view
           </p>
         </CardContent>
       </Card>
 
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl">
+      <Card
+        className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 rounded-xl cursor-pointer"
+        onClick={() => navigate("/money-out")}
+      >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
           <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
           <div className="p-1.5 sm:p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
@@ -141,7 +149,7 @@ export const ReportsSummary = () => {
             €{formatCurrency(data.totalExpenses)}
           </div>
           <p className="text-xs text-muted-foreground">
-            This month
+            This month • Click to view
           </p>
         </CardContent>
       </Card>
