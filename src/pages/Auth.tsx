@@ -12,21 +12,40 @@ const Auth = () => {
   const [initialTab, setInitialTab] = useState<"login" | "signup">("signup");
 
   useEffect(() => {
+    const checkSessionAndRedirect = async (session: any) => {
+      if (!session?.user) return;
+
+      // Check if user profile exists and onboarding status
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("created_at, onboarding_completed")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profile && !profile.onboarding_completed) {
+        // User hasn't completed onboarding yet
+        navigate("/onboarding");
+      } else {
+        // User has completed onboarding or returning user
+        navigate("/");
+      }
+    };
+
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        navigate("/");
+        checkSessionAndRedirect(session);
       }
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        navigate("/");
+        await checkSessionAndRedirect(session);
       }
     });
 

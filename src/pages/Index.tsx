@@ -14,14 +14,32 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkSessionAndOnboarding = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
-      setLoading(false);
+
       if (!session) {
         navigate("/auth");
+        setLoading(false);
+        return;
       }
-    });
+
+      // Check if user has completed onboarding
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profile && !profile.onboarding_completed) {
+        // Redirect to onboarding if not completed
+        navigate("/onboarding");
+      }
+
+      setLoading(false);
+    };
+
+    checkSessionAndOnboarding();
 
     // Listen for auth changes
     const {

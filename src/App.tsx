@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
 import Income from "./pages/Income";
 import MoneyOut from "./pages/MoneyOut";
 import Reports from "./pages/Reports";
@@ -42,6 +43,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/income" element={<Income />} />
             <Route path="/money-out" element={<MoneyOut />} />
             <Route path="/reports" element={<Reports />} />
