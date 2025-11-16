@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, MoreVertical, Trash2, ArrowUpDown } from "lucide-react";
+import { Plus, Search, MoreVertical, Trash2, ArrowUpDown, Loader2 } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
 import { SpendingEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -46,6 +46,7 @@ export const MoneyOutList = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchExpenses();
@@ -114,6 +115,7 @@ export const MoneyOutList = () => {
   const confirmDelete = async () => {
     if (!deleteId) return;
 
+    setDeleting(true);
     const { error } = await supabase
       .from('transactions')
       .delete()
@@ -127,6 +129,7 @@ export const MoneyOutList = () => {
       // Dispatch event to refresh all components
       window.dispatchEvent(new Event('transaction-added'));
     }
+    setDeleting(false);
     setDeleteId(null);
   };
 
@@ -331,9 +334,16 @@ export const MoneyOutList = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {deleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
