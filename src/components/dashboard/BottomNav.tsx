@@ -1,29 +1,29 @@
-import { Home, TrendingUp, Receipt, PieChart, User } from "lucide-react";
+import { Home, TrendingUp, Receipt, BarChart3, User } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 const navItems = [
-  { icon: Home, label: "Home", value: "home" },
-  { icon: TrendingUp, label: "Income", value: "income" },
-  { icon: Receipt, label: "Bills", value: "bills" },
-  { icon: PieChart, label: "Reports", value: "reports" },
-  { icon: User, label: "Profile", value: "profile" },
+  { icon: Home, label: "Home", path: "/" },
+  { icon: TrendingUp, label: "Income", path: "/income" },
+  { icon: Receipt, label: "Bills", path: "/bills" },
+  { icon: BarChart3, label: "Reports", path: "/reports" },
+  { icon: User, label: "Profile", path: "/profile" },
 ];
 
 export const BottomNav = () => {
-  const [active, setActive] = useState("home");
+  const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-border shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg z-50">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = active === item.value;
+          const isActive = location.pathname === item.path;
           
           return (
-            <button
-              key={item.value}
-              onClick={() => setActive(item.value)}
+            <Link
+              key={item.path}
+              to={item.path}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full transition-colors",
                 isActive 
@@ -38,7 +38,7 @@ export const BottomNav = () => {
               )}>
                 {item.label}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>
