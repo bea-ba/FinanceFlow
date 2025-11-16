@@ -119,12 +119,6 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
       return;
     }
 
-    // Validate description is not empty for large amounts
-    if (amount > 500 && !formData.description.trim()) {
-      toast.error("Please add a description for amounts over €500");
-      return;
-    }
-
     // Check for unusually large amounts
     if (amount > 5000 && !editTransaction) {
       setShowLargeAmountConfirm(true);
@@ -202,19 +196,15 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">
-                Description
-                {parseFloat(formData.amount) > 500 && <span className="text-destructive">*</span>}
-              </Label>
+              <Label htmlFor="description">Description (optional)</Label>
               <Input
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 placeholder="e.g., Weekly groceries at Tesco, Electric bill"
-                required={parseFloat(formData.amount) > 500}
               />
               {parseFloat(formData.amount) > 500 && !formData.description && (
-                <p className="text-xs text-muted-foreground">Description required for amounts over €500</p>
+                <p className="text-xs text-amber-600">💡 Tip: Adding a description helps track large expenses</p>
               )}
             </div>
 

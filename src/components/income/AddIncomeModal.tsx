@@ -119,12 +119,6 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
       return;
     }
 
-    // Validate description is not empty for large amounts
-    if (amount > 1000 && !formData.description.trim()) {
-      toast.error("Please add a description for amounts over €1,000");
-      return;
-    }
-
     // Check for unusually large amounts
     if (amount > 10000 && !editTransaction) {
       setShowLargeAmountConfirm(true);
@@ -196,19 +190,15 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">
-              Description
-              {parseFloat(formData.amount) > 1000 && <span className="text-destructive">*</span>}
-            </Label>
+            <Label htmlFor="description">Description (optional)</Label>
             <Input
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
               placeholder="e.g., Freelance project payment, Monthly salary"
-              required={parseFloat(formData.amount) > 1000}
             />
-            {parseFloat(formData.amount) > 1000 && !formData.description && (
-              <p className="text-xs text-muted-foreground">Description required for amounts over €1,000</p>
+            {parseFloat(formData.amount) > 1000 && !formData.description && formData.category !== 'salary' && (
+              <p className="text-xs text-amber-600">💡 Tip: Adding a description helps track large amounts</p>
             )}
           </div>
 
