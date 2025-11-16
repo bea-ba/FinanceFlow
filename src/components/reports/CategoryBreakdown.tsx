@@ -3,6 +3,7 @@ import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
 import { Target } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 interface CategoryData {
   name: string;
@@ -59,6 +60,21 @@ export const CategoryBreakdown = () => {
     );
   }
 
+  // Custom tooltip for donut chart
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      return (
+        <div className="bg-background border border-border rounded-xl p-3 shadow-elevated">
+          <p className="font-semibold text-sm">{data.name}</p>
+          <p className="text-primary font-bold">€{formatCurrency(data.value)}</p>
+          <p className="text-muted-foreground text-xs">{data.payload.percentage}%</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderCategorySection = (data: CategoryData[], title: string, emptyMessage: string) => {
     if (data.length === 0) {
       return (
@@ -70,43 +86,51 @@ export const CategoryBreakdown = () => {
 
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
+    // Add percentage to data
+    const chartData = data.map(item => ({
+      ...item,
+      percentage: ((item.value / total) * 100).toFixed(1)
+    }));
+
     return (
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-          {title}
-          <span className="text-xs text-muted-foreground font-normal">
-            (€{formatCurrency(total)})
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-foreground">
+            {title}
+          </h3>
+          <span className="text-lg font-bold text-primary">
+            €{formatCurrency(total)}
           </span>
-        </h3>
-
-        {/* Category List */}
-        <div className="space-y-2">
-          {data.map((category, index) => {
-            const percentage = ((category.value / total) * 100).toFixed(1);
-            return (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-accent/50 transition-colors"
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <div
-                    className="w-4 h-4 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: category.color }}
-                  />
-                  <span className="font-medium text-sm">{category.name}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-semibold">
-                    €{formatCurrency(category.value)}
-                  </span>
-                  <span className="text-sm text-muted-foreground w-12 text-right">
-                    {percentage}%
-                  </span>
-                </div>
-              </div>
-            );
-          })}
         </div>
+
+        {/* Donut Chart */}
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              formatter={(value, entry: any) => (
+                <span className="text-sm">
+                  {value} ({entry.payload.percentage}%)
+                </span>
+              )}
+            />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     );
   };
