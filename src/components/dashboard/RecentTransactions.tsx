@@ -64,25 +64,36 @@ export const RecentTransactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchTransactions = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("transaction_date", { ascending: false })
+      .limit(10);
+
+    if (data) {
+      setTransactions(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    fetchTransactions();
 
-      const { data } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("transaction_date", { ascending: false })
-        .limit(10);
-
-      if (data) {
-        setTransactions(data);
-      }
-      setLoading(false);
+    // Listen for transaction-added event
+    const handleTransactionAdded = () => {
+      fetchTransactions();
     };
 
-    fetchTransactions();
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   if (loading) {

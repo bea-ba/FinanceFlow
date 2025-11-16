@@ -43,43 +43,54 @@ export const SpendingChart = () => {
   const [spending, setSpending] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchSpending = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: transactions } = await supabase
+      .from("transactions")
+      .select("category, amount")
+      .eq("user_id", user.id)
+      .eq("type", "expense");
+
+    if (transactions && transactions.length > 0) {
+      const categoryTotals: Record<string, number> = {};
+      let total = 0;
+
+      transactions.forEach((t) => {
+        const amount = Number(t.amount);
+        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + amount;
+        total += amount;
+      });
+
+      const categorySpending: CategorySpending[] = Object.entries(categoryTotals)
+        .map(([category, amount]) => ({
+          category,
+          amount,
+          percentage: (amount / total) * 100,
+          color: categoryColors[category] || categoryColors.other_expense,
+        }))
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 5);
+
+      setSpending(categorySpending);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchSpending = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    fetchSpending();
 
-      const { data: transactions } = await supabase
-        .from("transactions")
-        .select("category, amount")
-        .eq("user_id", user.id)
-        .eq("type", "expense");
-
-      if (transactions && transactions.length > 0) {
-        const categoryTotals: Record<string, number> = {};
-        let total = 0;
-
-        transactions.forEach((t) => {
-          const amount = Number(t.amount);
-          categoryTotals[t.category] = (categoryTotals[t.category] || 0) + amount;
-          total += amount;
-        });
-
-        const categorySpending: CategorySpending[] = Object.entries(categoryTotals)
-          .map(([category, amount]) => ({
-            category,
-            amount,
-            percentage: (amount / total) * 100,
-            color: categoryColors[category] || categoryColors.other_expense,
-          }))
-          .sort((a, b) => b.amount - a.amount)
-          .slice(0, 5);
-
-        setSpending(categorySpending);
-      }
-      setLoading(false);
+    // Listen for transaction-added event
+    const handleTransactionAdded = () => {
+      fetchSpending();
     };
 
-    fetchSpending();
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   if (loading) {

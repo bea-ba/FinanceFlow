@@ -36,6 +36,7 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 interface AddTransactionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 const incomeCategories = [
@@ -57,7 +58,7 @@ const expenseCategories = [
   { value: "other_expense", label: "Other" },
 ];
 
-export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalProps) => {
+export const AddTransactionModal = ({ open, onOpenChange, onSuccess }: AddTransactionModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [transactionType, setTransactionType] = useState<"income" | "expense">("expense");
 
@@ -98,7 +99,14 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
       toast.success(`${data.type === "income" ? "Money In" : "Money Out"} added!`);
       reset();
       onOpenChange(false);
-      window.location.reload(); // Refresh to show new transaction
+
+      // Call success callback to refresh data without full page reload
+      if (onSuccess) {
+        onSuccess();
+      }
+
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('transaction-added'));
     } catch (error: any) {
       toast.error(error.message || "Failed to add transaction");
     } finally {

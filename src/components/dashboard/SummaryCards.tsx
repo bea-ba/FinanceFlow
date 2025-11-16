@@ -20,35 +20,46 @@ export const SummaryCards = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const fetchSummary = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: transactions } = await supabase
+      .from("transactions")
+      .select("type, amount")
+      .eq("user_id", user.id);
+
+    if (transactions) {
+      const income = transactions
+        .filter((t) => t.type === "income")
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const expenses = transactions
+        .filter((t) => t.type === "expense")
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      setSummary({
+        totalIncome: income,
+        totalExpenses: expenses,
+        balance: income - expenses,
+      });
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchSummary = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    fetchSummary();
 
-      const { data: transactions } = await supabase
-        .from("transactions")
-        .select("type, amount")
-        .eq("user_id", user.id);
-
-      if (transactions) {
-        const income = transactions
-          .filter((t) => t.type === "income")
-          .reduce((sum, t) => sum + Number(t.amount), 0);
-        
-        const expenses = transactions
-          .filter((t) => t.type === "expense")
-          .reduce((sum, t) => sum + Number(t.amount), 0);
-
-        setSummary({
-          totalIncome: income,
-          totalExpenses: expenses,
-          balance: income - expenses,
-        });
-      }
-      setLoading(false);
+    // Listen for transaction-added event
+    const handleTransactionAdded = () => {
+      fetchSummary();
     };
 
-    fetchSummary();
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   if (loading) {
