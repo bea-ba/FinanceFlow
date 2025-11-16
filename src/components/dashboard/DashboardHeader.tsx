@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const mockNotifications = [
   { id: 1, title: "Payment received", message: "Your salary for March has been credited", time: "2h ago", unread: true, type: "income" },
@@ -13,6 +14,14 @@ const mockNotifications = [
   { id: 3, title: "Budget alert", message: "You've spent 80% of your dining budget", time: "1d ago", unread: false, type: "alert" },
   { id: 4, title: "Savings milestone", message: "Congratulations! You've saved $5,000 this month", time: "2d ago", unread: false, type: "success" },
 ];
+
+// Get time-based greeting
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
 
 export const DashboardHeader = () => {
   const [userName, setUserName] = useState<string>("");
@@ -29,44 +38,71 @@ export const DashboardHeader = () => {
           .select("full_name")
           .eq("id", user.id)
           .maybeSingle();
-        
-        setUserName(profile?.full_name || user.email?.split("@")[0] || "User");
+
+        // Get first name from full name, or use email prefix
+        const fullName = profile?.full_name || user.email?.split("@")[0] || "User";
+        const firstName = fullName.split(" ")[0];
+        setUserName(firstName);
       }
     };
 
     fetchUserProfile();
   }, []);
 
+  // Get user initials for avatar
+  const getInitials = () => {
+    if (!userName) return "U";
+    return userName.substring(0, 2).toUpperCase();
+  };
+
   return (
     <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/50">
       <div className="flex items-center justify-between p-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {isHomePage ? (
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
-              Hey {userName}! 👋
-            </h2>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {new Date().toLocaleDateString("en-US", { 
-                weekday: "long", 
-                month: "short", 
-                day: "numeric" 
-              })}
-            </p>
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Avatar */}
+            <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20">
+              <AvatarFallback className="bg-mint-tint text-primary font-semibold">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* Greeting */}
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-foreground">
+                {getGreeting()}, <span className="text-primary">{userName}</span>
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric"
+                })}
+              </p>
+            </div>
           </div>
         ) : (
           <div className="h-10"></div>
         )}
+
+        {/* Notifications */}
         <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 transition-colors">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative hover:bg-primary/10 transition-colors rounded-full"
+            >
               <AppIcons.communication.notification className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full animate-pulse" />
+              {mockNotifications.filter(n => n.unread).length > 0 && (
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-warning rounded-full animate-pulse" />
+              )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="end">
+          <PopoverContent className="w-80 p-0 rounded-2xl shadow-elevated" align="end">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <h3 className="font-semibold text-foreground">Notifications</h3>
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
                 {mockNotifications.filter(n => n.unread).length} new
               </Badge>
             </div>
@@ -100,7 +136,10 @@ export const DashboardHeader = () => {
               </div>
             </ScrollArea>
             <div className="border-t border-border p-2">
-              <Button variant="ghost" className="w-full text-sm text-primary hover:text-primary hover:bg-primary/10">
+              <Button
+                variant="ghost"
+                className="w-full text-sm text-info hover:text-info hover:bg-blue-tint rounded-xl"
+              >
                 View all notifications
               </Button>
             </div>
