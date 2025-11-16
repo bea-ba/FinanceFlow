@@ -138,7 +138,7 @@ export const IncomeList = () => {
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add Income
+              Add Manually
             </Button>
           </div>
         </CardHeader>
