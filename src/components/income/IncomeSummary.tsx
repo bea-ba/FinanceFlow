@@ -70,7 +70,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                ${monthlyTotal.toFixed(2)}
+                €{monthlyTotal.toFixed(2)}
               </p>
             )}
           </CardContent>
@@ -90,7 +90,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                ${yearlyTotal.toFixed(2)}
+                €{yearlyTotal.toFixed(2)}
               </p>
             )}
           </CardContent>

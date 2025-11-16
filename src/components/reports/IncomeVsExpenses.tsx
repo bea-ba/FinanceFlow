@@ -34,7 +34,7 @@ export const IncomeVsExpenses = () => {
                 borderRadius: '16px',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
               }}
-              formatter={(value: number) => `$${value.toFixed(2)}`}
+              formatter={(value: number) => `$€{value.toFixed(2)}`}
             />
             <Legend />
             <Bar dataKey="income" fill="hsl(var(--primary))" name="Income" radius={[8, 8, 0, 0]} />

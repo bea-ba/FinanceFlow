@@ -9,7 +9,7 @@ export const AIInsights = () => {
       type: "opportunity",
       icon: AppIcons.financial.trendingUp,
       title: "Savings opportunity detected",
-      description: "Your spending on dining is 23% higher this month. Small adjustments could save $200.",
+      description: "Your spending on dining is 23% higher this month. Small adjustments could save €200.",
       confidence: "high",
       color: "text-success",
       bgColor: "bg-success/10"

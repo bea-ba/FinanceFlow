@@ -113,7 +113,7 @@ export const SummaryCards = () => {
                 {card.title}
               </p>
               <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1">
-                ${card.value.toFixed(2)}
+                €{card.value.toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
                 {card.description}

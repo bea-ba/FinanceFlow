@@ -20,7 +20,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            ${totalIncome.toFixed(2)}
+            €{totalIncome.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
             This period
@@ -37,7 +37,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            ${totalExpenses.toFixed(2)}
+            €{totalExpenses.toFixed(2)}
           </div>
           <p className="text-xs text-success flex items-center gap-1">
             {expenseGrowth}% vs last period
@@ -54,7 +54,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
-            ${netSavings.toFixed(2)}
+            €{netSavings.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
             {savingsRate}% savings rate
@@ -72,7 +72,7 @@ export const ReportsSummary = () => {
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">Groceries</div>
           <p className="text-xs text-muted-foreground">
-            $1,248.50 spent
+            €1,248.50 spent
           </p>
         </CardContent>
       </Card>

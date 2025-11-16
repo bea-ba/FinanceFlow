@@ -51,7 +51,7 @@ export const CategoryBreakdown = () => {
                   boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                 }}
                 formatter={(value: number) => [
-                  `$${value.toFixed(2)} (${((value / total) * 100).toFixed(1)}%)`,
+                  `$€{value.toFixed(2)} (€{((value / total) * 100).toFixed(1)}%)`,
                   'Amount'
                 ]}
               />
@@ -62,7 +62,7 @@ export const CategoryBreakdown = () => {
         {/* Total in Center */}
         <div className="text-center -mt-44 mb-32 pointer-events-none">
           <p className="text-xs text-muted-foreground">Total</p>
-          <p className="text-2xl font-bold text-foreground">${total.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-foreground">€{total.toFixed(2)}</p>
         </div>
 
         {/* Category List */}
@@ -83,7 +83,7 @@ export const CategoryBreakdown = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-sm font-semibold">
-                    ${category.value.toFixed(2)}
+                    €{category.value.toFixed(2)}
                   </span>
                   <span className="text-sm text-muted-foreground w-12 text-right">
                     {percentage}%

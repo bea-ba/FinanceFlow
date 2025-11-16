@@ -162,7 +162,7 @@ export const RecentTransactions = () => {
                 "font-semibold text-base whitespace-nowrap",
                 isIncome ? "text-success" : "text-destructive"
               )}>
-                {isIncome ? "+" : "-"}${Number(transaction.amount).toFixed(2)}
+                {isIncome ? "+" : "-"}€{Number(transaction.amount).toFixed(2)}
               </p>
             </div>
           );

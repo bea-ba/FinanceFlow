@@ -72,7 +72,7 @@ export const RecurringBillsChart = () => {
       <CardContent className="space-y-4">
         <div className="mb-6">
           <p className="text-sm text-muted-foreground mb-1">Total Monthly Recurring</p>
-          <p className="text-3xl font-bold text-primary">${totalRecurring.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-primary">€{totalRecurring.toFixed(2)}</p>
         </div>
 
         {recurringBills.length === 0 ? (
@@ -88,7 +88,7 @@ export const RecurringBillsChart = () => {
                     <span className="font-medium text-sm">{bill.category}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    ${bill.amount.toFixed(2)} ({percentage.toFixed(1)}%)
+                    €{bill.amount.toFixed(2)} ({percentage.toFixed(1)}%)
                   </span>
                 </div>
                 <Progress value={percentage} className="h-2" />

@@ -224,7 +224,7 @@ export const IncomeList = () => {
                     {/* Amount */}
                     <div className="text-right">
                       <p className="text-lg font-bold text-success">
-                        +${Number(transaction.amount).toFixed(2)}
+                        +€{Number(transaction.amount).toFixed(2)}
                       </p>
                     </div>
 

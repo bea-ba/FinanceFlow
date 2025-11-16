@@ -255,7 +255,7 @@ export const MoneyOutList = () => {
                     {/* Amount */}
                     <div className="text-right">
                       <p className="text-lg font-bold text-destructive">
-                        -${Number(expense.amount).toFixed(2)}
+                        -€{Number(expense.amount).toFixed(2)}
                       </p>
                     </div>
 

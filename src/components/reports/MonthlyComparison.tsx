@@ -76,13 +76,13 @@ export const MonthlyComparison = () => {
                 <TableRow key={index}>
                   <TableCell className="font-medium">{row.month}</TableCell>
                   <TableCell className="text-right text-green-600">
-                    ${row.income.toFixed(2)}
+                    €{row.income.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right text-red-600">
-                    ${row.expenses.toFixed(2)}
+                    €{row.expenses.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right font-semibold text-primary">
-                    ${row.savings.toFixed(2)}
+                    €{row.savings.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {row.savingsRate}%

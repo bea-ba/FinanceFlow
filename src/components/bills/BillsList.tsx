@@ -275,7 +275,7 @@ export const BillsList = () => {
                     {/* Amount */}
                     <div className="text-right">
                       <p className="text-lg font-bold text-foreground">
-                        ${Number(bill.amount).toFixed(2)}
+                        €{Number(bill.amount).toFixed(2)}
                       </p>
                     </div>
 

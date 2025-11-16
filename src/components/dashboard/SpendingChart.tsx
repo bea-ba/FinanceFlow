@@ -135,7 +135,7 @@ export const SpendingChart = () => {
                 {categoryLabels[item.category] || item.category.replace(/_/g, " ")}
               </span>
               <span className="text-sm font-semibold text-foreground">
-                ${item.amount.toFixed(2)}
+                €{item.amount.toFixed(2)}
               </span>
             </div>
             <div className="relative">

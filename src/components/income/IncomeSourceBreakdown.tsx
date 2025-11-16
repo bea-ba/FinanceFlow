@@ -80,7 +80,7 @@ export const IncomeSourceBreakdown = () => {
               <div className="flex justify-between items-center">
                 <span className="font-medium">{source.category}</span>
                 <span className="text-sm text-muted-foreground">
-                  ${source.total.toFixed(2)} ({source.percentage.toFixed(1)}%)
+                  €{source.total.toFixed(2)} ({source.percentage.toFixed(1)}%)
                 </span>
               </div>
               <Progress value={source.percentage} className="h-2" />

@@ -12,7 +12,7 @@ const mockNotifications = [
   { id: 1, title: "Payment received", message: "Your salary for March has been credited", time: "2h ago", unread: true, type: "income" },
   { id: 2, title: "Bill reminder", message: "Electricity bill due in 3 days", time: "5h ago", unread: true, type: "bill" },
   { id: 3, title: "Budget alert", message: "You've spent 80% of your dining budget", time: "1d ago", unread: false, type: "alert" },
-  { id: 4, title: "Savings milestone", message: "Congratulations! You've saved $5,000 this month", time: "2d ago", unread: false, type: "success" },
+  { id: 4, title: "Savings milestone", message: "Congratulations! You've saved €5,000 this month", time: "2d ago", unread: false, type: "success" },
 ];
 
 // Get time-based greeting

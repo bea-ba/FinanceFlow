@@ -64,7 +64,7 @@ export const BillsSummary = () => {
           <AppIcons.financial.money className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${totalAmount.toFixed(2)}</div>
+          <div className="text-2xl font-bold">€{totalAmount.toFixed(2)}</div>
           <p className="text-xs text-muted-foreground">
             Monthly recurring
           </p>
@@ -79,7 +79,7 @@ export const BillsSummary = () => {
         <CardContent>
           <div className="text-2xl font-bold text-success">{paidBills}</div>
           <p className="text-xs text-muted-foreground">
-            ${paidAmount.toFixed(2)} paid
+            €{paidAmount.toFixed(2)} paid
           </p>
         </CardContent>
       </Card>
@@ -92,7 +92,7 @@ export const BillsSummary = () => {
         <CardContent>
           <div className="text-2xl font-bold text-warning">{unpaidBills}</div>
           <p className="text-xs text-muted-foreground">
-            ${unpaidAmount.toFixed(2)} due
+            €{unpaidAmount.toFixed(2)} due
           </p>
         </CardContent>
       </Card>

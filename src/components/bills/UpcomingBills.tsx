@@ -123,7 +123,7 @@ export const UpcomingBills = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <p className="text-lg font-bold">${Number(bill.amount).toFixed(2)}</p>
+                <p className="text-lg font-bold">€{Number(bill.amount).toFixed(2)}</p>
                 <Button
                   size="sm"
                   variant="outline"
