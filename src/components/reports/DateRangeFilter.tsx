@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths } from "date-fns";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
@@ -12,6 +12,31 @@ export const DateRangeFilter = () => {
     from: new Date(2024, 10, 1), // Nov 1, 2024
     to: new Date(2024, 10, 30),  // Nov 30, 2024
   });
+
+  // Preset functions
+  const setThisMonth = () => {
+    const now = new Date();
+    setDate({
+      from: startOfMonth(now),
+      to: endOfMonth(now),
+    });
+  };
+
+  const setLastMonth = () => {
+    const lastMonth = subMonths(new Date(), 1);
+    setDate({
+      from: startOfMonth(lastMonth),
+      to: endOfMonth(lastMonth),
+    });
+  };
+
+  const setThisYear = () => {
+    const now = new Date();
+    setDate({
+      from: startOfYear(now),
+      to: endOfYear(now),
+    });
+  };
 
   return (
     <Popover>
@@ -41,15 +66,45 @@ export const DateRangeFilter = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          initialFocus
-          mode="range"
-          defaultMonth={date?.from}
-          selected={date}
-          onSelect={setDate}
-          numberOfMonths={1}
-          className={cn("p-3 pointer-events-auto")}
-        />
+        <div className="flex flex-col">
+          {/* Quick Presets */}
+          <div className="flex gap-2 p-3 border-b border-border">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={setThisMonth}
+              className="flex-1 text-xs"
+            >
+              This Month
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={setLastMonth}
+              className="flex-1 text-xs"
+            >
+              Last Month
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={setThisYear}
+              className="flex-1 text-xs"
+            >
+              This Year
+            </Button>
+          </div>
+          {/* Calendar */}
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={1}
+            className={cn("p-3 pointer-events-auto")}
+          />
+        </div>
       </PopoverContent>
     </Popover>
   );
