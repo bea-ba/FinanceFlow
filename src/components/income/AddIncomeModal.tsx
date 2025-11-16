@@ -36,6 +36,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
   const { addTransaction, updateTransaction } = useTransactions();
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
+  const [showLargeAmountConfirm, setShowLargeAmountConfirm] = useState(false);
   const [formData, setFormData] = useState({
     category: "salary",
     amount: "",
@@ -118,6 +119,18 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
       return;
     }
 
+    // Validate description is not empty for large amounts
+    if (amount > 1000 && !formData.description.trim()) {
+      toast.error("Please add a description for amounts over €1,000");
+      return;
+    }
+
+    // Check for unusually large amounts
+    if (amount > 10000 && !editTransaction) {
+      setShowLargeAmountConfirm(true);
+      return;
+    }
+
     // Check if date is in the future
     const selectedDate = new Date(formData.transaction_date);
     const today = new Date();
@@ -169,21 +182,34 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
               id="amount"
               type="number"
               step="0.01"
+              min="0.01"
+              max="1000000"
               required
               value={formData.amount}
               onChange={(e) => setFormData({...formData, amount: e.target.value})}
               placeholder="0.00"
+              className="text-lg"
             />
+            {parseFloat(formData.amount) > 10000 && (
+              <p className="text-xs text-amber-600">Large amount - you'll be asked to confirm</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">
+              Description
+              {parseFloat(formData.amount) > 1000 && <span className="text-destructive">*</span>}
+            </Label>
             <Input
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="e.g., Freelance project, monthly paycheck"
+              placeholder="e.g., Freelance project payment, Monthly salary"
+              required={parseFloat(formData.amount) > 1000}
             />
+            {parseFloat(formData.amount) > 1000 && !formData.description && (
+              <p className="text-xs text-muted-foreground">Description required for amounts over €1,000</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -222,6 +248,29 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
               Change Date
             </Button>
             <AlertDialogAction onClick={handleConfirmFutureDate}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showLargeAmountConfirm} onOpenChange={setShowLargeAmountConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Large Amount Detected</AlertDialogTitle>
+            <AlertDialogDescription>
+              You're adding €{parseFloat(formData.amount).toLocaleString()} as income. Please confirm this is correct.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowLargeAmountConfirm(false)}>Cancel</AlertDialogCancel>
+            <Button variant="outline" onClick={() => setShowLargeAmountConfirm(false)}>
+              Edit Amount
+            </Button>
+            <AlertDialogAction onClick={async () => {
+              setShowLargeAmountConfirm(false);
+              await saveIncome();
+            }}>
+              Confirm
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
