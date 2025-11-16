@@ -62,7 +62,7 @@ export const SummaryCards = () => {
 
   const cards = [
     {
-      title: "Your Balance",
+      title: "My Balance",
       value: summary.balance,
       icon: Wallet,
       color: "text-primary",

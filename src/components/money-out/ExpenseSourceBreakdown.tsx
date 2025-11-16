@@ -67,7 +67,7 @@ export const ExpenseSourceBreakdown = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PieChart className="h-5 w-5" />
-          Where your money goes
+          Where my money goes
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -78,7 +78,7 @@ export const ExpenseSourceBreakdown = () => {
             ))}
           </div>
         ) : sources.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">No expenses yet — add some to see where your money goes</p>
+          <p className="text-muted-foreground text-center py-8">No expenses yet — add some to see where my money goes</p>
         ) : (
           sources.map((source) => (
             <div key={source.category} className="space-y-2">

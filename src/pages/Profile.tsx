@@ -9,7 +9,7 @@ const Profile = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-foreground">Your profile</h1>
+        <h1 className="text-3xl font-bold text-foreground">My profile</h1>
         
         <ProfileHeader />
         

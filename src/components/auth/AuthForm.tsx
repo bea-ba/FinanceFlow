@@ -15,7 +15,7 @@ export const AuthForm = () => {
           Finance<span className="text-primary">Flow</span>
         </h1>
         <p className="text-slate-600 dark:text-slate-400 text-base">
-          Your financial wellness companion
+          My financial wellness companion
         </p>
       </div>
 

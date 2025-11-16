@@ -80,7 +80,7 @@ export const IncomeList = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Your income history</CardTitle>
+            <CardTitle>My income history</CardTitle>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Add manually
@@ -92,7 +92,7 @@ export const IncomeList = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search your income..."
+                placeholder="Search my income..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"

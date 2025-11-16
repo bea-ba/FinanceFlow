@@ -64,7 +64,7 @@ export const NotificationSettings = () => {
           <div className="space-y-0.5">
             <Label htmlFor="weekly-reports">Send me weekly summaries</Label>
             <p className="text-sm text-muted-foreground">
-              A gentle weekly check-in on your flow
+              A gentle weekly check-in on my flow
             </p>
           </div>
           <Switch
@@ -95,7 +95,7 @@ export const NotificationSettings = () => {
             <div className="space-y-0.5">
               <Label htmlFor="email-notif">Email</Label>
               <p className="text-sm text-muted-foreground">
-                Send notifications to your email
+                Send notifications to my email
               </p>
             </div>
             <Switch
@@ -109,7 +109,7 @@ export const NotificationSettings = () => {
             <div className="space-y-0.5">
               <Label htmlFor="push-notif">Push notifications</Label>
               <p className="text-sm text-muted-foreground">
-                Get push alerts on your phone
+                Get push alerts on my phone
               </p>
             </div>
             <Switch
