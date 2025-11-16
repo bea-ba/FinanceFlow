@@ -1,145 +1,196 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Calendar, Pencil, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Plus, Search, Calendar, MoreVertical, Trash2 } from "lucide-react";
 import { AddBillModal } from "./AddBillModal";
+import { BillsEmptyState } from "@/components/shared/empty-states";
+import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import { AppIcons } from "@/config/icons";
 
 interface Bill {
-  id: number;
+  id: string;
   name: string;
   amount: number;
   category: string;
-  dueDay: number;
+  due_day: number;
   frequency: string;
-  status: "paid" | "unpaid";
-  nextDueDate: Date;
+  status: "paid" | "unpaid" | "overdue";
+  next_due_date: string;
 }
 
 export const BillsList = () => {
+  const navigate = useNavigate();
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [filteredBills, setFilteredBills] = useState<Bill[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Mockup data
-  const bills: Bill[] = [
-    {
-      id: 1,
-      name: "Rent",
-      amount: 1500.00,
-      category: "housing",
-      dueDay: 1,
-      frequency: "monthly",
-      status: "paid",
-      nextDueDate: new Date(2025, 11, 1)
-    },
-    {
-      id: 2,
-      name: "Electric Bill",
-      amount: 125.50,
-      category: "utilities",
-      dueDay: 15,
-      frequency: "monthly",
-      status: "unpaid",
-      nextDueDate: new Date(2025, 10, 15)
-    },
-    {
-      id: 3,
-      name: "Internet Service",
-      amount: 79.99,
-      category: "utilities",
-      dueDay: 10,
-      frequency: "monthly",
-      status: "unpaid",
-      nextDueDate: new Date(2025, 10, 10)
-    },
-    {
-      id: 4,
-      name: "Netflix",
-      amount: 15.99,
-      category: "entertainment",
-      dueDay: 5,
-      frequency: "monthly",
-      status: "paid",
-      nextDueDate: new Date(2025, 11, 5)
-    },
-    {
-      id: 5,
-      name: "Car Insurance",
-      amount: 150.00,
-      category: "insurance",
-      dueDay: 20,
-      frequency: "monthly",
-      status: "paid",
-      nextDueDate: new Date(2025, 11, 20)
-    },
-    {
-      id: 6,
-      name: "Phone Bill",
-      amount: 65.00,
-      category: "utilities",
-      dueDay: 12,
-      frequency: "monthly",
-      status: "unpaid",
-      nextDueDate: new Date(2025, 10, 12)
-    },
-    {
-      id: 7,
-      name: "Gym Membership",
-      amount: 45.00,
-      category: "health",
-      dueDay: 8,
-      frequency: "monthly",
-      status: "paid",
-      nextDueDate: new Date(2025, 11, 8)
-    },
-    {
-      id: 8,
-      name: "Spotify Premium",
-      amount: 10.99,
-      category: "entertainment",
-      dueDay: 3,
-      frequency: "monthly",
-      status: "paid",
-      nextDueDate: new Date(2025, 11, 3)
-    },
-  ];
-
-  const filteredBills = bills.filter(bill => {
-    const matchesSearch = bill.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || bill.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const getStatusColor = (status: string) => {
-    return status === "paid" ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800";
-  };
-
-  const getFrequencyBadge = (frequency: string) => {
-    const colors: Record<string, string> = {
-      monthly: "bg-blue-100 text-blue-800",
-      weekly: "bg-purple-100 text-purple-800",
-      yearly: "bg-indigo-100 text-indigo-800"
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      }
     };
-    return colors[frequency] || "bg-gray-100 text-gray-800";
+    checkAuth();
+  }, [navigate]);
+
+  useEffect(() => {
+    fetchBills();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [bills, searchTerm, statusFilter]);
+
+  const fetchBills = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data, error } = await supabase
+      .from('bills')
+      .select('*')
+      .eq('is_active', true)
+      .order('next_due_date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching bills:', error);
+      toast.error('Failed to load bills');
+    } else if (data) {
+      setBills(data);
+    }
+    setLoading(false);
   };
+
+  const applyFilters = () => {
+    let filtered = [...bills];
+
+    if (searchTerm) {
+      filtered = filtered.filter(bill =>
+        bill.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(bill => bill.status === statusFilter);
+    }
+
+    setFilteredBills(filtered);
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from('bills')
+      .update({ is_active: false })
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Failed to delete bill");
+    } else {
+      toast.success("Bill deleted");
+      fetchBills();
+    }
+  };
+
+  const handleMarkAsPaid = async (id: string) => {
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return;
+
+    // Calculate next due date based on frequency
+    const currentDueDate = new Date(bill.next_due_date);
+    let nextDueDate = new Date(currentDueDate);
+
+    switch (bill.frequency) {
+      case 'weekly':
+        nextDueDate.setDate(currentDueDate.getDate() + 7);
+        break;
+      case 'monthly':
+        nextDueDate.setMonth(currentDueDate.getMonth() + 1);
+        break;
+      case 'yearly':
+        nextDueDate.setFullYear(currentDueDate.getFullYear() + 1);
+        break;
+    }
+
+    const { error } = await supabase
+      .from('bills')
+      .update({
+        status: 'paid',
+        last_paid_date: new Date().toISOString().split('T')[0],
+        next_due_date: nextDueDate.toISOString().split('T')[0]
+      })
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Failed to mark bill as paid");
+    } else {
+      toast.success("Bill marked as paid");
+      fetchBills();
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'utilities':
+        return AppIcons.financial.wallet;
+      case 'housing':
+        return AppIcons.navigation.home;
+      case 'insurance':
+        return AppIcons.status.shield;
+      default:
+        return AppIcons.financial.money;
+    }
+  };
+
+  // Show empty state if no bills at all
+  if (!loading && bills.length === 0) {
+    return (
+      <>
+        <BillsEmptyState
+          onAddBill={() => setShowAddModal(true)}
+          onScanEmail={() => toast.info("Email scanning coming soon!")}
+        />
+        <AddBillModal
+          open={showAddModal}
+          onOpenChange={setShowAddModal}
+          onSuccess={fetchBills}
+        />
+      </>
+    );
+  }
 
   return (
     <>
-      <Card>
+      <Card className="shadow-card">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>All Bills</CardTitle>
-            <Button onClick={() => setShowAddModal(true)}>
+            <CardTitle className="text-xl font-bold">All Bills</CardTitle>
+            <Button
+              onClick={() => setShowAddModal(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Bill
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -147,65 +198,122 @@ export const BillsList = () => {
                 placeholder="Search bills..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
+                className="pl-9 rounded-xl"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-full sm:w-[180px] rounded-xl">
+                <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="paid">Paid</SelectItem>
                 <SelectItem value="unpaid">Unpaid</SelectItem>
+                <SelectItem value="overdue">Overdue</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="space-y-3">
-            {filteredBills.map((bill) => (
-              <div
-                key={bill.id}
-                className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
+          {/* List */}
+          {loading ? (
+            <ListSkeleton count={4} />
+          ) : filteredBills.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">
+                No bills found matching your filters
+              </p>
+              <Button
+                variant="link"
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                }}
+                className="text-info mt-2"
               >
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <p className="font-medium">{bill.name}</p>
-                    <Badge className={getStatusColor(bill.status)}>
-                      {bill.status}
-                    </Badge>
-                    <Badge className={getFrequencyBadge(bill.frequency)} variant="outline">
-                      {bill.frequency}
-                    </Badge>
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredBills.map((bill) => {
+                const Icon = getCategoryIcon(bill.category);
+                return (
+                  <div
+                    key={bill.id}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:shadow-card transition-all"
+                  >
+                    {/* Icon */}
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-tint flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-info" />
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-foreground truncate">
+                          {bill.name}
+                        </p>
+                        <Badge
+                          variant={bill.status === 'paid' ? 'default' : bill.status === 'overdue' ? 'destructive' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {bill.status}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {bill.frequency}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span className="capitalize">{bill.category}</span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          Due: {format(new Date(bill.next_due_date), "MMM d, yyyy")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Amount */}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-foreground">
+                        ${Number(bill.amount).toFixed(2)}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="flex-shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {bill.status === 'unpaid' && (
+                          <DropdownMenuItem onClick={() => handleMarkAsPaid(bill.id)}>
+                            <AppIcons.status.checkCircle className="mr-2 h-4 w-4" />
+                            Mark as Paid
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(bill.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="capitalize">{bill.category}</span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      Due: {format(bill.nextDueDate, "MMM d")} (Day {bill.dueDay})
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <p className="text-lg font-bold">${bill.amount.toFixed(2)}</p>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="ghost">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <AddBillModal 
-        open={showAddModal} 
+      <AddBillModal
+        open={showAddModal}
         onOpenChange={setShowAddModal}
+        onSuccess={fetchBills}
       />
     </>
   );

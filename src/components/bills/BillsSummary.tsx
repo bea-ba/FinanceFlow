@@ -1,18 +1,51 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, AlertCircle, CheckCircle, Calendar } from "lucide-react";
+import { AppIcons } from "@/config/icons";
+import { Calendar } from "lucide-react";
 
 export const BillsSummary = () => {
-  // Mockup data
-  const totalBills = 8;
-  const paidBills = 5;
-  const unpaidBills = 3;
-  const totalAmount = 2847.50;
-  const paidAmount = 1620.00;
-  const unpaidAmount = 1227.50;
+  const [totalBills, setTotalBills] = useState(0);
+  const [paidBills, setPaidBills] = useState(0);
+  const [unpaidBills, setUnpaidBills] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [paidAmount, setPaidAmount] = useState(0);
+  const [unpaidAmount, setUnpaidAmount] = useState(0);
+
+  useEffect(() => {
+    fetchBillsSummary();
+  }, []);
+
+  const fetchBillsSummary = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data: bills } = await supabase
+      .from('bills')
+      .select('*')
+      .eq('is_active', true);
+
+    if (bills) {
+      const total = bills.length;
+      const paid = bills.filter(b => b.status === 'paid').length;
+      const unpaid = bills.filter(b => b.status === 'unpaid' || b.status === 'overdue').length;
+
+      const totalAmt = bills.reduce((sum, b) => sum + Number(b.amount), 0);
+      const paidAmt = bills.filter(b => b.status === 'paid').reduce((sum, b) => sum + Number(b.amount), 0);
+      const unpaidAmt = bills.filter(b => b.status === 'unpaid' || b.status === 'overdue').reduce((sum, b) => sum + Number(b.amount), 0);
+
+      setTotalBills(total);
+      setPaidBills(paid);
+      setUnpaidBills(unpaid);
+      setTotalAmount(totalAmt);
+      setPaidAmount(paidAmt);
+      setUnpaidAmount(unpaidAmt);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card>
+      <Card className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Bills</CardTitle>
           <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -20,15 +53,15 @@ export const BillsSummary = () => {
         <CardContent>
           <div className="text-2xl font-bold">{totalBills}</div>
           <p className="text-xs text-muted-foreground">
-            This month
+            Active bills
           </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Amount</CardTitle>
-          <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <AppIcons.financial.money className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">${totalAmount.toFixed(2)}</div>
@@ -38,26 +71,26 @@ export const BillsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card className="border-green-200 bg-green-50/50">
+      <Card className="border-success/20 bg-mint-tint shadow-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Paid</CardTitle>
-          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AppIcons.status.checkCircle className="h-4 w-4 text-success" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600">{paidBills}</div>
+          <div className="text-2xl font-bold text-success">{paidBills}</div>
           <p className="text-xs text-muted-foreground">
             ${paidAmount.toFixed(2)} paid
           </p>
         </CardContent>
       </Card>
 
-      <Card className="border-orange-200 bg-orange-50/50">
+      <Card className="border-warning/20 bg-coral-tint shadow-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Unpaid</CardTitle>
-          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AppIcons.status.alert className="h-4 w-4 text-warning" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-orange-600">{unpaidBills}</div>
+          <div className="text-2xl font-bold text-warning">{unpaidBills}</div>
           <p className="text-xs text-muted-foreground">
             ${unpaidAmount.toFixed(2)} due
           </p>

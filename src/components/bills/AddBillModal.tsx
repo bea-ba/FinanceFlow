@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,9 +10,10 @@ import { toast } from "sonner";
 interface AddBillModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export const AddBillModal = ({ open, onOpenChange }: AddBillModalProps) => {
+export const AddBillModal = ({ open, onOpenChange, onSuccess }: AddBillModalProps) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,8 +27,36 @@ export const AddBillModal = ({ open, onOpenChange }: AddBillModalProps) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in to add bills");
+        return;
+      }
+
+      // Calculate next due date
+      const today = new Date();
+      const dueDay = parseInt(formData.dueDay);
+      let nextDueDate = new Date(today.getFullYear(), today.getMonth(), dueDay);
+
+      // If the due day this month has passed, use next month
+      if (nextDueDate < today) {
+        nextDueDate = new Date(today.getFullYear(), today.getMonth() + 1, dueDay);
+      }
+
+      const { error } = await supabase.from('bills').insert({
+        user_id: user.id,
+        name: formData.name,
+        amount: parseFloat(formData.amount),
+        category: formData.category,
+        due_day: parseInt(formData.dueDay),
+        frequency: formData.frequency,
+        next_due_date: nextDueDate.toISOString().split('T')[0],
+        status: 'unpaid'
+      });
+
+      if (error) throw error;
+
       toast.success("Bill added successfully");
       onOpenChange(false);
       setFormData({
@@ -36,8 +66,13 @@ export const AddBillModal = ({ open, onOpenChange }: AddBillModalProps) => {
         dueDay: "1",
         frequency: "monthly"
       });
+      onSuccess?.();
+    } catch (error) {
+      console.error('Error adding bill:', error);
+      toast.error("Failed to add bill");
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   return (
