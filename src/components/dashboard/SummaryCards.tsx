@@ -85,24 +85,28 @@ export const SummaryCards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.title} className="p-4 border-border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground font-medium mb-1">
-                  {card.title}
-                </p>
-                <p className="text-2xl font-bold text-foreground">
-                  ${card.value.toFixed(2)}
-                </p>
+          <Card 
+            key={card.title} 
+            className="group relative overflow-hidden p-6 border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+          >
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`${card.bgColor} ${card.color} p-3.5 rounded-2xl transition-transform group-hover:scale-110 duration-300`}>
+                  <Icon className="h-6 w-6" />
+                </div>
               </div>
-              <div className={`${card.bgColor} ${card.color} p-3 rounded-xl`}>
-                <Icon className="h-6 w-6" />
-              </div>
+              <p className="text-sm text-muted-foreground font-medium mb-2">
+                {card.title}
+              </p>
+              <p className="text-3xl font-bold text-foreground tracking-tight">
+                ${card.value.toFixed(2)}
+              </p>
             </div>
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-2xl" />
           </Card>
         );
       })}

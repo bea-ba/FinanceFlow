@@ -24,13 +24,13 @@ export const DashboardHeader = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center justify-between p-4">
+    <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/50">
+      <div className="flex items-center justify-between p-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div>
-          <h2 className="text-xl font-bold text-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">
             Hey {userName}! 👋
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-0.5">
             {new Date().toLocaleDateString("en-US", { 
               weekday: "long", 
               month: "short", 
@@ -38,9 +38,9 @@ export const DashboardHeader = () => {
             })}
           </p>
         </div>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 transition-colors">
           <Bell className="h-5 w-5" />
-          <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full" />
+          <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full animate-pulse" />
         </Button>
       </div>
     </header>
