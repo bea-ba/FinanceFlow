@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +25,7 @@ interface AddIncomeModalProps {
 
 export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModalProps) => {
   const [loading, setLoading] = useState(false);
+  const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
   const [formData, setFormData] = useState({
     category: "salary",
     amount: "",
@@ -22,8 +33,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveIncome = async () => {
     setLoading(true);
 
     try {
@@ -59,6 +69,32 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if date is in the future
+    const selectedDate = new Date(formData.transaction_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      setShowFutureDateConfirm(true);
+      return;
+    }
+
+    await saveIncome();
+  };
+
+  const handleConfirmFutureDate = async () => {
+    setShowFutureDateConfirm(false);
+    await saveIncome();
+  };
+
+  const handleCancelFutureDate = () => {
+    setShowFutureDateConfirm(false);
   };
 
   return (
@@ -127,6 +163,24 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
           </div>
         </form>
       </DialogContent>
+
+      <AlertDialog open={showFutureDateConfirm} onOpenChange={setShowFutureDateConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Future Date Selected</AlertDialogTitle>
+            <AlertDialogDescription>
+              You're adding this transaction for a future date. Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelFutureDate}>Cancel</AlertDialogCancel>
+            <Button variant="outline" onClick={() => setShowFutureDateConfirm(false)}>
+              Change Date
+            </Button>
+            <AlertDialogAction onClick={handleConfirmFutureDate}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };
