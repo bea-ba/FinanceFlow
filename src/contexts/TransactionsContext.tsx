@@ -472,9 +472,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     }
   }, [transactions, calculatedData.balance, refreshTransactions]);
 
-  // Delete transaction (Optimistic UI with Undo) - memoized
+  // Delete transaction (Optimistic UI) - memoized
   const deleteTransaction = useCallback(async (id: string) => {
-    // Store deleted transaction for rollback and undo
+    // Store deleted transaction for rollback
     const deletedTransaction = transactions.find(t => t.id === id);
     if (!deletedTransaction) return;
 
@@ -485,44 +485,6 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
     // Calculate balance change (with precision rounding)
     const balanceChange = roundCurrency(deletedTransaction.type === "income" ? -deletedTransaction.amount : deletedTransaction.amount);
-    let undoClicked = false;
-    let deleteExecuted = false;
-
-    // Show toast with undo option
-    toast.success(
-      `${deletedTransaction.type === "income" ? "Income" : "Expense"} deleted`,
-      {
-        description: `Balance: €${((oldBalance + balanceChange)).toFixed(2)} (${balanceChange > 0 ? '+' : ''}€${balanceChange.toFixed(2)})`,
-        action: {
-          label: "Undo",
-          onClick: () => {
-            undoClicked = true;
-            if (!deleteExecuted) {
-              // Restore before delete was executed (with timezone-safe dates)
-              setTransactions(prev => [...prev, deletedTransaction].sort(
-                (a, b) => parseLocalDate(b.transaction_date).getTime() - parseLocalDate(a.transaction_date).getTime()
-              ));
-              toast.info("Delete cancelled");
-            } else {
-              // Need to re-insert to database
-              supabase.from("transactions").insert({
-                ...deletedTransaction,
-                id: undefined // Let database generate new ID
-              }).then(() => {
-                refreshTransactions();
-                toast.info("Transaction restored");
-              });
-            }
-          },
-        },
-        duration: 5000, // 5 seconds to undo
-      }
-    );
-
-    // Wait a bit before actually deleting from database (gives time for undo)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (undoClicked) return; // User clicked undo, don't delete
 
     try {
       const { error } = await supabase
@@ -530,9 +492,15 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         .delete()
         .eq("id", id);
 
-      deleteExecuted = true;
-
       if (error) throw error;
+
+      // Show success toast
+      toast.success(
+        `${deletedTransaction.type === "income" ? "Income" : "Expense"} deleted`,
+        {
+          description: `Balance: €${((oldBalance + balanceChange)).toFixed(2)} (${balanceChange > 0 ? '+' : ''}€${balanceChange.toFixed(2)})`,
+        }
+      );
 
       await refreshTransactions();
     } catch (error) {
