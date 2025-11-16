@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { parseLocalDate } from "@/lib/utils";
 
 // Types
 export interface Transaction {
@@ -186,22 +187,22 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     const totalExpenses = roundCurrency(expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0));
     const balance = roundCurrency(totalIncome - totalExpenses);
 
-    // Monthly/Yearly income (with precision rounding)
+    // Monthly/Yearly income (with precision rounding and timezone-safe dates)
     const incomeMonthly = roundCurrency(incomeTransactions
-      .filter(t => new Date(t.transaction_date) >= monthStart)
+      .filter(t => parseLocalDate(t.transaction_date) >= monthStart)
       .reduce((sum, t) => sum + Number(t.amount), 0));
 
     const incomeYearly = roundCurrency(incomeTransactions
-      .filter(t => new Date(t.transaction_date) >= yearStart)
+      .filter(t => parseLocalDate(t.transaction_date) >= yearStart)
       .reduce((sum, t) => sum + Number(t.amount), 0));
 
-    // Monthly/Yearly expenses (with precision rounding)
+    // Monthly/Yearly expenses (with precision rounding and timezone-safe dates)
     const expenseMonthly = roundCurrency(expenseTransactions
-      .filter(t => new Date(t.transaction_date) >= monthStart)
+      .filter(t => parseLocalDate(t.transaction_date) >= monthStart)
       .reduce((sum, t) => sum + Number(t.amount), 0));
 
     const expenseYearly = roundCurrency(expenseTransactions
-      .filter(t => new Date(t.transaction_date) >= yearStart)
+      .filter(t => parseLocalDate(t.transaction_date) >= yearStart)
       .reduce((sum, t) => sum + Number(t.amount), 0));
 
     // Income breakdown by category (with precision rounding)
@@ -255,9 +256,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     const netSavingsMonthly = roundCurrency(incomeMonthly - expenseMonthly);
     const savingsRateMonthly = roundCurrency(incomeMonthly > 0 ? (netSavingsMonthly / incomeMonthly) * 100 : 0);
 
-    // Monthly income breakdown (with precision rounding)
+    // Monthly income breakdown (with precision rounding and timezone-safe dates)
     const monthlyIncomeTransactions = incomeTransactions.filter(
-      t => new Date(t.transaction_date) >= monthStart
+      t => parseLocalDate(t.transaction_date) >= monthStart
     );
     const monthlyIncomeCategoryTotals = monthlyIncomeTransactions.reduce((acc, t) => {
       acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
@@ -272,9 +273,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       }))
       .sort((a, b) => b.total - a.total);
 
-    // Monthly expense breakdown (with precision rounding)
+    // Monthly expense breakdown (with precision rounding and timezone-safe dates)
     const monthlyExpenseTransactions = expenseTransactions.filter(
-      t => new Date(t.transaction_date) >= monthStart
+      t => parseLocalDate(t.transaction_date) >= monthStart
     );
     const monthlyExpenseCategoryTotals = monthlyExpenseTransactions.reduce((acc, t) => {
       acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
@@ -295,17 +296,17 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       ? { category: expenseBreakdownMonthly[0].category, amount: expenseBreakdownMonthly[0].total }
       : null;
 
-    // Daily trends for current month (with precision rounding)
+    // Daily trends for current month (with precision rounding and timezone-safe dates)
     const dailyIncome: Record<string, number> = {};
     const dailyExpenses: Record<string, number> = {};
 
     monthlyIncomeTransactions.forEach(t => {
-      const day = new Date(t.transaction_date).getDate().toString();
+      const day = parseLocalDate(t.transaction_date).getDate().toString();
       dailyIncome[day] = roundCurrency((dailyIncome[day] || 0) + Number(t.amount));
     });
 
     monthlyExpenseTransactions.forEach(t => {
-      const day = new Date(t.transaction_date).getDate().toString();
+      const day = parseLocalDate(t.transaction_date).getDate().toString();
       dailyExpenses[day] = roundCurrency((dailyExpenses[day] || 0) + Number(t.amount));
     });
 
@@ -318,7 +319,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       }))
       .sort((a, b) => parseInt(a.day) - parseInt(b.day));
 
-    // Monthly trends for last 6 months (with precision rounding)
+    // Monthly trends for last 6 months (with precision rounding and timezone-safe dates)
     const monthlyTrends: MonthlyTrend[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthDate = new Date(currentYear, currentMonth - i, 1);
@@ -328,14 +329,14 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       const monthIncome = roundCurrency(incomeTransactions
         .filter(t => {
-          const tDate = new Date(t.transaction_date);
+          const tDate = parseLocalDate(t.transaction_date);
           return tDate >= monthStartDate && tDate <= monthEndDate;
         })
         .reduce((sum, t) => sum + Number(t.amount), 0));
 
       const monthExpenses = roundCurrency(expenseTransactions
         .filter(t => {
-          const tDate = new Date(t.transaction_date);
+          const tDate = parseLocalDate(t.transaction_date);
           return tDate >= monthStartDate && tDate <= monthEndDate;
         })
         .reduce((sum, t) => sum + Number(t.amount), 0));
@@ -497,9 +498,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
           onClick: () => {
             undoClicked = true;
             if (!deleteExecuted) {
-              // Restore before delete was executed
+              // Restore before delete was executed (with timezone-safe dates)
               setTransactions(prev => [...prev, deletedTransaction].sort(
-                (a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+                (a, b) => parseLocalDate(b.transaction_date).getTime() - parseLocalDate(a.transaction_date).getTime()
               ));
               toast.info("Delete cancelled");
             } else {
@@ -535,9 +536,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       await refreshTransactions();
     } catch (error) {
-      // Rollback optimistic update
+      // Rollback optimistic update (with timezone-safe dates)
       setTransactions(prev => [...prev, deletedTransaction].sort(
-        (a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+        (a, b) => parseLocalDate(b.transaction_date).getTime() - parseLocalDate(a.transaction_date).getTime()
       ));
       console.error("Error deleting transaction:", error);
       toast.error("Failed to delete transaction");

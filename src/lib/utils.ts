@@ -6,6 +6,19 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Parse a date string (YYYY-MM-DD) in a timezone-safe manner
+ * Prevents off-by-one errors caused by UTC/local timezone differences
+ * @param dateString - Date string in YYYY-MM-DD format
+ * @returns Date object in local timezone at midnight
+ */
+export function parseLocalDate(dateString: string): Date {
+  // Split the date string to get year, month, day
+  const [year, month, day] = dateString.split('-').map(Number);
+  // Create date in local timezone (month is 0-indexed)
+  return new Date(year, month - 1, day);
+}
+
+/**
  * Format a number as currency with European formatting
  * Uses period (.) as thousands separator and comma (,) as decimal separator
  * @param value - The number to format
