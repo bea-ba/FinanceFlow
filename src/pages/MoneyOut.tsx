@@ -4,6 +4,7 @@ import { MoneyOutSummary } from "@/components/money-out/MoneyOutSummary";
 import { ImportMoneyOut } from "@/components/money-out/ImportMoneyOut";
 import { ExpenseSourceBreakdown } from "@/components/money-out/ExpenseSourceBreakdown";
 import { MoneyOutList } from "@/components/money-out/MoneyOutList";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
 
@@ -54,6 +55,7 @@ const MoneyOut = () => {
         
         <MoneyOutList />
       </div>
+      <QuickActions />
     </DashboardLayout>
   );
 };

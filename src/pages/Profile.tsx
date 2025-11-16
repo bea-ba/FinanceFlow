@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { SmartConnections } from "@/components/profile/SmartConnections";
 import { AIPreferences } from "@/components/profile/AIPreferences";
@@ -83,6 +84,7 @@ const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <QuickActions />
     </DashboardLayout>
   );
 };

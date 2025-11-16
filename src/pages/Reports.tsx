@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { ReportsSummary } from "@/components/reports/ReportsSummary";
 import { AIInsights } from "@/components/reports/AIInsights";
 import { SmartPredictions } from "@/components/reports/SmartPredictions";
@@ -47,6 +48,7 @@ const Reports = () => {
 
         <MonthlyComparison />
       </div>
+      <QuickActions />
     </DashboardLayout>
   );
 };

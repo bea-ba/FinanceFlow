@@ -4,6 +4,7 @@ import { IncomeSummary } from "@/components/income/IncomeSummary";
 import { IncomeSourceBreakdown } from "@/components/income/IncomeSourceBreakdown";
 import { IncomeList } from "@/components/income/IncomeList";
 import { ImportFromDrive } from "@/components/income/ImportFromDrive";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
 
@@ -54,6 +55,7 @@ const Income = () => {
         
         <IncomeList />
       </div>
+      <QuickActions />
     </DashboardLayout>
   );
 };

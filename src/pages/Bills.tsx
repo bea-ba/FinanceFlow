@@ -4,6 +4,7 @@ import { BillsSummary } from "@/components/bills/BillsSummary";
 import { UpcomingBills } from "@/components/bills/UpcomingBills";
 import { BillsList } from "@/components/bills/BillsList";
 import { RecurringBillsChart } from "@/components/bills/RecurringBillsChart";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
 
@@ -55,6 +56,7 @@ const Bills = () => {
 
         <BillsList />
       </div>
+      <QuickActions />
     </DashboardLayout>
   );
 };
