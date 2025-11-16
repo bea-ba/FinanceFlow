@@ -111,6 +111,8 @@ export const MoneyOutList = () => {
     } else {
       toast.success("Expense deleted");
       fetchExpenses();
+      // Dispatch event to refresh all components
+      window.dispatchEvent(new Event('transaction-added'));
     }
   };
 

@@ -108,6 +108,8 @@ export const IncomeList = () => {
     } else {
       toast.success("Income deleted");
       fetchIncomeTransactions();
+      // Dispatch event to refresh all components
+      window.dispatchEvent(new Event('transaction-added'));
     }
   };
 
