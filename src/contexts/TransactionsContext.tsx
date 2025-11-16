@@ -131,7 +131,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
   // Initial fetch
   useEffect(() => {
     refreshTransactions();
-  }, []);
+  }, [refreshTransactions]);
 
   // Realtime subscription for live updates
   useEffect(() => {
@@ -168,7 +168,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         supabase.removeChannel(subscription);
       }
     };
-  }, []);
+  }, [refreshTransactions]);
 
   // Calculated data using useMemo for performance
   const calculatedData = useMemo(() => {
