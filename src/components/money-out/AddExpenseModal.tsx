@@ -16,10 +16,10 @@ interface AddExpenseModalProps {
 export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseModalProps) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    description: "",
-    amount: "",
     category: "other_expense",
-    date: new Date().toISOString().split('T')[0]
+    amount: "",
+    description: "",
+    transaction_date: new Date().toISOString().split('T')[0]
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,7 +39,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
       category: formData.category as any,
       amount: parseFloat(formData.amount),
       description: formData.description,
-      transaction_date: formData.date
+      transaction_date: formData.transaction_date
     }]);
 
     if (error) {
@@ -49,10 +49,10 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
       toast.success("Expense added successfully");
       onOpenChange(false);
       setFormData({
-        description: "",
-        amount: "",
         category: "other_expense",
-        date: new Date().toISOString().split('T')[0]
+        amount: "",
+        description: "",
+        transaction_date: new Date().toISOString().split('T')[0]
       });
       onSuccess();
     }
@@ -66,30 +66,6 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
           <DialogTitle>Add expense manually</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Input
-              id="description"
-              required
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="e.g., Weekly groceries, Netflix subscription"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount ($)</Label>
-            <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              required
-              value={formData.amount}
-              onChange={(e) => setFormData({...formData, amount: e.target.value})}
-              placeholder="0.00"
-            />
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
@@ -111,13 +87,36 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="amount">Amount (€)</Label>
+            <Input
+              id="amount"
+              type="number"
+              step="0.01"
+              required
+              value={formData.amount}
+              onChange={(e) => setFormData({...formData, amount: e.target.value})}
+              placeholder="0.00"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              placeholder="e.g., Weekly groceries, Netflix subscription"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Input
               id="date"
               type="date"
               required
-              value={formData.date}
-              onChange={(e) => setFormData({...formData, date: e.target.value})}
+              value={formData.transaction_date}
+              onChange={(e) => setFormData({...formData, transaction_date: e.target.value})}
             />
           </div>
 

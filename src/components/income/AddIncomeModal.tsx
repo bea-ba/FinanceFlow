@@ -84,7 +84,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount ($)</Label>
+            <Label htmlFor="amount">Amount (€)</Label>
             <Input
               id="amount"
               type="number"
@@ -100,7 +100,6 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
             <Label htmlFor="description">Description</Label>
             <Input
               id="description"
-              required
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
               placeholder="e.g., Freelance project, monthly paycheck"
