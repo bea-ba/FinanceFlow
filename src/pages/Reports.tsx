@@ -14,15 +14,15 @@ const Reports = () => {
     <DashboardLayout>
       <div className="space-y-8 w-full overflow-x-hidden">
         {/* Header with gradient background */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-transparent p-6 border border-primary/20">
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-1">My Flow</h1>
-              <p className="text-muted-foreground">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-transparent p-4 sm:p-6 border border-primary/20">
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">My Flow</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 AI-powered insights into my financial rhythm
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <DateRangeFilter />
               <ExportReports />
             </div>

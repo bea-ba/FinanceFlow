@@ -19,10 +19,10 @@ export const ExportReports = () => {
   };
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">
+          <Button variant="outline" className="w-full sm:w-auto text-xs sm:text-sm">
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
@@ -46,10 +46,11 @@ export const ExportReports = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="outline" onClick={handleAutoExport} disabled className="gap-2">
+            <Button variant="outline" onClick={handleAutoExport} disabled className="w-full sm:w-auto gap-2 text-xs sm:text-sm">
               <FileSpreadsheet className="h-4 w-4" />
-              Auto-Export
-              <PremiumBadge className="scale-90" />
+              <span className="hidden sm:inline">Auto-Export</span>
+              <span className="sm:hidden">Auto</span>
+              <PremiumBadge className="scale-75 sm:scale-90" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>

@@ -19,22 +19,25 @@ export const DateRangeFilter = () => {
         <Button
           variant="outline"
           className={cn(
-            "justify-start text-left font-normal",
+            "w-full sm:w-auto justify-start text-left font-normal text-xs sm:text-sm",
             !date && "text-muted-foreground"
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date?.from ? (
-            date.to ? (
-              <>
-                {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
-              </>
+          <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+          <span className="truncate">
+            {date?.from ? (
+              date.to ? (
+                <>
+                  <span className="hidden sm:inline">{format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}</span>
+                  <span className="sm:hidden">{format(date.from, "MMM dd")} - {format(date.to, "MMM dd")}</span>
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
             ) : (
-              format(date.from, "LLL dd, y")
-            )
-          ) : (
-            <span>Pick a date range</span>
-          )}
+              <span>Pick a date range</span>
+            )}
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -44,7 +47,7 @@ export const DateRangeFilter = () => {
           defaultMonth={date?.from}
           selected={date}
           onSelect={setDate}
-          numberOfMonths={2}
+          numberOfMonths={1}
           className={cn("p-3 pointer-events-auto")}
         />
       </PopoverContent>
