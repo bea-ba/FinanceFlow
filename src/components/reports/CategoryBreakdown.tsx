@@ -26,7 +26,8 @@ const CATEGORY_COLORS = [
 ];
 
 export const CategoryBreakdown = () => {
-  const [data, setData] = useState<CategoryData[]>([]);
+  const [incomeData, setIncomeData] = useState<CategoryData[]>([]);
+  const [expenseData, setExpenseData] = useState<CategoryData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,37 +48,55 @@ export const CategoryBreakdown = () => {
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('type', 'expense')
         .gte('transaction_date', startOfMonth)
         .lte('transaction_date', endOfMonth);
 
       if (!transactions || transactions.length === 0) {
-        setData([]);
+        setIncomeData([]);
+        setExpenseData([]);
         setLoading(false);
         return;
       }
-
-      // Aggregate by category
-      const categoryTotals: Record<string, number> = {};
-      transactions.forEach(t => {
-        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Number(t.amount);
-      });
 
       // Format category names
       const formatCategory = (cat: string) => {
         return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       };
 
-      // Convert to chart data format
-      const chartData: CategoryData[] = Object.entries(categoryTotals)
+      // Aggregate income by category
+      const incomeTotals: Record<string, number> = {};
+      transactions
+        .filter(t => t.type === 'income')
+        .forEach(t => {
+          incomeTotals[t.category] = (incomeTotals[t.category] || 0) + Number(t.amount);
+        });
+
+      const incomeChartData: CategoryData[] = Object.entries(incomeTotals)
         .map(([category, value], index) => ({
           name: formatCategory(category),
           value,
           color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
         }))
-        .sort((a, b) => b.value - a.value); // Sort by amount descending
+        .sort((a, b) => b.value - a.value);
 
-      setData(chartData);
+      // Aggregate expenses by category
+      const expenseTotals: Record<string, number> = {};
+      transactions
+        .filter(t => t.type === 'expense')
+        .forEach(t => {
+          expenseTotals[t.category] = (expenseTotals[t.category] || 0) + Number(t.amount);
+        });
+
+      const expenseChartData: CategoryData[] = Object.entries(expenseTotals)
+        .map(([category, value], index) => ({
+          name: formatCategory(category),
+          value,
+          color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+        }))
+        .sort((a, b) => b.value - a.value);
+
+      setIncomeData(incomeChartData);
+      setExpenseData(expenseChartData);
     } catch (error) {
       console.error("Error fetching category data:", error);
     } finally {
@@ -89,71 +108,41 @@ export const CategoryBreakdown = () => {
     return <ChartSkeleton />;
   }
 
-  if (data.length === 0) {
+  if (incomeData.length === 0 && expenseData.length === 0) {
     return (
       <Card className="shadow-card rounded-xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
-            Expense Category Breakdown
+            Category Breakdown
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center py-12">
-          <p className="text-muted-foreground">No expense data available for this month</p>
+          <p className="text-muted-foreground">No transaction data available for this month</p>
         </CardContent>
       </Card>
     );
   }
 
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-
-  return (
-    <Card className="shadow-card rounded-xl">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5 text-primary" />
-          Expense Category Breakdown
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Pie Chart */}
-        <div className="flex justify-center">
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '16px',
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
-                }}
-                formatter={(value: number) => [
-                  `€${formatCurrency(value)} (${formatCurrency((value / total) * 100, 1)}%)`,
-                  'Amount'
-                ]}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+  const renderCategorySection = (data: CategoryData[], title: string, emptyMessage: string) => {
+    if (data.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         </div>
+      );
+    }
 
-        {/* Total in Center */}
-        <div className="text-center -mt-44 mb-32 pointer-events-none">
-          <p className="text-xs text-muted-foreground">Total</p>
-          <p className="text-2xl font-bold text-foreground">€{formatCurrency(total)}</p>
-        </div>
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+          {title}
+          <span className="text-xs text-muted-foreground font-normal">
+            (€{formatCurrency(total)})
+          </span>
+        </h3>
 
         {/* Category List */}
         <div className="space-y-2">
@@ -182,6 +171,28 @@ export const CategoryBreakdown = () => {
               </div>
             );
           })}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Card className="shadow-card rounded-xl">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-5 w-5 text-primary" />
+          Category Breakdown
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {/* Income Section */}
+        <div className="pb-6 border-b border-border">
+          {renderCategorySection(incomeData, "Income by Source", "No income data for this month")}
+        </div>
+
+        {/* Expense Section */}
+        <div>
+          {renderCategorySection(expenseData, "Expenses by Category", "No expense data for this month")}
         </div>
       </CardContent>
     </Card>
