@@ -130,6 +130,7 @@ export const AppIcons = {
   communication: {
     notification: Bell,
     email: Mail,
+    mail: Mail,
     messageCircle: MessageCircle,
   },
   
