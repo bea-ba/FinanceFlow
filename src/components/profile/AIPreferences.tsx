@@ -31,19 +31,19 @@ export const AIPreferences = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          AI Intelligence
+          Insights & Predictions
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Customize how AI helps manage your flow
+          Customize your financial insights
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <Label htmlFor="auto-insights">Auto Insights</Label>
+              <Label htmlFor="auto-insights">Pattern Detection</Label>
               <p className="text-sm text-muted-foreground">
-                AI discovers patterns automatically
+                Discover spending patterns
               </p>
             </div>
             <Switch
@@ -55,9 +55,9 @@ export const AIPreferences = () => {
 
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <Label htmlFor="smart-predictions">Smart Predictions</Label>
+              <Label htmlFor="smart-predictions">Predictions</Label>
               <p className="text-sm text-muted-foreground">
-                Forecast your future spending & income
+                Forecast future spending & income
               </p>
             </div>
             <Switch
@@ -83,9 +83,9 @@ export const AIPreferences = () => {
 
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <Label htmlFor="savings-suggestions">Savings Suggestions</Label>
+              <Label htmlFor="savings-suggestions">Savings Tips</Label>
               <p className="text-sm text-muted-foreground">
-                AI finds opportunities to save more
+                Find opportunities to save more
               </p>
             </div>
             <Switch
@@ -98,9 +98,9 @@ export const AIPreferences = () => {
 
         <div className="pt-4 border-t space-y-4">
           <div className="space-y-2">
-            <Label>Insight Frequency</Label>
+            <Label>Check-in Frequency</Label>
             <p className="text-sm text-muted-foreground">
-              How often AI should check in: {frequencyLabels[insightFrequency[0]]}
+              How often to receive insights: {frequencyLabels[insightFrequency[0]]}
             </p>
             <Slider
               value={insightFrequency}

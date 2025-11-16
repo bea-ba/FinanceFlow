@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const connections = [
   {
     id: "bank-sync",
-    name: "Bank Auto-Sync",
+    name: "Bank Sync",
     description: "Automatically imports transactions",
     status: "connected",
     icon: CheckCircle2,
@@ -15,16 +15,16 @@ const connections = [
   },
   {
     id: "ai-categorization",
-    name: "AI Categorization",
-    description: "Intelligently categorizes spending",
+    name: "Auto Categorization",
+    description: "Categories spending automatically",
     status: "active",
     icon: Sparkles,
     color: "text-primary"
   },
   {
     id: "smart-alerts",
-    name: "Smart Alerts",
-    description: "AI-powered spending insights",
+    name: "Spending Alerts",
+    description: "Get notified of unusual activity",
     status: "active",
     icon: Zap,
     color: "text-primary"
@@ -49,10 +49,10 @@ export const SmartConnections = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Link2 className="h-5 w-5 text-primary" />
-          Smart Connections
+          Connections
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Automatic integrations that keep your finances flowing
+          Integrations that keep your finances synced
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

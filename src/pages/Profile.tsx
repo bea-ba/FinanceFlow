@@ -14,7 +14,7 @@ const Profile = () => {
           <div className="relative z-10">
             <h1 className="text-3xl font-bold text-foreground mb-1">My Profile</h1>
             <p className="text-muted-foreground">
-              Seamless settings powered by intelligent automation
+              Manage your account settings and preferences
             </p>
           </div>
           <div className="absolute -right-8 -bottom-8 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />

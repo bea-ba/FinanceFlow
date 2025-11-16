@@ -93,7 +93,7 @@ export const ProfileHeader = () => {
             <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" />
-                <span>AI-enhanced experience</span>
+                <span>Premium features enabled</span>
               </div>
             </div>
           </div>
