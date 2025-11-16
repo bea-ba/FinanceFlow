@@ -15,6 +15,7 @@ export const ImportFromDrive = () => {
   return (
     <LockedFeature 
       tooltipText="Unlock Unlimited Google Drive Imports with Premium"
+      featureName="Unlimited Google Drive Imports"
       showOverlay={false}
       badgePosition="top-right"
     >
