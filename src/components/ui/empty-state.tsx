@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 
@@ -26,27 +27,47 @@ export const EmptyState = ({
   className,
 }: EmptyStateProps) => {
   return (
-    <div className={cn("flex flex-col items-center justify-center text-center p-8 space-y-6", className)}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={cn("flex flex-col items-center justify-center text-center p-8 space-y-6", className)}
+    >
       {/* Icon */}
       {Icon && (
-        <div className="rounded-full bg-mint-tint p-6">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          className="rounded-full bg-mint-tint p-6"
+        >
           <Icon className="h-12 w-12 text-primary" />
-        </div>
+        </motion.div>
       )}
 
       {/* Text Content */}
-      <div className="space-y-2 max-w-md">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
+        className="space-y-2 max-w-md"
+      >
         <h3 className="text-xl md:text-2xl font-semibold text-foreground">
           {title}
         </h3>
         <p className="text-base text-muted-foreground leading-relaxed">
           {description}
         </p>
-      </div>
+      </motion.div>
 
       {/* Actions */}
       {(action || secondaryAction) && (
-        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+          className="flex flex-col sm:flex-row gap-3 w-full max-w-xs"
+        >
           {action && (
             <Button
               onClick={action.onClick}
@@ -64,8 +85,8 @@ export const EmptyState = ({
               {secondaryAction.label}
             </Button>
           )}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
