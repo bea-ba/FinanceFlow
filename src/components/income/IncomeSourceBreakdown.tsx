@@ -1,63 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PieChart } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-
-interface IncomeSource {
-  category: string;
-  total: number;
-  percentage: number;
-}
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const IncomeSourceBreakdown = () => {
-  const [sources, setSources] = useState<IncomeSource[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchIncomeSources();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchIncomeSources();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
-  const fetchIncomeSources = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data } = await supabase
-      .from('transactions')
-      .select('category, amount')
-      .eq('type', 'income');
-
-    if (data) {
-      const categoryTotals = data.reduce((acc, t) => {
-        const category = t.category;
-        acc[category] = (acc[category] || 0) + Number(t.amount);
-        return acc;
-      }, {} as Record<string, number>);
-
-      const totalIncome = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
-
-      const sourcesData = Object.entries(categoryTotals).map(([category, total]) => ({
-        category: category.charAt(0).toUpperCase() + category.slice(1),
-        total,
-        percentage: (total / totalIncome) * 100
-      })).sort((a, b) => b.total - a.total);
-
-      setSources(sourcesData);
-    }
-    setLoading(false);
-  };
+  const { incomeBreakdown, loading } = useTransactions();
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -84,10 +32,10 @@ export const IncomeSourceBreakdown = () => {
               <div key={i} className="animate-pulse h-16 bg-muted rounded" />
             ))}
           </div>
-        ) : sources.length === 0 ? (
+        ) : incomeBreakdown.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No income yet — add some to see my breakdown</p>
         ) : (
-          sources.map((source) => (
+          incomeBreakdown.map((source) => (
             <div key={source.category} className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium">{source.category}</span>

@@ -1,60 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppIcons } from "@/config/icons";
 import { formatCurrency } from "@/lib/utils";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const IncomeSummary = () => {
-  const [monthlyTotal, setMonthlyTotal] = useState(0);
-  const [yearlyTotal, setYearlyTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchIncomeTotals();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchIncomeTotals();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
-  const fetchIncomeTotals = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-    
-    const monthStart = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0];
-    const yearStart = new Date(currentYear, 0, 1).toISOString().split('T')[0];
-
-    const { data: monthlyData } = await supabase
-      .from('transactions')
-      .select('amount')
-      .eq('type', 'income')
-      .gte('transaction_date', monthStart);
-
-    const { data: yearlyData } = await supabase
-      .from('transactions')
-      .select('amount')
-      .eq('type', 'income')
-      .gte('transaction_date', yearStart);
-
-    const monthlySum = monthlyData?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-    const yearlySum = yearlyData?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-
-    setMonthlyTotal(monthlySum);
-    setYearlyTotal(yearlySum);
-    setLoading(false);
-  };
+  const { incomeMonthly, incomeYearly, loading } = useTransactions();
 
   return (
     <Tabs defaultValue="monthly" className="w-full">
@@ -82,7 +33,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                €{formatCurrency(monthlyTotal)}
+                €{formatCurrency(incomeMonthly)}
               </p>
             )}
           </CardContent>
@@ -102,7 +53,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                €{formatCurrency(yearlyTotal)}
+                €{formatCurrency(incomeYearly)}
               </p>
             )}
           </CardContent>
