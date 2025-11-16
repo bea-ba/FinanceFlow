@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppIcons } from "@/config/icons";
 import { toast } from "sonner";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 /**
  * DemoDataSeeder - Component to populate the database with realistic demo transactions
@@ -11,6 +12,7 @@ import { toast } from "sonner";
  */
 export const DemoDataSeeder = () => {
   const [isSeeding, setIsSeeding] = useState(false);
+  const { refreshTransactions } = useTransactions();
 
   const seedDemoData = async () => {
     setIsSeeding(true);
@@ -32,6 +34,8 @@ export const DemoDataSeeder = () => {
         console.error("Error seeding demo data:", error);
         toast.error("Failed to seed demo data. The seed function may not be available.");
       } else {
+        // Refresh transactions to show new data immediately
+        await refreshTransactions();
         toast.success("Demo data seeded successfully!", {
           description: "Check your Reports page to see realistic transaction data."
         });
