@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { WelcomeLanding } from "@/components/auth/WelcomeLanding";
 import { AuthForm } from "@/components/auth/AuthForm";
-import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
+  const [showAuthForm, setShowAuthForm] = useState(false);
+  const [initialTab, setInitialTab] = useState<"login" | "signup">("signup");
 
   useEffect(() => {
     // Check current session
@@ -36,9 +38,28 @@ const Auth = () => {
     return null;
   }
 
+  // Show welcome landing or auth form
+  if (!showAuthForm) {
+    return (
+      <WelcomeLanding
+        onGetStarted={() => {
+          setInitialTab("signup");
+          setShowAuthForm(true);
+        }}
+        onSignIn={() => {
+          setInitialTab("login");
+          setShowAuthForm(true);
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen w-full bg-background-light dark:bg-background-dark flex items-center justify-center p-4">
-      <AuthForm />
+    <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
+      <AuthForm
+        initialTab={initialTab}
+        onBack={() => setShowAuthForm(false)}
+      />
     </div>
   );
 };

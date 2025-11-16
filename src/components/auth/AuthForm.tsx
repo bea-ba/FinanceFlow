@@ -1,26 +1,45 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { LoginForm } from "./LoginForm";
 import { SignupForm } from "./SignupForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { ArrowLeft } from "lucide-react";
 
-export const AuthForm = () => {
-  const [activeTab, setActiveTab] = useState<"login" | "signup" | "forgot">("login");
+interface AuthFormProps {
+  initialTab?: "login" | "signup";
+  onBack?: () => void;
+}
+
+export const AuthForm = ({ initialTab = "login", onBack }: AuthFormProps) => {
+  const [activeTab, setActiveTab] = useState<"login" | "signup" | "forgot">(initialTab);
 
   return (
     <div className="w-full max-w-md">
+      {/* Back Button */}
+      {onBack && (
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="mb-4 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+      )}
+
       {/* Logo/Branding */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+        <h1 className="text-4xl font-extrabold text-foreground mb-2">
           Finance<span className="text-primary">Flow</span>
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-base">
+        <p className="text-muted-foreground text-base">
           My financial wellness companion
         </p>
       </div>
 
       {/* Auth Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8">
+      <div className="bg-card rounded-2xl shadow-card p-8 border border-border">
         {activeTab === "forgot" ? (
           <ForgotPasswordForm onBack={() => setActiveTab("login")} />
         ) : (
@@ -44,7 +63,7 @@ export const AuthForm = () => {
       </div>
 
       {/* Footer Text */}
-      <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+      <p className="text-center text-sm text-muted-foreground mt-6">
         By continuing, you agree to our Terms & Privacy Policy
       </p>
     </div>
