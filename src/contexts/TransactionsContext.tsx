@@ -22,6 +22,18 @@ interface CategoryBreakdown {
   color?: string;
 }
 
+interface DailyTrend {
+  day: string;
+  income: number;
+  expenses: number;
+}
+
+interface MonthlyTrend {
+  month: string;
+  income: number;
+  expenses: number;
+}
+
 interface TransactionsContextValue {
   // Raw data
   transactions: Transaction[];
@@ -45,6 +57,15 @@ interface TransactionsContextValue {
   expenseBreakdown: CategoryBreakdown[];
   expenseTransactions: Transaction[];
   topExpenseCategories: CategoryBreakdown[];
+
+  // Calculated data - Reports (Monthly specific)
+  netSavingsMonthly: number;
+  savingsRateMonthly: number;
+  incomeBreakdownMonthly: CategoryBreakdown[];
+  expenseBreakdownMonthly: CategoryBreakdown[];
+  topExpenseCategoryMonthly: { category: string; amount: number } | null;
+  dailyTrendsMonthly: DailyTrend[];
+  monthlyTrends: MonthlyTrend[];
 
   // Methods
   refreshTransactions: () => Promise<void>;
@@ -185,6 +206,102 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Recent 10 transactions
     const recentTransactions = transactions.slice(0, 10);
 
+    // Reports-specific calculations (Monthly)
+    const netSavingsMonthly = incomeMonthly - expenseMonthly;
+    const savingsRateMonthly = incomeMonthly > 0 ? (netSavingsMonthly / incomeMonthly) * 100 : 0;
+
+    // Monthly income breakdown
+    const monthlyIncomeTransactions = incomeTransactions.filter(
+      t => new Date(t.transaction_date) >= monthStart
+    );
+    const monthlyIncomeCategoryTotals = monthlyIncomeTransactions.reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
+    const incomeBreakdownMonthly: CategoryBreakdown[] = Object.entries(monthlyIncomeCategoryTotals)
+      .map(([category, total]) => ({
+        category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
+        total,
+        percentage: incomeMonthly > 0 ? (total / incomeMonthly) * 100 : 0,
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    // Monthly expense breakdown
+    const monthlyExpenseTransactions = expenseTransactions.filter(
+      t => new Date(t.transaction_date) >= monthStart
+    );
+    const monthlyExpenseCategoryTotals = monthlyExpenseTransactions.reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
+    const expenseBreakdownMonthly: CategoryBreakdown[] = Object.entries(monthlyExpenseCategoryTotals)
+      .map(([category, total]) => ({
+        category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
+        total,
+        percentage: expenseMonthly > 0 ? (total / expenseMonthly) * 100 : 0,
+        color: categoryColors[category],
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    // Top expense category for current month
+    const topExpenseCategoryMonthly = expenseBreakdownMonthly.length > 0
+      ? { category: expenseBreakdownMonthly[0].category, amount: expenseBreakdownMonthly[0].total }
+      : null;
+
+    // Daily trends for current month
+    const dailyIncome: Record<string, number> = {};
+    const dailyExpenses: Record<string, number> = {};
+
+    monthlyIncomeTransactions.forEach(t => {
+      const day = new Date(t.transaction_date).getDate().toString();
+      dailyIncome[day] = (dailyIncome[day] || 0) + Number(t.amount);
+    });
+
+    monthlyExpenseTransactions.forEach(t => {
+      const day = new Date(t.transaction_date).getDate().toString();
+      dailyExpenses[day] = (dailyExpenses[day] || 0) + Number(t.amount);
+    });
+
+    const allDays = new Set([...Object.keys(dailyIncome), ...Object.keys(dailyExpenses)]);
+    const dailyTrendsMonthly: DailyTrend[] = Array.from(allDays)
+      .map(day => ({
+        day,
+        income: dailyIncome[day] || 0,
+        expenses: dailyExpenses[day] || 0,
+      }))
+      .sort((a, b) => parseInt(a.day) - parseInt(b.day));
+
+    // Monthly trends for last 6 months
+    const monthlyTrends: MonthlyTrend[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const monthDate = new Date(currentYear, currentMonth - i, 1);
+      const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' });
+      const monthStartDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+      const monthEndDate = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+
+      const monthIncome = incomeTransactions
+        .filter(t => {
+          const tDate = new Date(t.transaction_date);
+          return tDate >= monthStartDate && tDate <= monthEndDate;
+        })
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const monthExpenses = expenseTransactions
+        .filter(t => {
+          const tDate = new Date(t.transaction_date);
+          return tDate >= monthStartDate && tDate <= monthEndDate;
+        })
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      monthlyTrends.push({
+        month: monthName,
+        income: monthIncome,
+        expenses: monthExpenses,
+      });
+    }
+
     return {
       totalIncome,
       totalExpenses,
@@ -199,6 +316,14 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       recentTransactions,
       incomeTransactions,
       expenseTransactions,
+      // Reports-specific
+      netSavingsMonthly,
+      savingsRateMonthly,
+      incomeBreakdownMonthly,
+      expenseBreakdownMonthly,
+      topExpenseCategoryMonthly,
+      dailyTrendsMonthly,
+      monthlyTrends,
     };
   }, [transactions]);
 
