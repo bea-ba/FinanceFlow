@@ -4,9 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, ArrowUpDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { AddIncomeModal } from "./AddIncomeModal";
+import { IncomeEmptyState } from "@/components/shared/empty-states";
+import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import { AppIcons } from "@/config/icons";
 
 interface Transaction {
   id: string;
@@ -53,7 +63,7 @@ export const IncomeList = () => {
     let filtered = [...transactions];
 
     if (searchTerm) {
-      filtered = filtered.filter(t => 
+      filtered = filtered.filter(t =>
         t.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -75,80 +85,176 @@ export const IncomeList = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Failed to delete income");
+    } else {
+      toast.success("Income deleted");
+      fetchIncomeTransactions();
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'salary':
+        return AppIcons.financial.income;
+      case 'freelance':
+        return AppIcons.financial.wallet;
+      default:
+        return AppIcons.financial.dollarSign;
+    }
+  };
+
+  // Show empty state if no transactions at all
+  if (!loading && transactions.length === 0) {
+    return (
+      <>
+        <IncomeEmptyState
+          onAddIncome={() => setShowAddModal(true)}
+          onImport={() => toast.info("Import feature coming soon!")}
+        />
+        <AddIncomeModal
+          open={showAddModal}
+          onOpenChange={setShowAddModal}
+          onSuccess={fetchIncomeTransactions}
+        />
+      </>
+    );
+  }
+
   return (
     <>
-      <Card>
+      <Card className="shadow-card">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>My income history</CardTitle>
-            <Button onClick={() => setShowAddModal(true)}>
+            <CardTitle className="text-xl font-bold">Income History</CardTitle>
+            <Button
+              onClick={() => setShowAddModal(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
+            >
               <Plus className="mr-2 h-4 w-4" />
-              Add manually
+              Add Income
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search my income..."
+                placeholder="Search income..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
+                className="pl-9 rounded-xl"
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by source" />
+              <SelectTrigger className="w-full sm:w-[180px] rounded-xl">
+                <SelectValue placeholder="All Sources" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Sources</SelectItem>
                 <SelectItem value="salary">Salary</SelectItem>
                 <SelectItem value="freelance">Freelance</SelectItem>
                 <SelectItem value="gift">Gift</SelectItem>
-                <SelectItem value="other_income">Other Income</SelectItem>
+                <SelectItem value="other_income">Other</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" onClick={toggleSortOrder}>
+            <Button
+              variant="outline"
+              onClick={toggleSortOrder}
+              className="rounded-xl"
+            >
               <ArrowUpDown className="mr-2 h-4 w-4" />
               {sortOrder === "desc" ? "Newest" : "Oldest"}
             </Button>
           </div>
 
+          {/* List */}
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="animate-pulse h-20 bg-muted rounded" />
-              ))}
-            </div>
+            <ListSkeleton count={4} />
           ) : filteredTransactions.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No income here yet — try importing or adding manually</p>
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">
+                No income found matching your filters
+              </p>
+              <Button
+                variant="link"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCategoryFilter("all");
+                }}
+                className="text-info mt-2"
+              >
+                Clear filters
+              </Button>
+            </div>
           ) : (
             <div className="space-y-3">
-              {filteredTransactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <p className="font-medium">{transaction.description}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)} • {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
-                    </p>
+              {filteredTransactions.map((transaction) => {
+                const Icon = getCategoryIcon(transaction.category);
+                return (
+                  <div
+                    key={transaction.id}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:shadow-card transition-all"
+                  >
+                    {/* Icon */}
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-mint-tint flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-foreground truncate">
+                        {transaction.description}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}
+                        {" • "}
+                        {format(new Date(transaction.transaction_date), "MMM d, yyyy")}
+                      </p>
+                    </div>
+
+                    {/* Amount */}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-success">
+                        +${Number(transaction.amount).toFixed(2)}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="flex-shrink-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(transaction.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <p className="text-lg font-bold text-primary">
-                    +${Number(transaction.amount).toFixed(2)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
       </Card>
 
-      <AddIncomeModal 
-        open={showAddModal} 
+      <AddIncomeModal
+        open={showAddModal}
         onOpenChange={setShowAddModal}
         onSuccess={fetchIncomeTransactions}
       />
