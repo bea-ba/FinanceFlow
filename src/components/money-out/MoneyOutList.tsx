@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +27,7 @@ import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { AppIcons } from "@/config/icons";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 interface Expense {
   id: string;
@@ -38,57 +38,25 @@ interface Expense {
 }
 
 export const MoneyOutList = () => {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  // Use centralized context instead of local state and queries
+  const { expenseTransactions, loading, deleteTransaction } = useTransactions();
+
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Expense | null>(null);
 
-  useEffect(() => {
-    fetchExpenses();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchExpenses();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
+  // Apply filters and sort whenever expenses or filters change
   useEffect(() => {
     applyFiltersAndSort();
-  }, [expenses, searchTerm, categoryFilter, sortOrder]);
-
-  const fetchExpenses = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('type', 'expense')
-      .order('transaction_date', { ascending: false });
-
-    if (error) {
-      toast.error("Failed to load expenses");
-      console.error(error);
-    } else {
-      setExpenses(data || []);
-    }
-    setLoading(false);
-  };
+  }, [expenseTransactions, searchTerm, categoryFilter, sortOrder]);
 
   const applyFiltersAndSort = () => {
-    let filtered = [...expenses];
+    let filtered = [...expenseTransactions];
 
     if (searchTerm) {
       filtered = filtered.filter(expense =>
@@ -117,21 +85,16 @@ export const MoneyOutList = () => {
     if (!deleteId) return;
 
     setDeleting(true);
-    const { error } = await supabase
-      .from('transactions')
-      .delete()
-      .eq('id', deleteId);
-
-    if (error) {
-      toast.error("Failed to delete expense");
-    } else {
+    try {
+      await deleteTransaction(deleteId);
       toast.success("Expense deleted");
-      fetchExpenses();
-      // Dispatch event to refresh all components
-      window.dispatchEvent(new Event('transaction-added'));
+    } catch (error) {
+      toast.error("Failed to delete expense");
+      console.error(error);
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
     }
-    setDeleting(false);
-    setDeleteId(null);
   };
 
   const handleDelete = (id: string) => {
@@ -183,7 +146,7 @@ export const MoneyOutList = () => {
   };
 
   // Show empty state if no expenses at all
-  if (!loading && expenses.length === 0) {
+  if (!loading && expenseTransactions.length === 0) {
     return (
       <>
         <SpendingEmptyState
@@ -193,7 +156,6 @@ export const MoneyOutList = () => {
         <AddExpenseModal
           open={isAddModalOpen}
           onOpenChange={handleCloseModal}
-          onSuccess={fetchExpenses}
           editTransaction={editTransaction}
         />
       </>
@@ -338,7 +300,6 @@ export const MoneyOutList = () => {
       <AddExpenseModal
         open={isAddModalOpen}
         onOpenChange={handleCloseModal}
-        onSuccess={fetchExpenses}
         editTransaction={editTransaction}
       />
 

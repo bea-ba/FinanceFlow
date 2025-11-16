@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/skeleton-loaders";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 interface MonthData {
   month: string;
@@ -17,82 +17,44 @@ interface MonthData {
 }
 
 export const MonthlyComparison = () => {
-  const [comparisonData, setComparisonData] = useState<MonthData[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use centralized context instead of local queries
+  const { monthlyTrends, loading } = useTransactions();
 
-  useEffect(() => {
-    fetchMonthlyData();
+  // Transform context data to add savings, savingsRate, and trend
+  const comparisonData = useMemo<MonthData[]>(() => {
+    if (!monthlyTrends || monthlyTrends.length === 0) return [];
 
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchMonthlyData();
-    };
+    // Take last 4 months from the 6-month trends
+    const lastFourMonths = monthlyTrends.slice(-4);
 
-    window.addEventListener('transaction-added', handleTransactionAdded);
+    // Calculate derived data and add full month names
+    return lastFourMonths.map((trend, index) => {
+      const savings = trend.income - trend.expenses;
+      const savingsRate = trend.income > 0 ? (savings / trend.income) * 100 : 0;
 
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
+      // Determine trend (compare with previous month if available)
+      const prevSavingsRate = index > 0
+        ? ((lastFourMonths[index - 1].income - lastFourMonths[index - 1].expenses) / lastFourMonths[index - 1].income) * 100
+        : 0;
 
-  const fetchMonthlyData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const trendDirection = index === 0 ? "up" : savingsRate >= prevSavingsRate ? "up" : "down";
 
-      // Get data for the last 4 months
-      const monthsData: MonthData[] = [];
+      // Convert short month name to full format with year
       const now = new Date();
+      const monthsBack = lastFourMonths.length - 1 - index;
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - monthsBack, 1);
+      const fullMonth = monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
-      for (let i = 0; i < 4; i++) {
-        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const startOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).toISOString().split('T')[0];
-        const endOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).toISOString().split('T')[0];
-
-        const { data: transactions } = await supabase
-          .from('transactions')
-          .select('*')
-          .eq('user_id', user.id)
-          .gte('transaction_date', startOfMonth)
-          .lte('transaction_date', endOfMonth);
-
-        if (transactions) {
-          const income = transactions
-            .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + Number(t.amount), 0);
-
-          const expenses = transactions
-            .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + Number(t.amount), 0);
-
-          const savings = income - expenses;
-          const savingsRate = income > 0 ? (savings / income) * 100 : 0;
-
-          // Determine trend (compare with previous month if available)
-          const trend = i === 0 || monthsData.length === 0
-            ? "up"
-            : savingsRate > monthsData[monthsData.length - 1].savingsRate
-            ? "up"
-            : "down";
-
-          monthsData.push({
-            month: monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
-            income,
-            expenses,
-            savings,
-            savingsRate: parseFloat(savingsRate.toFixed(1)),
-            trend
-          });
-        }
-      }
-
-      setComparisonData(monthsData);
-    } catch (error) {
-      console.error("Error fetching monthly comparison data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return {
+        month: fullMonth,
+        income: trend.income,
+        expenses: trend.expenses,
+        savings,
+        savingsRate: parseFloat(savingsRate.toFixed(1)),
+        trend: trendDirection,
+      };
+    });
+  }, [monthlyTrends]);
 
   if (loading) {
     return (

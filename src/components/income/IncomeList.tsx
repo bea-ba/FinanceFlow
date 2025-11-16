@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +27,7 @@ import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { AppIcons } from "@/config/icons";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 interface Transaction {
   id: string;
@@ -38,9 +38,10 @@ interface Transaction {
 }
 
 export const IncomeList = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  // Use centralized context instead of local state and queries
+  const { incomeTransactions, loading, deleteTransaction } = useTransactions();
+
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -49,43 +50,13 @@ export const IncomeList = () => {
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | null>(null);
 
-  useEffect(() => {
-    fetchIncomeTransactions();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchIncomeTransactions();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
+  // Apply filters and sort whenever transactions or filters change
   useEffect(() => {
     applyFiltersAndSort();
-  }, [transactions, searchTerm, categoryFilter, sortOrder]);
-
-  const fetchIncomeTransactions = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('type', 'income')
-      .order('transaction_date', { ascending: false });
-
-    if (data) {
-      setTransactions(data);
-    }
-    setLoading(false);
-  };
+  }, [incomeTransactions, searchTerm, categoryFilter, sortOrder]);
 
   const applyFiltersAndSort = () => {
-    let filtered = [...transactions];
+    let filtered = [...incomeTransactions];
 
     if (searchTerm) {
       filtered = filtered.filter(t =>
@@ -114,21 +85,16 @@ export const IncomeList = () => {
     if (!deleteId) return;
 
     setDeleting(true);
-    const { error } = await supabase
-      .from('transactions')
-      .delete()
-      .eq('id', deleteId);
-
-    if (error) {
-      toast.error("Failed to delete income");
-    } else {
+    try {
+      await deleteTransaction(deleteId);
       toast.success("Income deleted");
-      fetchIncomeTransactions();
-      // Dispatch event to refresh all components
-      window.dispatchEvent(new Event('transaction-added'));
+    } catch (error) {
+      toast.error("Failed to delete income");
+      console.error(error);
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
     }
-    setDeleting(false);
-    setDeleteId(null);
   };
 
   const handleDelete = (id: string) => {
@@ -157,7 +123,7 @@ export const IncomeList = () => {
   };
 
   // Show empty state if no transactions at all
-  if (!loading && transactions.length === 0) {
+  if (!loading && incomeTransactions.length === 0) {
     return (
       <>
         <IncomeEmptyState
@@ -167,7 +133,6 @@ export const IncomeList = () => {
         <AddIncomeModal
           open={showAddModal}
           onOpenChange={handleCloseModal}
-          onSuccess={fetchIncomeTransactions}
           editTransaction={editTransaction}
         />
       </>
@@ -307,7 +272,6 @@ export const IncomeList = () => {
       <AddIncomeModal
         open={showAddModal}
         onOpenChange={handleCloseModal}
-        onSuccess={fetchIncomeTransactions}
         editTransaction={editTransaction}
       />
 
