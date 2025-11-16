@@ -1,13 +1,113 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardSkeleton } from "@/components/ui/skeleton-loaders";
 import { AppIcons } from "@/config/icons";
 
+interface SummaryData {
+  totalIncome: number;
+  totalExpenses: number;
+  netSavings: number;
+  savingsRate: string;
+  topCategory: string;
+  topCategoryAmount: number;
+}
+
 export const ReportsSummary = () => {
-  // Mockup data for current period
-  const totalIncome = 8950.00;
-  const totalExpenses = 5847.32;
-  const netSavings = totalIncome - totalExpenses;
-  const savingsRate = ((netSavings / totalIncome) * 100).toFixed(1);
-  const expenseGrowth = -8.5; // negative means reduction
+  const [data, setData] = useState<SummaryData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSummaryData();
+  }, []);
+
+  const fetchSummaryData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get current month date range
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+      // Fetch all transactions for current period
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startOfMonth)
+        .lte('transaction_date', endOfMonth);
+
+      if (!transactions) {
+        setData({
+          totalIncome: 0,
+          totalExpenses: 0,
+          netSavings: 0,
+          savingsRate: '0.0',
+          topCategory: 'None',
+          topCategoryAmount: 0
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Calculate totals
+      const income = transactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const expenses = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      // Calculate top expense category
+      const categoryTotals: Record<string, number> = {};
+      transactions
+        .filter(t => t.type === 'expense')
+        .forEach(t => {
+          categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Number(t.amount);
+        });
+
+      const topCategoryEntry = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+      const topCategory = topCategoryEntry ? topCategoryEntry[0] : 'None';
+      const topCategoryAmount = topCategoryEntry ? topCategoryEntry[1] : 0;
+
+      // Format category name
+      const formatCategory = (cat: string) => {
+        return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      };
+
+      const savings = income - expenses;
+      const rate = income > 0 ? ((savings / income) * 100).toFixed(1) : '0.0';
+
+      setData({
+        totalIncome: income,
+        totalExpenses: expenses,
+        netSavings: savings,
+        savingsRate: rate,
+        topCategory: formatCategory(topCategory),
+        topCategoryAmount
+      });
+    } catch (error) {
+      console.error("Error fetching summary data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -20,10 +120,10 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{totalIncome.toFixed(2)}
+            €{data.totalIncome.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
-            This period
+            This month
           </p>
         </CardContent>
       </Card>
@@ -37,10 +137,10 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{totalExpenses.toFixed(2)}
+            €{data.totalExpenses.toFixed(2)}
           </div>
-          <p className="text-xs text-success flex items-center gap-1">
-            {expenseGrowth}% vs last period
+          <p className="text-xs text-muted-foreground">
+            This month
           </p>
         </CardContent>
       </Card>
@@ -54,10 +154,10 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
-            €{netSavings.toFixed(2)}
+            €{data.netSavings.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
-            {savingsRate}% savings rate
+            {data.savingsRate}% savings rate
           </p>
         </CardContent>
       </Card>
@@ -70,9 +170,9 @@ export const ReportsSummary = () => {
           </div>
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
-          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">Groceries</div>
+          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">{data.topCategory}</div>
           <p className="text-xs text-muted-foreground">
-            €1,248.50 spent
+            €{data.topCategoryAmount.toFixed(2)} spent
           </p>
         </CardContent>
       </Card>

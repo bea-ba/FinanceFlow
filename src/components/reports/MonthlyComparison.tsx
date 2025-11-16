@@ -1,44 +1,118 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableSkeleton } from "@/components/ui/skeleton-loaders";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 
+interface MonthData {
+  month: string;
+  income: number;
+  expenses: number;
+  savings: number;
+  savingsRate: number;
+  trend: string;
+}
+
 export const MonthlyComparison = () => {
-  // Mockup data - comparing last 3 months
-  const comparisonData = [
-    {
-      month: "November 2024",
-      income: 8950.00,
-      expenses: 5847.32,
-      savings: 3102.68,
-      savingsRate: 34.7,
-      trend: "up"
-    },
-    {
-      month: "October 2024",
-      income: 9100.00,
-      expenses: 5800.00,
-      savings: 3300.00,
-      savingsRate: 36.3,
-      trend: "up"
-    },
-    {
-      month: "September 2024",
-      income: 8700.00,
-      expenses: 6200.00,
-      savings: 2500.00,
-      savingsRate: 28.7,
-      trend: "down"
-    },
-    {
-      month: "August 2024",
-      income: 8300.00,
-      expenses: 5900.00,
-      savings: 2400.00,
-      savingsRate: 28.9,
-      trend: "down"
-    },
-  ];
+  const [comparisonData, setComparisonData] = useState<MonthData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMonthlyData();
+  }, []);
+
+  const fetchMonthlyData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get data for the last 4 months
+      const monthsData: MonthData[] = [];
+      const now = new Date();
+
+      for (let i = 0; i < 4; i++) {
+        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const startOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).toISOString().split('T')[0];
+        const endOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).toISOString().split('T')[0];
+
+        const { data: transactions } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startOfMonth)
+          .lte('transaction_date', endOfMonth);
+
+        if (transactions) {
+          const income = transactions
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+
+          const expenses = transactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+
+          const savings = income - expenses;
+          const savingsRate = income > 0 ? (savings / income) * 100 : 0;
+
+          // Determine trend (compare with previous month if available)
+          const trend = i === 0 || monthsData.length === 0
+            ? "up"
+            : savingsRate > monthsData[monthsData.length - 1].savingsRate
+            ? "up"
+            : "down";
+
+          monthsData.push({
+            month: monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+            income,
+            expenses,
+            savings,
+            savingsRate: parseFloat(savingsRate.toFixed(1)),
+            trend
+          });
+        }
+      }
+
+      setComparisonData(monthsData);
+    } catch (error) {
+      console.error("Error fetching monthly comparison data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Card className="shadow-card rounded-xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Monthly Comparison
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TableSkeleton rows={4} />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (comparisonData.length === 0) {
+    return (
+      <Card className="shadow-card rounded-xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Monthly Comparison
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-12">
+          <p className="text-muted-foreground">No transaction data available for comparison</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getTrendBadge = (trend: string, savingsRate: number) => {
     if (trend === "up" && savingsRate > 30) {

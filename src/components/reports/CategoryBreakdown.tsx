@@ -1,19 +1,108 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Target } from "lucide-react";
 
+interface CategoryData {
+  name: string;
+  value: number;
+  color: string;
+}
+
+const CATEGORY_COLORS = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(142 76% 36%)",
+  "hsl(197 37% 45%)",
+  "hsl(43 96% 56%)",
+  "hsl(291 47% 51%)",
+  "hsl(16 100% 66%)",
+];
+
 export const CategoryBreakdown = () => {
-  // Mockup data - expense breakdown by category
-  const data = [
-    { name: "Groceries", value: 1248.50, color: "hsl(var(--chart-1))" },
-    { name: "Dining", value: 876.30, color: "hsl(var(--chart-2))" },
-    { name: "Transport", value: 654.20, color: "hsl(var(--chart-3))" },
-    { name: "Utilities", value: 425.48, color: "hsl(var(--chart-4))" },
-    { name: "Entertainment", value: 387.90, color: "hsl(var(--chart-5))" },
-    { name: "Shopping", value: 723.50, color: "hsl(142 76% 36%)" },
-    { name: "Health", value: 298.40, color: "hsl(197 37% 45%)" },
-    { name: "Education", value: 456.80, color: "hsl(43 96% 56%)" },
-  ];
+  const [data, setData] = useState<CategoryData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategoryData();
+  }, []);
+
+  const fetchCategoryData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get current month transactions
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('type', 'expense')
+        .gte('transaction_date', startOfMonth)
+        .lte('transaction_date', endOfMonth);
+
+      if (!transactions || transactions.length === 0) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+
+      // Aggregate by category
+      const categoryTotals: Record<string, number> = {};
+      transactions.forEach(t => {
+        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Number(t.amount);
+      });
+
+      // Format category names
+      const formatCategory = (cat: string) => {
+        return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      };
+
+      // Convert to chart data format
+      const chartData: CategoryData[] = Object.entries(categoryTotals)
+        .map(([category, value], index) => ({
+          name: formatCategory(category),
+          value,
+          color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+        }))
+        .sort((a, b) => b.value - a.value); // Sort by amount descending
+
+      setData(chartData);
+    } catch (error) {
+      console.error("Error fetching category data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <ChartSkeleton />;
+  }
+
+  if (data.length === 0) {
+    return (
+      <Card className="shadow-card rounded-xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Expense Category Breakdown
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-12">
+          <p className="text-muted-foreground">No expense data available for this month</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
