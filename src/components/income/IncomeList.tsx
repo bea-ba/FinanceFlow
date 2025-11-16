@@ -42,17 +42,38 @@ export const IncomeList = () => {
   // Use centralized context instead of local state and queries
   const { incomeTransactions, loading, deleteTransaction } = useTransactions();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("incomeSearchTerm") || "");
+  const [categoryFilter, setCategoryFilter] = useState(() => localStorage.getItem("incomeCategoryFilter") || "all");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => (localStorage.getItem("incomeSortOrder") as "asc" | "desc") || "desc");
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
-  const [minAmount, setMinAmount] = useState("");
-  const [maxAmount, setMaxAmount] = useState("");
+  const [minAmount, setMinAmount] = useState(() => localStorage.getItem("incomeMinAmount") || "");
+  const [maxAmount, setMaxAmount] = useState(() => localStorage.getItem("incomeMaxAmount") || "");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Persist filter preferences to localStorage
+  useEffect(() => {
+    localStorage.setItem("incomeSearchTerm", searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    localStorage.setItem("incomeCategoryFilter", categoryFilter);
+  }, [categoryFilter]);
+
+  useEffect(() => {
+    localStorage.setItem("incomeSortOrder", sortOrder);
+  }, [sortOrder]);
+
+  useEffect(() => {
+    localStorage.setItem("incomeMinAmount", minAmount);
+  }, [minAmount]);
+
+  useEffect(() => {
+    localStorage.setItem("incomeMaxAmount", maxAmount);
+  }, [maxAmount]);
 
   // Initialize Fuse.js for fuzzy search
   const fuse = useMemo(() => {

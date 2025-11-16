@@ -42,17 +42,38 @@ export const MoneyOutList = () => {
   // Use centralized context instead of local state and queries
   const { expenseTransactions, loading, deleteTransaction } = useTransactions();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("expenseSearchTerm") || "");
+  const [categoryFilter, setCategoryFilter] = useState(() => localStorage.getItem("expenseCategoryFilter") || "all");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => (localStorage.getItem("expenseSortOrder") as "asc" | "desc") || "desc");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Expense | null>(null);
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
-  const [minAmount, setMinAmount] = useState("");
-  const [maxAmount, setMaxAmount] = useState("");
+  const [minAmount, setMinAmount] = useState(() => localStorage.getItem("expenseMinAmount") || "");
+  const [maxAmount, setMaxAmount] = useState(() => localStorage.getItem("expenseMaxAmount") || "");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Persist filter preferences to localStorage
+  useEffect(() => {
+    localStorage.setItem("expenseSearchTerm", searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseCategoryFilter", categoryFilter);
+  }, [categoryFilter]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseSortOrder", sortOrder);
+  }, [sortOrder]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseMinAmount", minAmount);
+  }, [minAmount]);
+
+  useEffect(() => {
+    localStorage.setItem("expenseMaxAmount", maxAmount);
+  }, [maxAmount]);
 
   // Initialize Fuse.js for fuzzy search
   const fuse = useMemo(() => {
