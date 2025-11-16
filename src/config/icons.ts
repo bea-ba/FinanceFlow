@@ -17,6 +17,7 @@ import {
   
   // Charts & Analytics
   PieChart,
+  BarChart,
   Activity,
   Target,
   Brain,
@@ -98,6 +99,7 @@ export const AppIcons = {
   // Analytics & Charts
   analytics: {
     pieChart: PieChart,
+    barChart: BarChart,
     activity: Activity,
     target: Target,
     ai: Sparkles,
