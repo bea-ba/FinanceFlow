@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { useTransactions } from "@/contexts/TransactionsContext";
 import {
   Dialog,
   DialogContent,
@@ -79,6 +79,7 @@ const expenseCategories = [
 ];
 
 export const AddTransactionModal = ({ open, onOpenChange, onSuccess }: AddTransactionModalProps) => {
+  const { addTransaction } = useTransactions();
   const [isLoading, setIsLoading] = useState(false);
   const [transactionType, setTransactionType] = useState<"income" | "expense">("expense");
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
@@ -104,31 +105,22 @@ export const AddTransactionModal = ({ open, onOpenChange, onSuccess }: AddTransa
   const saveTransaction = async (data: TransactionFormData) => {
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { error } = await supabase.from("transactions").insert([{
-        user_id: user.id,
+      await addTransaction({
         type: data.type,
         category: data.category as any,
         amount: parseFloat(data.amount),
         description: data.description || null,
         transaction_date: data.transaction_date,
-      }]);
-
-      if (error) throw error;
+      });
 
       toast.success(`${data.type === "income" ? "Money In" : "Money Out"} added!`);
       reset();
       onOpenChange(false);
 
-      // Call success callback to refresh data without full page reload
+      // Call success callback if provided
       if (onSuccess) {
         onSuccess();
       }
-
-      // Dispatch custom event to notify other components
-      window.dispatchEvent(new CustomEvent('transaction-added'));
     } catch (error: any) {
       toast.error(error.message || "Failed to add transaction");
     } finally {

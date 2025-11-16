@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -16,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 interface Transaction {
   id: string;
@@ -33,6 +33,7 @@ interface AddExpenseModalProps {
 }
 
 export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction }: AddExpenseModalProps) => {
+  const { addTransaction, updateTransaction } = useTransactions();
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
   const [formData, setFormData] = useState({
@@ -66,12 +67,6 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
     setLoading(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error("You must be logged in");
-        return;
-      }
-
       const transactionData = {
         type: 'expense' as const,
         category: formData.category as any,
@@ -80,29 +75,17 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
         transaction_date: formData.transaction_date
       };
 
-      let error;
       if (editTransaction) {
         // Update existing transaction
-        const { error: updateError } = await supabase
-          .from('transactions')
-          .update(transactionData)
-          .eq('id', editTransaction.id);
-        error = updateError;
+        await updateTransaction(editTransaction.id, transactionData);
       } else {
         // Insert new transaction
-        const { error: insertError } = await supabase
-          .from('transactions')
-          .insert([{ ...transactionData, user_id: session.user.id }]);
-        error = insertError;
+        await addTransaction(transactionData);
       }
-
-      if (error) throw error;
 
       toast.success(editTransaction ? "Expense updated successfully" : "Expense added successfully");
       onOpenChange(false);
       onSuccess();
-      // Dispatch event to refresh all components
-      window.dispatchEvent(new Event('transaction-added'));
       setFormData({
         category: "other_expense",
         amount: "",
