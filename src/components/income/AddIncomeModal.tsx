@@ -45,7 +45,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
-  // Populate form when editing
+  // Populate form when editing or get remembered category
   useEffect(() => {
     if (editTransaction) {
       setFormData({
@@ -55,9 +55,10 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
         transaction_date: editTransaction.transaction_date
       });
     } else {
-      // Reset form when adding new
+      // Reset form when adding new, using remembered category if available
+      const rememberedCategory = localStorage.getItem('lastIncomeCategory') || "salary";
       setFormData({
-        category: "salary",
+        category: rememberedCategory,
         amount: "",
         description: "",
         transaction_date: new Date().toISOString().split('T')[0]
@@ -83,6 +84,8 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction,
       } else {
         // Insert new transaction (either new or duplicate)
         await addTransaction(transactionData);
+        // Remember category for next time
+        localStorage.setItem('lastIncomeCategory', formData.category);
       }
 
       toast.success(editTransaction && !isDuplicate ? "Income updated successfully" : (isDuplicate ? "Income duplicated successfully" : "Income added successfully"));

@@ -45,7 +45,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
-  // Populate form when editing
+  // Populate form when editing or get remembered category
   useEffect(() => {
     if (editTransaction) {
       setFormData({
@@ -55,9 +55,10 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
         transaction_date: editTransaction.transaction_date
       });
     } else {
-      // Reset form when adding new
+      // Reset form when adding new, using remembered category if available
+      const rememberedCategory = localStorage.getItem('lastExpenseCategory') || "other_expense";
       setFormData({
-        category: "other_expense",
+        category: rememberedCategory,
         amount: "",
         description: "",
         transaction_date: new Date().toISOString().split('T')[0]
@@ -83,6 +84,8 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
       } else {
         // Insert new transaction (either new or duplicate)
         await addTransaction(transactionData);
+        // Remember category for next time
+        localStorage.setItem('lastExpenseCategory', formData.category);
       }
 
       toast.success(editTransaction && !isDuplicate ? "Expense updated successfully" : (isDuplicate ? "Expense duplicated successfully" : "Expense added successfully"));
