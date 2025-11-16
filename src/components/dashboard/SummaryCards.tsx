@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Wallet, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import { Wallet, Plus, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface SummaryData {
@@ -71,14 +71,14 @@ export const SummaryCards = () => {
     {
       title: "Money In",
       value: summary.totalIncome,
-      icon: ArrowDownCircle,
+      icon: Plus,
       color: "text-success",
       bgColor: "bg-success/10",
     },
     {
       title: "Money Out",
       value: summary.totalExpenses,
-      icon: ArrowUpCircle,
+      icon: Minus,
       color: "text-destructive",
       bgColor: "bg-destructive/10",
     },
