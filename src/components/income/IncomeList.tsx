@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2, Loader2, Filter } from "lucide-react";
+import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2, Loader2, Filter, Copy } from "lucide-react";
 import { AddIncomeModal } from "./AddIncomeModal";
 import { IncomeEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -49,6 +49,7 @@ export const IncomeList = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | null>(null);
+  const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -132,12 +133,20 @@ export const IncomeList = () => {
 
   const handleEdit = (transaction: Transaction) => {
     setEditTransaction(transaction);
+    setIsDuplicateMode(false);
+    setShowAddModal(true);
+  };
+
+  const handleDuplicate = (transaction: Transaction) => {
+    setEditTransaction(transaction);
+    setIsDuplicateMode(true);
     setShowAddModal(true);
   };
 
   const handleCloseModal = () => {
     setShowAddModal(false);
     setEditTransaction(null);
+    setIsDuplicateMode(false);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -347,6 +356,10 @@ export const IncomeList = () => {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicate(transaction)}>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Duplicate
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(transaction.id)}
                           className="text-destructive focus:text-destructive"
@@ -367,7 +380,9 @@ export const IncomeList = () => {
       <AddIncomeModal
         open={showAddModal}
         onOpenChange={handleCloseModal}
+        onSuccess={() => {}}
         editTransaction={editTransaction}
+        isDuplicate={isDuplicateMode}
       />
 
       <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>

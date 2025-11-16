@@ -30,9 +30,10 @@ interface AddExpenseModalProps {
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
   editTransaction?: Transaction | null;
+  isDuplicate?: boolean;
 }
 
-export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction }: AddExpenseModalProps) => {
+export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction, isDuplicate = false }: AddExpenseModalProps) => {
   const { addTransaction, updateTransaction } = useTransactions();
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
@@ -76,15 +77,15 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
         transaction_date: formData.transaction_date
       };
 
-      if (editTransaction) {
+      if (editTransaction && !isDuplicate) {
         // Update existing transaction
         await updateTransaction(editTransaction.id, transactionData);
       } else {
-        // Insert new transaction
+        // Insert new transaction (either new or duplicate)
         await addTransaction(transactionData);
       }
 
-      toast.success(editTransaction ? "Expense updated successfully" : "Expense added successfully");
+      toast.success(editTransaction && !isDuplicate ? "Expense updated successfully" : (isDuplicate ? "Expense duplicated successfully" : "Expense added successfully"));
       onOpenChange(false);
       onSuccess();
       setFormData({
@@ -153,7 +154,9 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editTransaction ? "Edit expense" : "Add expense manually"}</DialogTitle>
+            <DialogTitle>
+              {isDuplicate ? "Duplicate expense" : (editTransaction ? "Edit expense" : "Add expense manually")}
+            </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">

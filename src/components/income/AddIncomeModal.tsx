@@ -30,9 +30,10 @@ interface AddIncomeModalProps {
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
   editTransaction?: Transaction | null;
+  isDuplicate?: boolean;
 }
 
-export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction }: AddIncomeModalProps) => {
+export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction, isDuplicate = false }: AddIncomeModalProps) => {
   const { addTransaction, updateTransaction } = useTransactions();
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
@@ -76,15 +77,15 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
         transaction_date: formData.transaction_date
       };
 
-      if (editTransaction) {
+      if (editTransaction && !isDuplicate) {
         // Update existing transaction
         await updateTransaction(editTransaction.id, transactionData);
       } else {
-        // Insert new transaction
+        // Insert new transaction (either new or duplicate)
         await addTransaction(transactionData);
       }
 
-      toast.success(editTransaction ? "Income updated successfully" : "Income added successfully");
+      toast.success(editTransaction && !isDuplicate ? "Income updated successfully" : (isDuplicate ? "Income duplicated successfully" : "Income added successfully"));
       onOpenChange(false);
       onSuccess();
       setFormData({
@@ -152,7 +153,9 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess, editTransaction 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editTransaction ? "Edit income" : "Add income manually"}</DialogTitle>
+          <DialogTitle>
+            {isDuplicate ? "Duplicate income" : (editTransaction ? "Edit income" : "Add income manually")}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

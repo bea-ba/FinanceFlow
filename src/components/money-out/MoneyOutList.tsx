@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, MoreVertical, Trash2, ArrowUpDown, Loader2, Edit, Filter } from "lucide-react";
+import { Plus, Search, MoreVertical, Trash2, ArrowUpDown, Loader2, Edit, Filter, Copy } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
 import { SpendingEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -49,6 +49,7 @@ export const MoneyOutList = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Expense | null>(null);
+  const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -132,12 +133,20 @@ export const MoneyOutList = () => {
 
   const handleEdit = (expense: Expense) => {
     setEditTransaction(expense);
+    setIsDuplicateMode(false);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDuplicate = (expense: Expense) => {
+    setEditTransaction(expense);
+    setIsDuplicateMode(true);
     setIsAddModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsAddModalOpen(false);
     setEditTransaction(null);
+    setIsDuplicateMode(false);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -375,6 +384,10 @@ export const MoneyOutList = () => {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicate(expense)}>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Duplicate
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(expense.id)}
                           className="text-destructive focus:text-destructive"
@@ -395,7 +408,9 @@ export const MoneyOutList = () => {
       <AddExpenseModal
         open={isAddModalOpen}
         onOpenChange={handleCloseModal}
+        onSuccess={() => {}}
         editTransaction={editTransaction}
+        isDuplicate={isDuplicateMode}
       />
 
       <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
