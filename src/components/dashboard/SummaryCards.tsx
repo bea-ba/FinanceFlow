@@ -85,24 +85,24 @@ export const SummaryCards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
           <Card 
             key={card.title} 
-            className="group relative overflow-hidden p-6 border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden p-3 sm:p-6 border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
           >
             <div className="relative z-10">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`${card.bgColor} ${card.color} p-3.5 rounded-2xl transition-transform group-hover:scale-110 duration-300`}>
-                  <Icon className="h-6 w-6" />
+              <div className="flex items-start justify-between mb-2 sm:mb-4">
+                <div className={`${card.bgColor} ${card.color} p-2 sm:p-3.5 rounded-xl sm:rounded-2xl transition-transform group-hover:scale-110 duration-300`}>
+                  <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground font-medium mb-2">
+              <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1 sm:mb-2">
                 {card.title}
               </p>
-              <p className="text-3xl font-bold text-foreground tracking-tight">
+              <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                 ${card.value.toFixed(2)}
               </p>
             </div>

@@ -71,26 +71,26 @@ export const ProfileHeader = () => {
 
   return (
     <Card className="border-border/50 hover:border-primary/50 transition-colors">
-      <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row items-center gap-6">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
           <div className="relative group">
-            <Avatar className="w-20 h-20 border-2 border-primary/20 group-hover:border-primary/50 transition-all">
+            <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-2 border-primary/20 group-hover:border-primary/50 transition-all">
               <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-xl">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-lg sm:text-xl">
                 {getInitials()}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-background flex items-center justify-center">
-              <Sparkles className="h-3 w-3 text-white" />
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full border-2 border-background flex items-center justify-center">
+              <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" />
             </div>
           </div>
           
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-bold text-foreground">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">
               {profile?.full_name || 'Welcome'}
             </h2>
-            <p className="text-sm text-muted-foreground">{session?.user?.email}</p>
-            <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
+            <p className="text-xs sm:text-sm text-muted-foreground">{session?.user?.email}</p>
+            <div className="flex items-center gap-2 mt-1.5 sm:mt-2 justify-center sm:justify-start">
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" />
                 <span>Premium features enabled</span>
