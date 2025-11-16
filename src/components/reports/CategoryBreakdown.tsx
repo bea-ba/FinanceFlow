@@ -204,31 +204,35 @@ export const CategoryBreakdown = () => {
   return (
     <Card className="shadow-card rounded-xl">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
             Category Breakdown
           </CardTitle>
 
           {/* Chart Type Toggle */}
-          <div className="flex items-center gap-1 bg-accent/50 rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-accent/50 rounded-lg p-1" role="group" aria-label="Chart type selection">
             <Button
               variant={chartType === "donut" ? "default" : "ghost"}
               size="sm"
               onClick={() => setChartType("donut")}
-              className="h-8 px-3"
+              className="h-8 px-2 sm:px-3"
+              aria-label="Switch to donut chart view"
+              aria-pressed={chartType === "donut"}
             >
-              <PieChartIcon className="h-4 w-4 mr-1" />
-              <span className="text-xs">Donut</span>
+              <PieChartIcon className="h-4 w-4" />
+              <span className="text-xs ml-1 hidden sm:inline">Donut</span>
             </Button>
             <Button
               variant={chartType === "bar" ? "default" : "ghost"}
               size="sm"
               onClick={() => setChartType("bar")}
-              className="h-8 px-3"
+              className="h-8 px-2 sm:px-3"
+              aria-label="Switch to bar chart view"
+              aria-pressed={chartType === "bar"}
             >
-              <BarChart3 className="h-4 w-4 mr-1" />
-              <span className="text-xs">Bar</span>
+              <BarChart3 className="h-4 w-4" />
+              <span className="text-xs ml-1 hidden sm:inline">Bar</span>
             </Button>
           </div>
         </div>
