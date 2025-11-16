@@ -10,14 +10,16 @@ export const ReportsSummary = () => {
   const expenseGrowth = -8.5; // negative means reduction
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-          <TrendingUp className="h-4 w-4 text-green-600" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
+          <div className="p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
+            <TrendingUp className="h-4 w-4 text-success" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600">
+          <div className="text-2xl font-bold text-foreground mb-1">
             ${totalIncome.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
@@ -26,28 +28,32 @@ export const ReportsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-          <TrendingDown className="h-4 w-4 text-red-600" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
+          <div className="p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
+            <TrendingDown className="h-4 w-4 text-destructive" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-red-600">
+          <div className="text-2xl font-bold text-foreground mb-1">
             ${totalExpenses.toFixed(2)}
           </div>
-          <p className="text-xs text-green-600">
+          <p className="text-xs text-success flex items-center gap-1">
             {expenseGrowth}% vs last period
           </p>
         </CardContent>
       </Card>
 
-      <Card className="border-primary/20 bg-primary/5">
+      <Card className="group border-primary/30 bg-gradient-to-br from-primary/10 to-transparent hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Net Savings</CardTitle>
-          <DollarSign className="h-4 w-4 text-primary" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
+          <div className="p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
+            <DollarSign className="h-4 w-4 text-primary" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-2xl font-bold text-primary mb-1">
             ${netSavings.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
@@ -56,13 +62,15 @@ export const ReportsSummary = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Top Category</CardTitle>
-          <PieChart className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Top Category</CardTitle>
+          <div className="p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors">
+            <PieChart className="h-4 w-4 text-muted-foreground" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">Groceries</div>
+          <div className="text-2xl font-bold text-foreground mb-1">Groceries</div>
           <p className="text-xs text-muted-foreground">
             $1,248.50 spent
           </p>
