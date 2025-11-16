@@ -22,8 +22,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 210 100% 12%;
 
-    /* Mint Green - PRIMARY SIGNATURE ACTION COLOR (PRD Critical) */
-    --primary: 162 100% 42%; /* #00D68F - Vibrant mint for all primary CTAs */
+    /* Mint Green - PRIMARY SIGNATURE ACTION COLOR */
+    --primary: 142 89% 50%; /* #13ec5b - Bright mint green */
     --primary-foreground: 210 100% 12%; /* Deep Navy text on mint */
 
     /* Secondary Colors */
@@ -33,7 +33,7 @@ All colors MUST be HSL.
     --muted: 210 17% 93%;
     --muted-foreground: 210 11% 46%; /* #6C757D - Medium gray */
 
-    --accent: 162 100% 42%; /* Same as primary mint */
+    --accent: 142 89% 50%; /* Same as primary mint */
     --accent-foreground: 210 100% 12%;
 
     /* Success/Income - Vivid Green (PRD: #00E676) */
@@ -62,7 +62,7 @@ All colors MUST be HSL.
     /* UI Structure */
     --border: 210 17% 93%; /* #E9ECEF - Light gray borders */
     --input: 210 20% 98%; /* Light background for inputs */
-    --ring: 162 100% 42%; /* Mint green focus ring */
+    --ring: 142 89% 50%; /* Mint green focus ring */
 
     /* Border Radius (PRD: 12-20px for friendly feel) */
     --radius: 1rem; /* 16px base - soft, friendly corners */
@@ -82,7 +82,7 @@ All colors MUST be HSL.
 
     /* Chart Colors - Vibrant palette for data visualization */
     --chart-1: 207 60% 60%; /* Blue #5B9BD5 */
-    --chart-2: 162 100% 42%; /* Mint Green #00D68F */
+    --chart-2: 142 89% 50%; /* Mint Green #13ec5b */
     --chart-3: 16 100% 66%; /* Coral #FF7F50 */
     --chart-4: 262 83% 58%; /* Purple */
     --chart-5: 0 100% 66%; /* Red #FF5252 */
@@ -90,12 +90,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 210 20% 98%;
     --sidebar-foreground: 210 100% 12%;
-    --sidebar-primary: 162 100% 42%;
+    --sidebar-primary: 142 89% 50%;
     --sidebar-primary-foreground: 210 100% 12%;
     --sidebar-accent: 210 17% 93%;
     --sidebar-accent-foreground: 210 100% 12%;
     --sidebar-border: 210 17% 93%;
-    --sidebar-ring: 162 100% 42%;
+    --sidebar-ring: 142 89% 50%;
   }
 
   .dark {
@@ -111,7 +111,7 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 98%;
 
     /* Mint Green stays bright in dark mode - PRIMARY SIGNATURE COLOR */
-    --primary: 162 100% 42%; /* #00D68F - Same vibrant mint */
+    --primary: 142 89% 50%; /* #13ec5b - Bright mint green */
     --primary-foreground: 210 14% 12%;
 
     --secondary: 210 12% 16%;
@@ -120,7 +120,7 @@ All colors MUST be HSL.
     --muted: 210 12% 16%;
     --muted-foreground: 215 14% 56%;
 
-    --accent: 162 100% 42%; /* Same as primary mint */
+    --accent: 142 89% 50%; /* Same as primary mint */
     --accent-foreground: 210 14% 12%;
 
     /* Success/Income - Vivid Green */
@@ -148,7 +148,7 @@ All colors MUST be HSL.
 
     --border: 210 12% 20%;
     --input: 210 12% 16%;
-    --ring: 162 100% 42%; /* Mint green focus ring */
+    --ring: 142 89% 50%; /* Mint green focus ring */
 
     /* Shadows for dark mode (stronger for visibility) */
     --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -165,7 +165,7 @@ All colors MUST be HSL.
 
     /* Chart Colors - Same vibrant palette */
     --chart-1: 207 60% 60%; /* Blue #5B9BD5 */
-    --chart-2: 162 100% 42%; /* Mint Green #00D68F */
+    --chart-2: 142 89% 50%; /* Mint Green #13ec5b */
     --chart-3: 16 100% 66%; /* Coral #FF7F50 */
     --chart-4: 262 83% 58%; /* Purple */
     --chart-5: 0 100% 66%; /* Red #FF5252 */
@@ -173,12 +173,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 150 40% 7%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 162 100% 42%;
+    --sidebar-primary: 142 89% 50%;
     --sidebar-primary-foreground: 210 14% 12%;
     --sidebar-accent: 210 12% 16%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 210 12% 20%;
-    --sidebar-ring: 162 100% 42%;
+    --sidebar-ring: 142 89% 50%;
   }
 }
 
