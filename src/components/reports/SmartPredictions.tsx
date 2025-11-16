@@ -73,7 +73,7 @@ export const SmartPredictions = () => {
                 On track for a great month
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Based on current patterns, I'm projected to save 37% of my income this month — that's above my usual 30% target.
+                Based on your current patterns, you're projected to save 37% of your income this month — that's above your usual 30% target.
               </p>
             </div>
           </div>

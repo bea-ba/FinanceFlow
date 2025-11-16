@@ -8,7 +8,7 @@ export const AIInsights = () => {
       type: "opportunity",
       icon: TrendingUp,
       title: "Savings opportunity detected",
-      description: "You're spending 23% more on dining this month. Small adjustments could save you $200.",
+      description: "Your spending on dining is 23% higher this month. Small adjustments could save $200.",
       confidence: "high",
       color: "text-success",
       bgColor: "bg-success/10"
@@ -26,7 +26,7 @@ export const AIInsights = () => {
       type: "alert",
       icon: AlertCircle,
       title: "Unusual activity",
-      description: "Entertainment spending is 45% higher than usual. Keep an eye on subscriptions.",
+      description: "Your entertainment spending is 45% higher than usual. Keep an eye on subscriptions.",
       confidence: "high",
       color: "text-warning",
       bgColor: "bg-warning/10"
@@ -83,7 +83,7 @@ export const AIInsights = () => {
         <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-border/50">
           <p className="text-xs text-muted-foreground flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Insights are updated automatically as my spending patterns change
+            Insights update automatically as your spending patterns change
           </p>
         </div>
       </CardContent>

@@ -74,7 +74,7 @@ export const ProfileSettings = () => {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="full_name">My name</Label>
+            <Label htmlFor="full_name">Name</Label>
             <Input
               id="full_name"
               value={formData.full_name}
@@ -93,7 +93,7 @@ export const ProfileSettings = () => {
               className="bg-muted cursor-not-allowed"
             />
             <p className="text-xs text-muted-foreground">
-              Can't change my email here
+              Can't change email here
             </p>
           </div>
 

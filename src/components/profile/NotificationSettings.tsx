@@ -34,7 +34,7 @@ export const NotificationSettings = () => {
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="bill-reminders">Remind me about bills</Label>
+            <Label htmlFor="bill-reminders">Remind about bills</Label>
             <p className="text-sm text-muted-foreground">
               We'll let you know when bills are coming up
             </p>
@@ -48,9 +48,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="income-alerts">Notify me about new income</Label>
+            <Label htmlFor="income-alerts">Notify about new income</Label>
             <p className="text-sm text-muted-foreground">
-              Get a heads up when income is detected
+              Get a heads up when income detected
             </p>
           </div>
           <Switch
@@ -62,9 +62,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="weekly-reports">Send me weekly summaries</Label>
+            <Label htmlFor="weekly-reports">Send weekly summaries</Label>
             <p className="text-sm text-muted-foreground">
-              A gentle weekly check-in on my flow
+              Your weekly check-in on financial flow
             </p>
           </div>
           <Switch
@@ -76,9 +76,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="budget-alerts">Alert me about spending</Label>
+            <Label htmlFor="budget-alerts">Alert about spending</Label>
             <p className="text-sm text-muted-foreground">
-              A friendly nudge when you're getting close to limits
+              Friendly nudges when getting close to limits
             </p>
           </div>
           <Switch
@@ -95,7 +95,7 @@ export const NotificationSettings = () => {
             <div className="space-y-0.5">
               <Label htmlFor="email-notif">Email</Label>
               <p className="text-sm text-muted-foreground">
-                Send notifications to my email
+                Send notifications to email
               </p>
             </div>
             <Switch
@@ -109,7 +109,7 @@ export const NotificationSettings = () => {
             <div className="space-y-0.5">
               <Label htmlFor="push-notif">Push notifications</Label>
               <p className="text-sm text-muted-foreground">
-                Get push alerts on my phone
+                Get push alerts on phone
               </p>
             </div>
             <Switch

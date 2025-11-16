@@ -181,7 +181,7 @@ export const MoneyOutList = () => {
                 <p className="text-muted-foreground mb-2">No expenses here yet</p>
                 <p className="text-sm text-muted-foreground">
                   {searchTerm || categoryFilter !== "all"
-                    ? "Try adjusting my filters"
+                    ? "Try adjusting filters"
                     : "Start by importing from Google Drive or adding manually"}
                 </p>
               </div>

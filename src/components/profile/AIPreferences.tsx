@@ -34,7 +34,7 @@ export const AIPreferences = () => {
           AI Intelligence
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Customize how AI helps me manage my flow
+          Customize how AI helps manage your flow
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -57,7 +57,7 @@ export const AIPreferences = () => {
             <div className="space-y-0.5">
               <Label htmlFor="smart-predictions">Smart Predictions</Label>
               <p className="text-sm text-muted-foreground">
-                Forecast my future spending & income
+                Forecast your future spending & income
               </p>
             </div>
             <Switch
@@ -71,7 +71,7 @@ export const AIPreferences = () => {
             <div className="space-y-0.5">
               <Label htmlFor="spending-alerts">Spending Alerts</Label>
               <p className="text-sm text-muted-foreground">
-                Gentle nudges when unusual activity is detected
+                Gentle nudges when unusual activity detected
               </p>
             </div>
             <Switch
