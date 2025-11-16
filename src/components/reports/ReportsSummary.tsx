@@ -81,7 +81,7 @@ export const ReportsSummary = () => {
             €{formatCurrency(netSavingsMonthly)}
           </div>
           <p className="text-xs text-muted-foreground">
-            {savingsRateMonthly.toFixed(1)}% savings rate
+            {(savingsRateMonthly || 0).toFixed(1)}% savings rate
           </p>
         </CardContent>
       </Card>

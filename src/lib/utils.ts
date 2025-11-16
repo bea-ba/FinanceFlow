@@ -13,6 +13,11 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Formatted string (e.g., "1.234,56")
  */
 export function formatCurrency(value: number, decimals: number = 2): string {
+  // Guard against undefined/null/NaN values
+  if (value === undefined || value === null || isNaN(value)) {
+    return (0).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, '.').replace('.', ',');
+  }
+
   // Format with specified decimals
   const fixed = value.toFixed(decimals);
 

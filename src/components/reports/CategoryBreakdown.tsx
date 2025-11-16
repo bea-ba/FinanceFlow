@@ -114,15 +114,19 @@ export const CategoryBreakdown = () => {
       );
     }
 
-    const total = data.reduce((sum, item) => sum + item.value, 0);
+    const total = data.reduce((sum, item) => sum + (item.value || 0), 0);
 
     // Add percentage to data and sort by value descending for bar chart
     const chartData = data
-      .map(item => ({
-        ...item,
-        percentage: ((item.value / total) * 100).toFixed(1)
-      }))
-      .sort((a, b) => b.value - a.value); // Sort for better bar chart readability
+      .map(item => {
+        const value = item.value || 0;
+        const percentage = total > 0 ? (value / total) * 100 : 0;
+        return {
+          ...item,
+          percentage: percentage.toFixed(1)
+        };
+      })
+      .sort((a, b) => (b.value || 0) - (a.value || 0)); // Sort for better bar chart readability
 
     return (
       <div className="space-y-4">

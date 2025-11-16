@@ -32,15 +32,19 @@ export const MonthlyComparison = () => {
 
     // Calculate derived data and add full month names
     return lastFourMonths.map((trend, index) => {
-      const savings = trend.income - trend.expenses;
+      const savings = (trend.income || 0) - (trend.expenses || 0);
       const savingsRate = trend.income > 0 ? (savings / trend.income) * 100 : 0;
+      const safeSavingsRate = isNaN(savingsRate) ? 0 : savingsRate;
 
       // Determine trend (compare with previous month if available)
-      const prevSavingsRate = index > 0
-        ? ((lastFourMonths[index - 1].income - lastFourMonths[index - 1].expenses) / lastFourMonths[index - 1].income) * 100
+      const prevIncome = lastFourMonths[index - 1]?.income || 0;
+      const prevSavings = (lastFourMonths[index - 1]?.income || 0) - (lastFourMonths[index - 1]?.expenses || 0);
+      const prevSavingsRate = index > 0 && prevIncome > 0
+        ? (prevSavings / prevIncome) * 100
         : 0;
+      const safePrevSavingsRate = isNaN(prevSavingsRate) ? 0 : prevSavingsRate;
 
-      const trendDirection = index === 0 ? "up" : savingsRate >= prevSavingsRate ? "up" : "down";
+      const trendDirection = index === 0 ? "up" : safeSavingsRate >= safePrevSavingsRate ? "up" : "down";
 
       // Convert short month name to full format with year
       const now = new Date();
@@ -50,10 +54,10 @@ export const MonthlyComparison = () => {
 
       return {
         month: fullMonth,
-        income: trend.income,
-        expenses: trend.expenses,
+        income: trend.income || 0,
+        expenses: trend.expenses || 0,
         savings,
-        savingsRate: parseFloat(savingsRate.toFixed(1)),
+        savingsRate: parseFloat(safeSavingsRate.toFixed(1)),
         trend: trendDirection,
       };
     });
