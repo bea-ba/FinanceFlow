@@ -327,13 +327,15 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     };
   }, [transactions]);
 
-  // Add transaction (Optimistic UI)
+  // Add transaction (Optimistic UI with Balance Change)
   const addTransaction = async (transaction: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error("Please sign in");
       return;
     }
+
+    const oldBalance = calculatedData.balance;
 
     // Optimistic update: create temporary transaction
     const tempId = `temp-${Date.now()}`;
@@ -348,6 +350,10 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Immediately update UI
     setTransactions(prev => [optimisticTransaction, ...prev]);
 
+    // Calculate balance change
+    const balanceChange = transaction.type === "income" ? transaction.amount : -transaction.amount;
+    const newBalance = oldBalance + balanceChange;
+
     try {
       const { error } = await supabase.from("transactions").insert([{
         user_id: user.id,
@@ -356,7 +362,10 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       if (error) throw error;
 
-      toast.success(`${transaction.type === "income" ? "Income" : "Expense"} added successfully`);
+      toast.success(`${transaction.type === "income" ? "Income" : "Expense"} added`, {
+        description: `Balance: €${newBalance.toFixed(2)} (${balanceChange > 0 ? '+' : ''}€${balanceChange.toFixed(2)})`,
+      });
+
       // Refresh to get real ID and server data
       await refreshTransactions();
     } catch (error) {
@@ -368,11 +377,23 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     }
   };
 
-  // Update transaction (Optimistic UI)
+  // Update transaction (Optimistic UI with Balance Change)
   const updateTransaction = async (id: string, transaction: Partial<Omit<Transaction, "id" | "user_id">>) => {
     // Store original for rollback
     const originalTransaction = transactions.find(t => t.id === id);
     if (!originalTransaction) return;
+
+    const oldBalance = calculatedData.balance;
+
+    // Calculate balance change from the update
+    const oldAmount = originalTransaction.amount;
+    const newAmount = transaction.amount ?? originalTransaction.amount;
+    const transactionType = transaction.type ?? originalTransaction.type;
+
+    const oldEffect = originalTransaction.type === "income" ? oldAmount : -oldAmount;
+    const newEffect = transactionType === "income" ? newAmount : -newAmount;
+    const balanceChange = newEffect - oldEffect;
+    const newBalance = oldBalance + balanceChange;
 
     // Optimistic update: immediately update in state
     setTransactions(prev => prev.map(t =>
@@ -387,7 +408,12 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       if (error) throw error;
 
-      toast.success(`${originalTransaction.type === "income" ? "Income" : "Expense"} updated successfully`);
+      toast.success(`${transactionType === "income" ? "Income" : "Expense"} updated`, {
+        description: balanceChange !== 0
+          ? `Balance: €${newBalance.toFixed(2)} (${balanceChange > 0 ? '+' : ''}€${balanceChange.toFixed(2)})`
+          : `No balance change`,
+      });
+
       await refreshTransactions();
     } catch (error) {
       // Rollback optimistic update
@@ -400,14 +426,57 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     }
   };
 
-  // Delete transaction (Optimistic UI)
+  // Delete transaction (Optimistic UI with Undo)
   const deleteTransaction = async (id: string) => {
-    // Store deleted transaction for rollback
+    // Store deleted transaction for rollback and undo
     const deletedTransaction = transactions.find(t => t.id === id);
     if (!deletedTransaction) return;
 
+    const oldBalance = calculatedData.balance;
+
     // Optimistic update: immediately remove from state
     setTransactions(prev => prev.filter(t => t.id !== id));
+
+    // Calculate balance change
+    const balanceChange = deletedTransaction.type === "income" ? -deletedTransaction.amount : deletedTransaction.amount;
+    let undoClicked = false;
+    let deleteExecuted = false;
+
+    // Show toast with undo option
+    toast.success(
+      `${deletedTransaction.type === "income" ? "Income" : "Expense"} deleted`,
+      {
+        description: `Balance: €${((oldBalance + balanceChange)).toFixed(2)} (${balanceChange > 0 ? '+' : ''}€${balanceChange.toFixed(2)})`,
+        action: {
+          label: "Undo",
+          onClick: () => {
+            undoClicked = true;
+            if (!deleteExecuted) {
+              // Restore before delete was executed
+              setTransactions(prev => [...prev, deletedTransaction].sort(
+                (a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+              ));
+              toast.info("Delete cancelled");
+            } else {
+              // Need to re-insert to database
+              supabase.from("transactions").insert({
+                ...deletedTransaction,
+                id: undefined // Let database generate new ID
+              }).then(() => {
+                refreshTransactions();
+                toast.info("Transaction restored");
+              });
+            }
+          },
+        },
+        duration: 5000, // 5 seconds to undo
+      }
+    );
+
+    // Wait a bit before actually deleting from database (gives time for undo)
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (undoClicked) return; // User clicked undo, don't delete
 
     try {
       const { error } = await supabase
@@ -415,9 +484,10 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         .delete()
         .eq("id", id);
 
+      deleteExecuted = true;
+
       if (error) throw error;
 
-      toast.success(`${deletedTransaction.type === "income" ? "Income" : "Expense"} deleted`);
       await refreshTransactions();
     } catch (error) {
       // Rollback optimistic update
