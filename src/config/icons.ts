@@ -50,6 +50,7 @@ import {
   
   // UI
   ArrowLeft,
+  ArrowRight,
   Loader2,
   Lock,
   LogOut,
@@ -113,6 +114,7 @@ export const AppIcons = {
     export: Download,
     upload: Upload,
     refresh: RotateCw,
+    arrowRight: ArrowRight,
   },
   
   // Files
