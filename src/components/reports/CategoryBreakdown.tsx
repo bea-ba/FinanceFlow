@@ -1,15 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
-import { Target, ChevronDown, PieChart as PieChartIcon, BarChart3, Plus } from "lucide-react";
+import { Target, ChevronDown, Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-type ChartType = "donut" | "bar";
 
 interface CategoryData {
   name: string;
@@ -35,7 +33,6 @@ export const CategoryBreakdown = () => {
   const navigate = useNavigate();
   const [incomeDetailsOpen, setIncomeDetailsOpen] = useState(false);
   const [expenseDetailsOpen, setExpenseDetailsOpen] = useState(false);
-  const [chartType, setChartType] = useState<ChartType>("donut");
 
   if (loading) {
     return <ChartSkeleton />;
@@ -140,49 +137,24 @@ export const CategoryBreakdown = () => {
         </div>
 
         {/* Chart Visualization */}
-        {chartType === "donut" ? (
-          <ResponsiveContainer width="100%" height={280} className="min-h-[220px] h-[35vh] max-h-[320px]">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                verticalAlign="bottom"
-                height={36}
-                formatter={(value, entry: any) => (
-                  <span className="text-sm">
-                    {value} ({entry.payload.percentage}%)
-                  </span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        ) : (
-          <ResponsiveContainer width="100%" height={280} className="min-h-[220px] h-[35vh] max-h-[320px]">
-            <BarChart data={chartData} layout="vertical" margin={{ left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis type="number" className="text-xs" />
-              <YAxis dataKey="name" type="category" className="text-xs" width={80} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+        <ResponsiveContainer width="100%" height={280} className="min-h-[220px] h-[35vh] max-h-[320px]">
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
 
         {/* Collapsible Detailed List */}
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -195,7 +167,7 @@ export const CategoryBreakdown = () => {
               {chartData.map((category, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 rounded-xl bg-accent/30 hover:bg-accent/50 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl hover:bg-accent/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-1">
                     <div
@@ -224,38 +196,10 @@ export const CategoryBreakdown = () => {
   return (
     <Card className="shadow-card rounded-xl">
       <CardHeader>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Category Breakdown
-          </CardTitle>
-
-          {/* Chart Type Toggle */}
-          <div className="flex items-center gap-1 bg-accent/50 rounded-lg p-1" role="group" aria-label="Chart type selection">
-            <Button
-              variant={chartType === "donut" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setChartType("donut")}
-              className="h-8 px-2 sm:px-3"
-              aria-label="Switch to donut chart view"
-              aria-pressed={chartType === "donut"}
-            >
-              <PieChartIcon className="h-4 w-4" />
-              <span className="text-xs ml-1 hidden sm:inline">Donut</span>
-            </Button>
-            <Button
-              variant={chartType === "bar" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setChartType("bar")}
-              className="h-8 px-2 sm:px-3"
-              aria-label="Switch to bar chart view"
-              aria-pressed={chartType === "bar"}
-            >
-              <BarChart3 className="h-4 w-4" />
-              <span className="text-xs ml-1 hidden sm:inline">Bar</span>
-            </Button>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-5 w-5 text-primary" />
+          Category Breakdown
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Income Section */}
