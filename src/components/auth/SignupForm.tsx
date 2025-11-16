@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -51,6 +52,7 @@ const signupSchema = z.object({
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export const SignupForm = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -94,6 +96,8 @@ export const SignupForm = () => {
         toast.success("Account created successfully! Welcome to FinanceFlow!");
         reset();
         setPasswordValue("");
+        // Navigate to dashboard after successful signup
+        navigate("/");
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
