@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Activity } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface DayData {
   day: string;
@@ -107,7 +108,7 @@ export const SpendingTrends = () => {
                 borderRadius: '16px',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
               }}
-              formatter={(value: number) => `$€{value.toFixed(2)}`}
+              formatter={(value: number) => `€${formatCurrency(value)}`}
             />
             <Line 
               type="monotone" 

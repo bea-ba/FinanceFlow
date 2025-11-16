@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AppIcons } from "@/config/icons";
 import { Card } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 interface SummaryData {
   totalIncome: number;
@@ -113,7 +114,7 @@ export const SummaryCards = () => {
                 {card.title}
               </p>
               <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1">
-                €{card.value.toFixed(2)}
+                €{formatCurrency(card.value)}
               </p>
               <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
                 {card.description}

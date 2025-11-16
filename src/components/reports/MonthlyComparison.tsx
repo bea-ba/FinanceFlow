@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TableSkeleton } from "@/components/ui/skeleton-loaders";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface MonthData {
   month: string;
@@ -150,13 +151,13 @@ export const MonthlyComparison = () => {
                 <TableRow key={index}>
                   <TableCell className="font-medium">{row.month}</TableCell>
                   <TableCell className="text-right text-green-600">
-                    €{row.income.toFixed(2)}
+                    €{formatCurrency(row.income)}
                   </TableCell>
                   <TableCell className="text-right text-red-600">
-                    €{row.expenses.toFixed(2)}
+                    €{formatCurrency(row.expenses)}
                   </TableCell>
                   <TableCell className="text-right font-semibold text-primary">
-                    €{row.savings.toFixed(2)}
+                    €{formatCurrency(row.savings)}
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     {row.savingsRate}%

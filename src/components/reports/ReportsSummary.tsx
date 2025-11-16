@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardSkeleton } from "@/components/ui/skeleton-loaders";
 import { AppIcons } from "@/config/icons";
+import { formatCurrency } from "@/lib/utils";
 
 interface SummaryData {
   totalIncome: number;
@@ -120,7 +121,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{data.totalIncome.toFixed(2)}
+            €{formatCurrency(data.totalIncome)}
           </div>
           <p className="text-xs text-muted-foreground">
             This month
@@ -137,7 +138,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
-            €{data.totalExpenses.toFixed(2)}
+            €{formatCurrency(data.totalExpenses)}
           </div>
           <p className="text-xs text-muted-foreground">
             This month
@@ -154,7 +155,7 @@ export const ReportsSummary = () => {
         </CardHeader>
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
-            €{data.netSavings.toFixed(2)}
+            €{formatCurrency(data.netSavings)}
           </div>
           <p className="text-xs text-muted-foreground">
             {data.savingsRate}% savings rate
@@ -172,7 +173,7 @@ export const ReportsSummary = () => {
         <CardContent className="p-3 sm:p-6 pt-0">
           <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">{data.topCategory}</div>
           <p className="text-xs text-muted-foreground">
-            €{data.topCategoryAmount.toFixed(2)} spent
+            €{formatCurrency(data.topCategoryAmount)} spent
           </p>
         </CardContent>
       </Card>
