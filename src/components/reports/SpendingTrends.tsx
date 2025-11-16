@@ -63,6 +63,17 @@ export const SpendingTrends = () => {
     }));
   }, [dailyTrendsMonthly]);
 
+  // Calculate spending by day of month
+  const dayOfMonthData = useMemo(() => {
+    if (!dailyTrendsMonthly || dailyTrendsMonthly.length === 0) return [];
+
+    return dailyTrendsMonthly.map(day => ({
+      day: day.day,
+      expenses: day.expenses,
+      income: day.income
+    })).sort((a, b) => parseInt(a.day) - parseInt(b.day));
+  }, [dailyTrendsMonthly]);
+
   // Custom tooltip for net position
   const NetPositionTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -91,6 +102,31 @@ export const SpendingTrends = () => {
           <p className="font-semibold text-sm">{payload[0].payload.day}</p>
           <p className="text-destructive font-bold">€{formatCurrency(payload[0].value)}</p>
           <p className="text-xs text-muted-foreground">Avg spent</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom tooltip for day of month
+  const DayOfMonthTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-background border border-border rounded-xl p-3 shadow-elevated">
+          <p className="text-xs text-muted-foreground mb-1">Day {data.day}</p>
+          <div className="space-y-1">
+            {data.income > 0 && (
+              <p className="text-success font-bold text-sm">
+                +€{formatCurrency(data.income)}
+              </p>
+            )}
+            {data.expenses > 0 && (
+              <p className="text-destructive font-bold text-sm">
+                -€{formatCurrency(data.expenses)}
+              </p>
+            )}
+          </div>
         </div>
       );
     }
@@ -204,6 +240,25 @@ export const SpendingTrends = () => {
               <Tooltip content={<DayOfWeekTooltip />} />
               <Bar
                 dataKey="average"
+                fill="hsl(var(--destructive))"
+                radius={[8, 8, 0, 0]}
+                opacity={0.8}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Third Chart: Daily Activity This Month */}
+        <div className="border-t border-border pt-6">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Daily Activity This Month</h3>
+          <ResponsiveContainer width="100%" height={180} className="min-h-[160px] h-[25vh] max-h-[220px]">
+            <BarChart data={dayOfMonthData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="day" className="text-xs" />
+              <YAxis className="text-xs" />
+              <Tooltip content={<DayOfMonthTooltip />} />
+              <Bar
+                dataKey="expenses"
                 fill="hsl(var(--destructive))"
                 radius={[8, 8, 0, 0]}
                 opacity={0.8}
