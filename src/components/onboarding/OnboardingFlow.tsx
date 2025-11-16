@@ -24,7 +24,7 @@ const screens: OnboardingScreen[] = [
   {
     title: "Welcome to FinanceFlow",
     description: "Your personal finance companion that makes money management effortless and insightful",
-    icon: AppIcons.status.sparkle,
+    icon: AppIcons.ui.sparkles,
     gradient: "from-primary/20 via-primary/10 to-transparent",
     features: [
       {
@@ -93,7 +93,7 @@ const screens: OnboardingScreen[] = [
   {
     title: "Get Powerful Insights",
     description: "Understand your money story with beautiful reports, trends, and AI-powered recommendations",
-    icon: AppIcons.analytics.lineChart,
+    icon: AppIcons.analytics.brain,
     gradient: "from-warning/20 via-warning/10 to-transparent",
     features: [
       {
@@ -272,7 +272,7 @@ export const OnboardingFlow = () => {
                   ) : currentScreen === screens.length - 1 ? (
                     <>
                       Get Started
-                      <AppIcons.status.sparkle className="ml-2 h-4 w-4" />
+                      <AppIcons.ui.sparkles className="ml-2 h-4 w-4" />
                     </>
                   ) : (
                     <>
