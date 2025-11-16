@@ -211,7 +211,7 @@ export const AddTransactionModal = ({ open, onOpenChange, onSuccess }: AddTransa
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{transactionType === "income" ? "Where from?" : "Where to?"}</Label>
             <Select
               value={selectedCategory}
               onValueChange={(value) => setValue("category", value)}

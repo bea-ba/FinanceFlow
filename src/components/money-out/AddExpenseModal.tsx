@@ -207,7 +207,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Where to?</Label>
               <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
                 <SelectTrigger>
                   <SelectValue />
