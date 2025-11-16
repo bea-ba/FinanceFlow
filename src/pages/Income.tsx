@@ -38,7 +38,7 @@ const Income = () => {
                   onClick={() => navigate("/reports")}
                   className="rounded-xl"
                 >
-                  <AppIcons.analytics.barChart className="mr-2 h-4 w-4" />
+                  <AppIcons.navigation.insights className="mr-2 h-4 w-4" />
                   View Insights
                 </Button>
               </div>
