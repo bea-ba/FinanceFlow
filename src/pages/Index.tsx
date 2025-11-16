@@ -7,6 +7,7 @@ import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { PageLoader } from "@/components/ui/PageLoader";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -55,13 +56,7 @@ const Index = () => {
   }, [navigate]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="animate-pulse text-primary text-2xl font-bold">
-          Loading...
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!session) {
