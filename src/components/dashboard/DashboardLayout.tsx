@@ -14,7 +14,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
       {isHomePage && <DashboardHeader />}
-      <main className="px-4 sm:px-6 lg:px-8 pt-6 max-w-7xl mx-auto">
+      <main className={`px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${isHomePage ? 'pt-6' : 'pt-4'}`}>
         {children}
       </main>
       <BottomNav />
