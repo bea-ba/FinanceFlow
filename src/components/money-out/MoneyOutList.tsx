@@ -99,6 +99,17 @@ export const MoneyOutList = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
+  // Calculate totals for display
+  const totalAmount = useMemo(() => {
+    return expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+  }, [expenseTransactions]);
+
+  const filteredAmount = useMemo(() => {
+    return filteredExpenses.reduce((sum, t) => sum + t.amount, 0);
+  }, [filteredExpenses]);
+
+  const hasActiveFilters = searchTerm || categoryFilter !== "all" || minAmount || maxAmount;
+
   const confirmDelete = async () => {
     if (!deleteId) return;
 
@@ -283,6 +294,20 @@ export const MoneyOutList = () => {
               </div>
             )}
           </div>
+
+          {/* Transaction Count Indicator */}
+          {!loading && expenseTransactions.length > 0 && hasActiveFilters && (
+            <div className="flex items-center justify-between px-1 py-2 text-sm">
+              <p className="text-muted-foreground">
+                Showing <span className="font-semibold text-foreground">{filteredExpenses.length}</span> of{" "}
+                <span className="font-semibold text-foreground">{expenseTransactions.length}</span> transactions
+              </p>
+              <p className="text-muted-foreground">
+                <span className="font-semibold text-destructive">€{formatCurrency(filteredAmount)}</span> of{" "}
+                <span className="font-semibold text-destructive">€{formatCurrency(totalAmount)}</span>
+              </p>
+            </div>
+          )}
 
           {/* List */}
           {loading ? (
