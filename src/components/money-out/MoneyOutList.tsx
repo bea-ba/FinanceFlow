@@ -189,38 +189,46 @@ export const MoneyOutList = () => {
               filteredExpenses.map((expense) => (
                 <div
                   key={expense.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
+                  className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium">{expense.description || "No description"}</p>
-                      <Badge variant="outline" className={getCategoryColor(expense.category)}>
-                        {formatCategoryName(expense.category)}
-                      </Badge>
+                  {/* Mobile-friendly layout */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    {/* Left section: Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start sm:items-center gap-2 mb-1 flex-wrap">
+                        <p className="font-medium truncate">{expense.description || "No description"}</p>
+                        <Badge variant="outline" className={`${getCategoryColor(expense.category)} shrink-0`}>
+                          {formatCategoryName(expense.category)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(expense.transaction_date), "MMM d, yyyy")}
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(expense.transaction_date), "MMM d, yyyy")}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <p className="text-lg font-bold text-destructive">
-                      ${Number(expense.amount).toFixed(2)}
-                    </p>
-                    <div className="flex gap-1">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => toast.info("Edit functionality coming soon")}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleDelete(expense.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    
+                    {/* Right section: Amount and Actions */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3">
+                      <p className="text-lg font-bold text-destructive shrink-0">
+                        ${Number(expense.amount).toFixed(2)}
+                      </p>
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          onClick={() => toast.info("Edit functionality coming soon")}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          onClick={() => handleDelete(expense.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
