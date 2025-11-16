@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Target } from "lucide-react";
 
 export const CategoryBreakdown = () => {
@@ -25,49 +25,73 @@ export const CategoryBreakdown = () => {
           Expense Category Breakdown
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={false}
-              outerRadius={90}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: 'hsl(var(--background))', 
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px'
-              }}
-              formatter={(value: number) => [
-                `$${value.toFixed(2)} (${((value / total) * 100).toFixed(1)}%)`,
-                'Amount'
-              ]}
-            />
-            <Legend 
-              layout="vertical" 
-              verticalAlign="middle" 
-              align="right"
-              wrapperStyle={{ fontSize: '12px', paddingLeft: '10px' }}
-              formatter={(value, entry: any) => {
-                const percent = ((entry.payload.value / total) * 100).toFixed(0);
-                return `${value} (${percent}%)`;
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="mt-4 text-center">
-          <p className="text-sm text-muted-foreground">Total Expenses</p>
-          <p className="text-2xl font-bold">${total.toFixed(2)}</p>
+      <CardContent className="space-y-6">
+        {/* Pie Chart */}
+        <div className="flex justify-center">
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'hsl(var(--background))', 
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                }}
+                formatter={(value: number) => [
+                  `$${value.toFixed(2)} (${((value / total) * 100).toFixed(1)}%)`,
+                  'Amount'
+                ]}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Total in Center */}
+        <div className="text-center -mt-44 mb-32 pointer-events-none">
+          <p className="text-xs text-muted-foreground">Total</p>
+          <p className="text-2xl font-bold text-foreground">${total.toFixed(2)}</p>
+        </div>
+
+        {/* Category List */}
+        <div className="space-y-2">
+          {data.map((category, index) => {
+            const percentage = ((category.value / total) * 100).toFixed(1);
+            return (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1">
+                  <div
+                    className="w-4 h-4 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  <span className="font-medium text-sm">{category.name}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-semibold">
+                    ${category.value.toFixed(2)}
+                  </span>
+                  <span className="text-sm text-muted-foreground w-12 text-right">
+                    {percentage}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
