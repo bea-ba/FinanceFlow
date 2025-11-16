@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Download, FileSpreadsheet, FileText, File } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PremiumBadge } from "@/components/profile/PremiumBadge";
+import { PremiumUpgradeModal } from "@/components/profile/PremiumUpgradeModal";
 
 export const ExportReports = () => {
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const handleExport = (format: string) => {
     toast.success(`Preparing ${format.toUpperCase()} export...`, {
       description: "Your download will start shortly"
@@ -13,9 +16,7 @@ export const ExportReports = () => {
   };
 
   const handleAutoExport = () => {
-    toast.info("Premium Feature", {
-      description: "Auto-export to Google Sheets is available with Premium"
-    });
+    setShowUpgradeModal(true);
   };
 
   return (
@@ -46,7 +47,7 @@ export const ExportReports = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="outline" onClick={handleAutoExport} disabled className="w-full sm:w-auto gap-2 text-xs sm:text-sm">
+            <Button variant="outline" onClick={handleAutoExport} className="w-full sm:w-auto gap-2 text-xs sm:text-sm border-primary/30 hover:border-primary/50">
               <FileSpreadsheet className="h-4 w-4" />
               <span className="hidden sm:inline">Auto-Export</span>
               <span className="sm:hidden">Auto</span>
@@ -58,6 +59,12 @@ export const ExportReports = () => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+      <PremiumUpgradeModal
+        open={showUpgradeModal}
+        onOpenChange={setShowUpgradeModal}
+        feature="Auto-Export to Google Sheets"
+      />
     </div>
   );
 };

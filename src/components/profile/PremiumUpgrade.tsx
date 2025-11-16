@@ -38,7 +38,7 @@ export const PremiumUpgrade = () => {
   ];
 
   return (
-    <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-transparent relative overflow-hidden">
+    <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-transparent relative overflow-hidden shadow-card rounded-xl">
       {/* Decorative elements */}
       <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-[#FF7F50]/10 rounded-full blur-2xl" />
@@ -65,8 +65,8 @@ export const PremiumUpgrade = () => {
           {premiumFeatures.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-background/50 border border-border/50">
-                <div className="mt-0.5 p-2 rounded-md bg-primary/10">
+              <div key={index} className="flex items-start gap-3 p-3 rounded-xl bg-background/50 border border-border/50 hover:border-primary/20 transition-colors">
+                <div className="mt-0.5 p-2 rounded-lg bg-primary/10">
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1">
@@ -78,14 +78,14 @@ export const PremiumUpgrade = () => {
           })}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-4 rounded-lg bg-muted/50">
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-4 rounded-xl bg-muted/50">
           <div>
             <p className="font-bold text-2xl text-foreground">€4.99<span className="text-sm font-normal text-muted-foreground">/month</span></p>
             <p className="text-xs text-muted-foreground mt-1">or €49/year (save 15%)</p>
           </div>
-          <Button 
+          <Button
             size="lg"
-            className="bg-[#FF7F50] hover:bg-[#FF7F50]/90 text-white min-w-[180px]"
+            className="bg-[#FF7F50] hover:bg-[#FF7F50]/90 text-white min-w-[180px] rounded-xl"
           >
             <AppIcons.ui.sparkles className="mr-2 h-4 w-4" />
             Start Free Trial

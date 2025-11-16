@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppIcons } from "@/config/icons";
 import { Progress } from "@/components/ui/progress";
+import { LockedFeature } from "@/components/profile/LockedFeature";
 
 export const SmartPredictions = () => {
   const predictions = [
@@ -25,7 +26,12 @@ export const SmartPredictions = () => {
   ];
 
   return (
-    <Card className="border-primary/20 overflow-hidden">
+    <LockedFeature
+      tooltipText="Unlock Smart Predictions with Premium"
+      featureName="Smart Predictions"
+      showOverlay={true}
+    >
+      <Card className="border-primary/20 overflow-hidden">
       <CardHeader className="bg-gradient-to-br from-primary/10 to-transparent">
         <CardTitle className="flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/20">
@@ -80,5 +86,6 @@ export const SmartPredictions = () => {
         </div>
       </CardContent>
     </Card>
+    </LockedFeature>
   );
 };
