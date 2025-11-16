@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { billSchema } from "@/lib/validationSchemas";
 
 interface AddBillModalProps {
   open: boolean;
@@ -31,12 +32,16 @@ export const AddBillModal = ({ open, onOpenChange, onSuccess }: AddBillModalProp
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("You must be logged in to add bills");
+        setLoading(false);
         return;
       }
 
+      // Parse form data
+      const amount = parseFloat(formData.amount);
+      const dueDay = parseInt(formData.dueDay);
+
       // Calculate next due date
       const today = new Date();
-      const dueDay = parseInt(formData.dueDay);
       let nextDueDate = new Date(today.getFullYear(), today.getMonth(), dueDay);
 
       // If the due day this month has passed, use next month
@@ -44,12 +49,31 @@ export const AddBillModal = ({ open, onOpenChange, onSuccess }: AddBillModalProp
         nextDueDate = new Date(today.getFullYear(), today.getMonth() + 1, dueDay);
       }
 
+      // Validate using Zod schema
+      const validationResult = billSchema.safeParse({
+        name: formData.name,
+        amount: amount,
+        category: formData.category,
+        due_day: dueDay,
+        frequency: formData.frequency,
+        status: 'unpaid',
+        next_due_date: nextDueDate.toISOString().split('T')[0],
+      });
+
+      if (!validationResult.success) {
+        // Show first validation error
+        const firstError = validationResult.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.from('bills').insert({
         user_id: user.id,
         name: formData.name,
-        amount: parseFloat(formData.amount),
+        amount: amount,
         category: formData.category,
-        due_day: parseInt(formData.dueDay),
+        due_day: dueDay,
         frequency: formData.frequency,
         next_due_date: nextDueDate.toISOString().split('T')[0],
         status: 'unpaid'

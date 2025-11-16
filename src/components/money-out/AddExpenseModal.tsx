@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { suggestCategory, getCategoryLabel } from "@/lib/categoryHints";
+import { expenseSchema } from "@/lib/validationSchemas";
 
 interface Transaction {
   id: string;
@@ -123,28 +124,32 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate amount
+    // Parse amount for validation
     const amount = parseFloat(formData.amount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error("Amount must be greater than €0");
-      return;
-    }
-    if (amount < 0.01) {
-      toast.error("Amount must be at least €0.01");
-      return;
-    }
-    if (amount > 1000000) {
-      toast.error("Amount cannot exceed €1,000,000");
+
+    // Validate using Zod schema
+    const validationResult = expenseSchema.safeParse({
+      type: 'expense',
+      category: formData.category,
+      amount: amount,
+      description: formData.description || undefined,
+      transaction_date: formData.transaction_date,
+    });
+
+    if (!validationResult.success) {
+      // Show first validation error
+      const firstError = validationResult.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
 
-    // Check for unusually large amounts
+    // Check for unusually large amounts (UX enhancement, not validation)
     if (amount > 5000 && !editTransaction) {
       setShowLargeAmountConfirm(true);
       return;
     }
 
-    // Check if date is in the future
+    // Check if date is in the future (UX enhancement, not validation)
     const selectedDate = new Date(formData.transaction_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
