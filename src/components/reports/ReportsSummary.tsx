@@ -10,16 +10,16 @@ export const ReportsSummary = () => {
   const expenseGrowth = -8.5; // negative means reduction
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
       <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
-          <div className="p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
-            <AppIcons.financial.income className="h-4 w-4 text-success" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Income</CardTitle>
+          <div className="p-1.5 sm:p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
+            <AppIcons.financial.income className="h-3 w-3 sm:h-4 sm:w-4 text-success" />
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-foreground mb-1">
+        <CardContent className="p-3 sm:p-6 pt-0">
+          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
             ${totalIncome.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
@@ -29,14 +29,14 @@ export const ReportsSummary = () => {
       </Card>
 
       <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
-          <div className="p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
-            <AppIcons.financial.expense className="h-4 w-4 text-destructive" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
+          <div className="p-1.5 sm:p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
+            <AppIcons.financial.expense className="h-3 w-3 sm:h-4 sm:w-4 text-destructive" />
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-foreground mb-1">
+        <CardContent className="p-3 sm:p-6 pt-0">
+          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
             ${totalExpenses.toFixed(2)}
           </div>
           <p className="text-xs text-success flex items-center gap-1">
@@ -46,14 +46,14 @@ export const ReportsSummary = () => {
       </Card>
 
       <Card className="group border-primary/30 bg-gradient-to-br from-primary/10 to-transparent hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
-          <div className="p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
-            <AppIcons.financial.money className="h-4 w-4 text-primary" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Net Savings</CardTitle>
+          <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 group-hover:bg-primary/30 transition-colors">
+            <AppIcons.financial.money className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-primary mb-1">
+        <CardContent className="p-3 sm:p-6 pt-0">
+          <div className="text-lg sm:text-2xl font-bold text-primary mb-0.5 sm:mb-1">
             ${netSavings.toFixed(2)}
           </div>
           <p className="text-xs text-muted-foreground">
@@ -63,14 +63,14 @@ export const ReportsSummary = () => {
       </Card>
 
       <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Top Category</CardTitle>
-          <div className="p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors">
-            <AppIcons.analytics.pieChart className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-6">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Top Category</CardTitle>
+          <div className="p-1.5 sm:p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors">
+            <AppIcons.analytics.pieChart className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-foreground mb-1">Groceries</div>
+        <CardContent className="p-3 sm:p-6 pt-0">
+          <div className="text-lg sm:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">Groceries</div>
           <p className="text-xs text-muted-foreground">
             $1,248.50 spent
           </p>
