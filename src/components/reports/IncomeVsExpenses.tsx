@@ -2,17 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const IncomeVsExpenses = () => {
-  // Mockup data - last 6 months
-  const data = [
-    { month: "Jun", income: 8200, expenses: 6100 },
-    { month: "Jul", income: 8500, expenses: 6350 },
-    { month: "Aug", income: 8300, expenses: 5900 },
-    { month: "Sep", income: 8700, expenses: 6200 },
-    { month: "Oct", income: 9100, expenses: 5800 },
-    { month: "Nov", income: 8950, expenses: 5847 },
-  ];
+  const { monthlyTrends } = useTransactions();
 
   return (
     <Card className="shadow-card rounded-xl">
@@ -24,7 +17,7 @@ export const IncomeVsExpenses = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
+          <BarChart data={monthlyTrends}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis dataKey="month" className="text-xs" />
             <YAxis className="text-xs" />

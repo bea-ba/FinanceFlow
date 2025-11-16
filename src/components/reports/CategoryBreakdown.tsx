@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Target } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 interface CategoryData {
   name: string;
@@ -26,98 +24,24 @@ const CATEGORY_COLORS = [
 ];
 
 export const CategoryBreakdown = () => {
-  const [incomeData, setIncomeData] = useState<CategoryData[]>([]);
-  const [expenseData, setExpenseData] = useState<CategoryData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchCategoryData();
-
-    // Listen for transaction-added event to refresh data
-    const handleTransactionAdded = () => {
-      fetchCategoryData();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
-
-  const fetchCategoryData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Get current month transactions
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startOfMonth)
-        .lte('transaction_date', endOfMonth);
-
-      if (!transactions || transactions.length === 0) {
-        setIncomeData([]);
-        setExpenseData([]);
-        setLoading(false);
-        return;
-      }
-
-      // Format category names
-      const formatCategory = (cat: string) => {
-        return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      };
-
-      // Aggregate income by category
-      const incomeTotals: Record<string, number> = {};
-      transactions
-        .filter(t => t.type === 'income')
-        .forEach(t => {
-          incomeTotals[t.category] = (incomeTotals[t.category] || 0) + Number(t.amount);
-        });
-
-      const incomeChartData: CategoryData[] = Object.entries(incomeTotals)
-        .map(([category, value], index) => ({
-          name: formatCategory(category),
-          value,
-          color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
-        }))
-        .sort((a, b) => b.value - a.value);
-
-      // Aggregate expenses by category
-      const expenseTotals: Record<string, number> = {};
-      transactions
-        .filter(t => t.type === 'expense')
-        .forEach(t => {
-          expenseTotals[t.category] = (expenseTotals[t.category] || 0) + Number(t.amount);
-        });
-
-      const expenseChartData: CategoryData[] = Object.entries(expenseTotals)
-        .map(([category, value], index) => ({
-          name: formatCategory(category),
-          value,
-          color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
-        }))
-        .sort((a, b) => b.value - a.value);
-
-      setIncomeData(incomeChartData);
-      setExpenseData(expenseChartData);
-    } catch (error) {
-      console.error("Error fetching category data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { incomeBreakdownMonthly, expenseBreakdownMonthly, loading } = useTransactions();
 
   if (loading) {
     return <ChartSkeleton />;
   }
+
+  // Transform context data to chart format
+  const incomeData: CategoryData[] = incomeBreakdownMonthly.map((item, index) => ({
+    name: item.category,
+    value: item.total,
+    color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+  }));
+
+  const expenseData: CategoryData[] = expenseBreakdownMonthly.map((item, index) => ({
+    name: item.category,
+    value: item.total,
+    color: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+  }));
 
   if (incomeData.length === 0 && expenseData.length === 0) {
     return (
