@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
 import { formatCurrency } from "@/lib/utils";
-
-interface CategorySpending {
-  category: string;
-  amount: number;
-  percentage: number;
-  color: string;
-}
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 const categoryLabels: Record<string, string> = {
   groceries: "Groceries",
@@ -40,58 +32,13 @@ const categoryColors: Record<string, string> = {
 
 export const SpendingChart = () => {
   const navigate = useNavigate();
-  const [spending, setSpending] = useState<CategorySpending[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { topExpenseCategories, loading } = useTransactions();
 
-  const fetchSpending = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: transactions } = await supabase
-      .from("transactions")
-      .select("category, amount")
-      .eq("user_id", user.id)
-      .eq("type", "expense");
-
-    if (transactions && transactions.length > 0) {
-      const categoryTotals: Record<string, number> = {};
-      let total = 0;
-
-      transactions.forEach((t) => {
-        const amount = Number(t.amount);
-        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + amount;
-        total += amount;
-      });
-
-      const categorySpending: CategorySpending[] = Object.entries(categoryTotals)
-        .map(([category, amount]) => ({
-          category,
-          amount,
-          percentage: (amount / total) * 100,
-          color: categoryColors[category] || categoryColors.other_expense,
-        }))
-        .sort((a, b) => b.amount - a.amount)
-        .slice(0, 5);
-
-      setSpending(categorySpending);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchSpending();
-
-    // Listen for transaction-added event
-    const handleTransactionAdded = () => {
-      fetchSpending();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
+  // Map categories to include color for display
+  const spending = topExpenseCategories.map(item => ({
+    ...item,
+    color: categoryColors[item.category] || categoryColors.other_expense,
+  }));
 
   if (loading) {
     return (

@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import {
   ShoppingBag,
@@ -17,15 +15,7 @@ import {
   ArrowUpCircle
 } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
-
-interface Transaction {
-  id: string;
-  type: "income" | "expense";
-  category: string;
-  amount: number;
-  description: string | null;
-  transaction_date: string;
-}
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 const categoryIcons: Record<string, any> = {
   salary: Briefcase,
@@ -61,40 +51,7 @@ const categoryColors: Record<string, string> = {
 
 export const RecentTransactions = () => {
   const navigate = useNavigate();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchTransactions = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("transaction_date", { ascending: false })
-      .limit(10);
-
-    if (data) {
-      setTransactions(data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-
-    // Listen for transaction-added event
-    const handleTransactionAdded = () => {
-      fetchTransactions();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
+  const { recentTransactions: transactions, loading } = useTransactions();
 
   if (loading) {
     return (

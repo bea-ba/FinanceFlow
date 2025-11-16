@@ -1,66 +1,12 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { AppIcons } from "@/config/icons";
 import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-
-interface SummaryData {
-  totalIncome: number;
-  totalExpenses: number;
-  balance: number;
-}
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 export const SummaryCards = () => {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState<SummaryData>({
-    totalIncome: 0,
-    totalExpenses: 0,
-    balance: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  const fetchSummary = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: transactions } = await supabase
-      .from("transactions")
-      .select("type, amount")
-      .eq("user_id", user.id);
-
-    if (transactions) {
-      const income = transactions
-        .filter((t) => t.type === "income")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
-
-      const expenses = transactions
-        .filter((t) => t.type === "expense")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
-
-      setSummary({
-        totalIncome: income,
-        totalExpenses: expenses,
-        balance: income - expenses,
-      });
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchSummary();
-
-    // Listen for transaction-added event
-    const handleTransactionAdded = () => {
-      fetchSummary();
-    };
-
-    window.addEventListener('transaction-added', handleTransactionAdded);
-
-    return () => {
-      window.removeEventListener('transaction-added', handleTransactionAdded);
-    };
-  }, []);
+  const { totalIncome, totalExpenses, balance, loading } = useTransactions();
 
   if (loading) {
     return (
@@ -77,7 +23,7 @@ export const SummaryCards = () => {
   const cards = [
     {
       title: "My Balance",
-      value: summary.balance,
+      value: balance,
       icon: AppIcons.financial.balance,
       color: "text-primary",
       bgColor: "bg-primary/10",
@@ -86,7 +32,7 @@ export const SummaryCards = () => {
     },
     {
       title: "Money In",
-      value: summary.totalIncome,
+      value: totalIncome,
       icon: AppIcons.financial.income,
       color: "text-success",
       bgColor: "bg-success/10",
@@ -95,7 +41,7 @@ export const SummaryCards = () => {
     },
     {
       title: "Money Out",
-      value: summary.totalExpenses,
+      value: totalExpenses,
       icon: AppIcons.financial.expense,
       color: "text-destructive",
       bgColor: "bg-destructive/10",
