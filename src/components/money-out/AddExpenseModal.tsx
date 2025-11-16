@@ -245,11 +245,13 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelFutureDate}>Cancel</AlertDialogCancel>
-            <Button variant="outline" onClick={() => setShowFutureDateConfirm(false)}>
+            <AlertDialogCancel disabled={loading} onClick={handleCancelFutureDate}>Cancel</AlertDialogCancel>
+            <Button variant="outline" disabled={loading} onClick={() => setShowFutureDateConfirm(false)}>
               Change Date
             </Button>
-            <AlertDialogAction onClick={handleConfirmFutureDate}>Confirm</AlertDialogAction>
+            <AlertDialogAction disabled={loading} onClick={handleConfirmFutureDate}>
+              {loading ? "Saving..." : "Confirm"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -263,15 +265,15 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowLargeAmountConfirm(false)}>Cancel</AlertDialogCancel>
-            <Button variant="outline" onClick={() => setShowLargeAmountConfirm(false)}>
+            <AlertDialogCancel disabled={loading} onClick={() => setShowLargeAmountConfirm(false)}>Cancel</AlertDialogCancel>
+            <Button variant="outline" disabled={loading} onClick={() => setShowLargeAmountConfirm(false)}>
               Edit Amount
             </Button>
-            <AlertDialogAction onClick={async () => {
+            <AlertDialogAction disabled={loading} onClick={async () => {
               setShowLargeAmountConfirm(false);
               await saveExpense();
             }}>
-              Confirm
+              {loading ? "Saving..." : "Confirm"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
