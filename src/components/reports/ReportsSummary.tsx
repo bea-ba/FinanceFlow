@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign, PieChart } from "lucide-react";
+import { Plus, Minus, DollarSign, PieChart } from "lucide-react";
 
 export const ReportsSummary = () => {
   // Mockup data for current period
@@ -15,7 +15,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
           <div className="p-2 rounded-lg bg-success/10 group-hover:bg-success/20 transition-colors">
-            <TrendingUp className="h-4 w-4 text-success" />
+            <Plus className="h-4 w-4 text-success" />
           </div>
         </CardHeader>
         <CardContent>
@@ -32,7 +32,7 @@ export const ReportsSummary = () => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
           <div className="p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
-            <TrendingDown className="h-4 w-4 text-destructive" />
+            <Minus className="h-4 w-4 text-destructive" />
           </div>
         </CardHeader>
         <CardContent>
