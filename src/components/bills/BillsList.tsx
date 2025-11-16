@@ -29,6 +29,7 @@ import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { AppIcons } from "@/config/icons";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface Bill {
   id: string;
@@ -52,6 +53,9 @@ export const BillsList = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Debounce search term to reduce re-renders
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -68,7 +72,7 @@ export const BillsList = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [bills, searchTerm, statusFilter]);
+  }, [bills, debouncedSearchTerm, statusFilter]);
 
   const fetchBills = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -92,9 +96,9 @@ export const BillsList = () => {
   const applyFilters = () => {
     let filtered = [...bills];
 
-    if (searchTerm) {
+    if (debouncedSearchTerm) {
       filtered = filtered.filter(bill =>
-        bill.name.toLowerCase().includes(searchTerm.toLowerCase())
+        bill.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       );
     }
 
