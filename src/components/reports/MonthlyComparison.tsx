@@ -27,8 +27,8 @@ export const MonthlyComparison = () => {
   const comparisonData = useMemo<MonthData[]>(() => {
     if (!monthlyTrends || monthlyTrends.length === 0) return [];
 
-    // Take last 4 months from the 6-month trends
-    const lastFourMonths = monthlyTrends.slice(-4);
+    // Take last 4 months from the 6-month trends and reverse to show newest first
+    const lastFourMonths = monthlyTrends.slice(-4).reverse();
 
     // Calculate derived data and add full month names
     return lastFourMonths.map((trend, index) => {
