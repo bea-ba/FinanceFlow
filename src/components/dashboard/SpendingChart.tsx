@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { AppIcons } from "@/config/icons";
 
 interface CategorySpending {
   category: string;
@@ -35,6 +38,7 @@ const categoryColors: Record<string, string> = {
 };
 
 export const SpendingChart = () => {
+  const navigate = useNavigate();
   const [spending, setSpending] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,11 +113,19 @@ export const SpendingChart = () => {
 
   return (
     <Card className="p-6 border-border">
-      <h3 className="text-xl font-semibold text-foreground mb-6">Where my money goes</h3>
-      
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold text-foreground">Where my money goes</h3>
+        <button
+          onClick={() => navigate("/money-out")}
+          className="text-sm text-primary font-medium hover:underline cursor-pointer transition-colors"
+        >
+          See all →
+        </button>
+      </div>
+
       <div className="space-y-5">
         {spending.map((item, index) => (
-          <div 
+          <div
             key={item.category}
             className="group"
             style={{ animationDelay: `${index * 50}ms` }}
@@ -127,8 +139,8 @@ export const SpendingChart = () => {
               </span>
             </div>
             <div className="relative">
-              <Progress 
-                value={item.percentage} 
+              <Progress
+                value={item.percentage}
                 className="h-2.5"
                 style={{
                   // @ts-ignore
@@ -142,6 +154,15 @@ export const SpendingChart = () => {
           </div>
         ))}
       </div>
+
+      <Button
+        onClick={() => navigate("/money-out")}
+        variant="outline"
+        className="w-full mt-6 rounded-xl"
+      >
+        <AppIcons.financial.expense className="mr-2 h-4 w-4" />
+        View All Expenses
+      </Button>
     </Card>
   );
 };

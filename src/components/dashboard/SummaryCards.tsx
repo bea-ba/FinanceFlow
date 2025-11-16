@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AppIcons } from "@/config/icons";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,7 @@ interface SummaryData {
 }
 
 export const SummaryCards = () => {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState<SummaryData>({
     totalIncome: 0,
     totalExpenses: 0,
@@ -67,6 +69,8 @@ export const SummaryCards = () => {
       icon: AppIcons.financial.balance,
       color: "text-primary",
       bgColor: "bg-primary/10",
+      route: "/reports",
+      description: "View detailed insights",
     },
     {
       title: "Money In",
@@ -74,6 +78,8 @@ export const SummaryCards = () => {
       icon: AppIcons.financial.income,
       color: "text-success",
       bgColor: "bg-success/10",
+      route: "/income",
+      description: "Track income sources",
     },
     {
       title: "Money Out",
@@ -81,6 +87,8 @@ export const SummaryCards = () => {
       icon: AppIcons.financial.expense,
       color: "text-destructive",
       bgColor: "bg-destructive/10",
+      route: "/money-out",
+      description: "View spending details",
     },
   ];
 
@@ -89,21 +97,26 @@ export const SummaryCards = () => {
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card 
-            key={card.title} 
-            className="group relative overflow-hidden p-3 sm:p-6 border-border hover:[box-shadow:var(--shadow-glow)] transition-all duration-300 hover:-translate-y-1"
+          <Card
+            key={card.title}
+            onClick={() => navigate(card.route)}
+            className="group relative overflow-hidden p-3 sm:p-6 border-border hover:[box-shadow:var(--shadow-glow)] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
           >
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-2 sm:mb-4">
                 <div className={`${card.bgColor} ${card.color} p-2 sm:p-3.5 rounded-xl sm:rounded-2xl transition-transform group-hover:scale-110 duration-300`}>
                   <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
+                <AppIcons.actions.arrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1 sm:mb-2">
                 {card.title}
               </p>
-              <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+              <p className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1">
                 ${card.value.toFixed(2)}
+              </p>
+              <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                {card.description}
               </p>
             </div>
             <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-2xl" />

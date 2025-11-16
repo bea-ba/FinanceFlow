@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { 
-  ShoppingBag, 
-  Utensils, 
-  Car, 
-  Zap, 
-  Film, 
-  Heart, 
+import {
+  ShoppingBag,
+  Utensils,
+  Car,
+  Zap,
+  Film,
+  Heart,
   GraduationCap,
   Briefcase,
   Gift,
@@ -59,6 +60,7 @@ const categoryColors: Record<string, string> = {
 };
 
 export const RecentTransactions = () => {
+  const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -121,8 +123,11 @@ export const RecentTransactions = () => {
     <Card className="p-4 border-border">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-foreground">Recent activity</h3>
-        <button className="text-sm text-primary font-medium hover:underline">
-          View All
+        <button
+          onClick={() => navigate("/reports")}
+          className="text-sm text-primary font-medium hover:underline cursor-pointer transition-colors"
+        >
+          View All →
         </button>
       </div>
       
