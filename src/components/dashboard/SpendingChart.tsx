@@ -101,7 +101,7 @@ export const SpendingChart = () => {
         </div>
         <h3 className="text-lg font-semibold mb-2">No spending data</h3>
         <p className="text-sm text-muted-foreground">
-          Add some expenses to see your spending breakdown
+          Add some expenses to see my spending breakdown
         </p>
       </Card>
     );
@@ -109,7 +109,7 @@ export const SpendingChart = () => {
 
   return (
     <Card className="p-6 border-border">
-      <h3 className="text-xl font-semibold text-foreground mb-6">Where your money goes</h3>
+      <h3 className="text-xl font-semibold text-foreground mb-6">Where my money goes</h3>
       
       <div className="space-y-5">
         {spending.map((item, index) => (
@@ -137,7 +137,7 @@ export const SpendingChart = () => {
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1.5">
-              {item.percentage.toFixed(1)}% of your spending
+              {item.percentage.toFixed(1)}% of my spending
             </p>
           </div>
         ))}

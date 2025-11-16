@@ -85,7 +85,7 @@ export const MoneyOutList = () => {
 
   const handleExport = () => {
     toast.info("Export to Google Sheets coming soon", {
-      description: "Your expenses will be formatted and ready to export",
+      description: "My expenses will be formatted and ready to export",
     });
   };
 
@@ -124,7 +124,7 @@ export const MoneyOutList = () => {
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle>Your expense history</CardTitle>
+            <CardTitle>My expense history</CardTitle>
             <div className="flex gap-2">
               <Button onClick={handleExport} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
@@ -143,7 +143,7 @@ export const MoneyOutList = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search your expenses..."
+                placeholder="Search my expenses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -181,7 +181,7 @@ export const MoneyOutList = () => {
                 <p className="text-muted-foreground mb-2">No expenses here yet</p>
                 <p className="text-sm text-muted-foreground">
                   {searchTerm || categoryFilter !== "all"
-                    ? "Try adjusting your filters"
+                    ? "Try adjusting my filters"
                     : "Start by importing from Google Drive or adding manually"}
                 </p>
               </div>

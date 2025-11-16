@@ -29,7 +29,7 @@ export const AccountSettings = () => {
 
   const handleDeleteAccount = async () => {
     toast.info("Account deletion coming soon", {
-      description: "For now, reach out to support if you need to delete your account"
+      description: "For now, reach out to support if I need to delete my account"
     });
   };
 
@@ -59,7 +59,7 @@ export const AccountSettings = () => {
           <div className="space-y-1">
             <h3 className="font-medium text-destructive">Delete account</h3>
             <p className="text-sm text-muted-foreground">
-              Permanently remove your account and all your data
+              Permanently remove my account and all my data
             </p>
           </div>
           
@@ -74,12 +74,12 @@ export const AccountSettings = () => {
               <AlertDialogHeader>
                 <AlertDialogTitle>This can't be undone</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Deleting your account will permanently remove all your data, including:
+                  Deleting my account will permanently remove all my data, including:
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     <li>All Money In and Money Out transactions</li>
                     <li>Bill reminders and recurring bills</li>
                     <li>Reports and insights</li>
-                    <li>Your profile and settings</li>
+                    <li>My profile and settings</li>
                   </ul>
                 </AlertDialogDescription>
               </AlertDialogHeader>

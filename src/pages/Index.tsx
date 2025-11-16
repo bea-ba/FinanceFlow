@@ -57,7 +57,7 @@ const Index = () => {
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-success/5 p-8 border border-primary/20">
           <div className="relative z-10">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Your financial flow
+              My financial flow
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl">
               Everything's looking smooth. Keep the momentum going.

@@ -5,14 +5,14 @@ import { toast } from "sonner";
 
 export const ImportMoneyOut = () => {
   const handleDriveImport = () => {
-    toast.info("Let's connect to your Google Drive", {
+    toast.info("Let's connect to my Google Drive", {
       description: "We'll scan for bills and extract everything automatically",
     });
   };
 
   const handleEmailImport = () => {
-    toast.info("Let's connect to your email", {
-      description: "We'll find bill notifications and extract the details for you",
+    toast.info("Let's connect to my email", {
+      description: "We'll find bill notifications and extract the details for me",
     });
   };
 
@@ -39,7 +39,7 @@ export const ImportMoneyOut = () => {
           <div className="flex-1">
             <h3 className="font-semibold mb-1">Connect Google Drive</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Link your Google Drive and we'll automatically find your bills, 
+              Link my Google Drive and we'll automatically find my bills, 
               read all the details, and keep everything organized. Zero manual work!
             </p>
             <Button onClick={handleDriveImport} className="w-full sm:w-auto">
@@ -55,7 +55,7 @@ export const ImportMoneyOut = () => {
             <Mail className="h-6 w-6 text-secondary" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold mb-1">Connect your email</h3>
+            <h3 className="font-semibold mb-1">Connect my email</h3>
             <p className="text-sm text-muted-foreground mb-3">
               We'll scan for bill notifications, payment confirmations, 
               and recurring charges. Due dates and amounts detected automatically.
@@ -92,7 +92,7 @@ export const ImportMoneyOut = () => {
             What happens automatically
           </h4>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Finds bills across all your sources</li>
+            <li>• Finds bills across all my sources</li>
             <li>• Reads amounts, dates, and vendors</li>
             <li>• Catches duplicates and unusual charges</li>
             <li>• Shows you everything before it's added</li>
