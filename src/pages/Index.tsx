@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { SummaryCards } from "@/components/dashboard/SummaryCards";
+import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
+import { SpendingChart } from "@/components/dashboard/SpendingChart";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -34,11 +36,6 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast.success("Signed out successfully");
-  };
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -54,34 +51,16 @@ const Index = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="text-center max-w-md w-full">
-        <h1 className="mb-2 text-5xl font-extrabold text-foreground">
-          Finance<span className="text-primary">Flow</span>
-        </h1>
-        <p className="text-xl text-muted-foreground mb-8">
-          Welcome back, {session.user.user_metadata?.full_name || session.user.email}!
-        </p>
-        
-        <div className="bg-card rounded-2xl shadow-lg p-8 mb-6">
-          <p className="text-lg text-muted-foreground mb-4">
-            🎉 Authentication is working! You're successfully logged in.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            The dashboard and other features will be added in the next phases.
-          </p>
-        </div>
-
-        <Button
-          onClick={handleSignOut}
-          variant="outline"
-          className="w-full h-12"
-        >
-          <LogOut className="mr-2 h-5 w-5" />
-          Sign Out
-        </Button>
+    <DashboardLayout>
+      <SummaryCards />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <RecentTransactions />
+        <SpendingChart />
       </div>
-    </div>
+
+      <QuickActions />
+    </DashboardLayout>
   );
 };
 
