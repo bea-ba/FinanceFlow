@@ -60,9 +60,10 @@ import {
   Zap,
   Link2,
   Repeat,
+  RotateCw,
   Camera,
   ArrowUpDown,
-  
+
   type LucideIcon,
 } from "lucide-react";
 
@@ -111,6 +112,7 @@ export const AppIcons = {
     download: Download,
     export: Download,
     upload: Upload,
+    refresh: RotateCw,
   },
   
   // Files
