@@ -12,6 +12,17 @@ export const MoneyOutSummary = () => {
 
   useEffect(() => {
     fetchExpenseTotals();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchExpenseTotals();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchExpenseTotals = async () => {

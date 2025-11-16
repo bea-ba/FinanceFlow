@@ -17,6 +17,17 @@ export const ExpenseSourceBreakdown = () => {
 
   useEffect(() => {
     fetchExpenseSources();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchExpenseSources();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchExpenseSources = async () => {

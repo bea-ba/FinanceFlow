@@ -12,6 +12,17 @@ export const IncomeSummary = () => {
 
   useEffect(() => {
     fetchIncomeTotals();
+
+    // Listen for transaction-added event to refresh data
+    const handleTransactionAdded = () => {
+      fetchIncomeTotals();
+    };
+
+    window.addEventListener('transaction-added', handleTransactionAdded);
+
+    return () => {
+      window.removeEventListener('transaction-added', handleTransactionAdded);
+    };
   }, []);
 
   const fetchIncomeTotals = async () => {
