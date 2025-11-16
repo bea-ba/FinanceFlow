@@ -28,7 +28,7 @@ export function parseLocalDate(dateString: string): Date {
 export function formatCurrency(value: number, decimals: number = 2): string {
   // Guard against undefined/null/NaN values
   if (value === undefined || value === null || isNaN(value)) {
-    return (0).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, '.').replace('.', ',');
+    return (0).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, '.').replace(/\./g, ',');
   }
 
   // Format with specified decimals
