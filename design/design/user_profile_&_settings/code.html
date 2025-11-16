@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile &amp; Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#4A90E2",
+              "background-light": "#F0F2F5",
+              "background-dark": "#102216",
+              "text-primary-light": "#333333",
+              "text-secondary-light": "#888888",
+              "text-primary-dark": "#E0E0E0",
+              "text-secondary-dark": "#A0A0A0",
+              "card-light": "#FFFFFF",
+              "card-dark": "#1A2C20",
+              "border-light": "#E5E7EB",
+              "border-dark": "#374151",
+              "success": "#2ECC71",
+              "danger": "#E74C3C"
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center bg-card-light dark:bg-card-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+<div class="text-text-primary-light dark:text-text-primary-dark flex size-10 items-center justify-center">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</div>
+<h2 class="text-text-primary-light dark:text-text-primary-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Profile &amp; Settings</h2>
+<div class="flex size-10 shrink-0 items-center"></div>
+</div>
+<main class="flex flex-col gap-6 p-4 pb-8">
+<!-- Profile Header -->
+<div class="flex p-4 @container bg-card-light dark:bg-card-dark rounded-xl">
+<div class="flex w-full flex-col gap-4 items-center">
+<div class="flex gap-4 flex-col items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-28 w-28" data-alt="User's profile picture, a person smiling." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFXQCYJqYyiVdC5XisUnGMpHjkAfQT-Z_v_qhHpAQyC1d9EF-Oak39w2iS9xY-YaGVHY0xF5_29G5dWaJuxZ1kzqCwe_lwlUhCq5sDe4wOBuOdjCB_afnXiD782v9JHNK4UDgrtAQc05VXBhvjmCObT9axy2AqB8gSGtLfMVUvHxb1r1a3c76fBG_w4MFnd33ly7Y4G9eRuKE-bh5X8ILRDw14208OzA2Y9qqEwqNKONVjWPMS1cFeVwEqRXKgNU0MSYFBq7fOsg");'></div>
+<button class="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-md">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+<div class="flex flex-col items-center justify-center">
+<p class="text-text-primary-light dark:text-text-primary-dark text-xl font-bold leading-tight tracking-[-0.015em] text-center">Alex Doe</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-base font-normal leading-normal text-center">alex.doe@email.com</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Account Settings Section -->
+<div class="flex flex-col gap-2">
+<h3 class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-bold uppercase tracking-wider px-2 pb-1 pt-2">ACCOUNT</h3>
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-light dark:bg-card-dark">
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal flex-1 truncate">Change Password</p>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">workspace_premium</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal line-clamp-1">Subscription Plan</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal line-clamp-2">Premium</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Connected Services Section -->
+<div class="flex flex-col gap-2">
+<h3 class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-bold uppercase tracking-wider px-2 pb-1 pt-2">CONNECTED SERVICES</h3>
+<div class="flex flex-col gap-4 rounded-xl bg-card-light dark:bg-card-dark p-4">
+<div class="flex items-center gap-4">
+<img class="h-10 w-10" data-alt="Google Drive Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5ZDbvACg23O9cUZB0SkDYSfjFNYRq8hmArQd3oQwSd694ZLxb8TBUhUKJP1Cwe-TcSpxnx8c90eJwxPVRCshc6dUByMBU1C18aoYkqwz2UcNLtKOIAm_3adeaEkYhOiVn_VAH8Zy7YGOOO4xE1FXEnrEpRdkczvbxmVBlB-IluGKNUpI_FzPAolrgK0eYNNCcQVT6Wk8ek8r2I7z7LAn2ujlWG86fuFDv_zvBTzRBdaH7AZ_9qlZ7JYHxsPxfuEVA2qIwxo43ow"/>
+<div class="flex-1">
+<p class="text-text-primary-light dark:text-text-primary-dark font-semibold">Google Drive</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm">receipts@alexdoe.com</p>
+</div>
+<span class="text-success text-sm font-bold">Connected</span>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-danger/10 text-danger text-sm font-bold leading-normal tracking-[0.015em] w-full">
+<span class="truncate">Disconnect</span>
+</button>
+</div>
+</div>
+<!-- App Preferences Section -->
+<div class="flex flex-col gap-2">
+<h3 class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-bold uppercase tracking-wider px-2 pb-1 pt-2">PREFERENCES</h3>
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-light dark:bg-card-dark">
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal flex-1 truncate">Push Notifications</p>
+</div>
+<div class="shrink-0">
+<div class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full">
+<input checked="" class="peer sr-only" id="notifications-toggle" type="checkbox"/>
+<div class="h-full w-full rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">dark_mode</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal line-clamp-1">Theme</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal line-clamp-2">System Default</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">attach_money</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal line-clamp-1">Currency</p>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-normal leading-normal line-clamp-2">USD ($)</p>
+</div>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions Section -->
+<div class="flex flex-col gap-2">
+<h3 class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-bold uppercase tracking-wider px-2 pb-1 pt-2">MORE</h3>
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-light dark:bg-card-dark">
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">help</span>
+</div>
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal flex-1 truncate">Help &amp; Support</p>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-2 justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-10">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+<p class="text-text-primary-light dark:text-text-primary-dark text-base font-medium leading-normal flex-1 truncate">Legal</p>
+</div>
+<div class="shrink-0">
+<div class="text-text-secondary-light dark:text-text-secondary-dark flex size-7 items-center justify-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] w-full">
+<span class="truncate">Save Changes</span>
+</button>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-transparent text-danger text-base font-bold leading-normal tracking-[0.015em] w-full">
+<span class="truncate">Log Out</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

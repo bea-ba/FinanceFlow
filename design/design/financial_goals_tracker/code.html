@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financial Goals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec5b",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102216",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden text-[#111813] dark:text-white">
+<!-- Top App Bar -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="flex size-12 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-[#111813] dark:text-white">arrow_back</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center text-[#111813] dark:text-white">Your Goals</h2>
+<div class="flex size-12 shrink-0 items-center justify-center">
+<!-- Placeholder for another action icon if needed -->
+</div>
+</header>
+<main class="flex-1 px-4">
+<!-- Headline Text -->
+<h1 class="text-[#111813] dark:text-white tracking-tight text-[32px] font-bold leading-tight text-left pb-1 pt-6">Future You</h1>
+<!-- Body Text -->
+<p class="text-[#111813]/80 dark:text-white/80 text-base font-normal leading-normal pb-6">Great progress on your goals! You're on your way to achieving them.</p>
+<!-- Section Header for Active Goals -->
+<h3 class="text-[#111813] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3 pt-4">Active Goals</h3>
+<!-- Goal Cards List -->
+<div class="space-y-3">
+<!-- List Item 1: House Down Payment -->
+<div class="flex items-center gap-4 bg-white dark:bg-background-dark/50 p-4 min-h-[72px] rounded-xl border border-black/5 dark:border-white/10">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-12">
+<span class="material-symbols-outlined text-primary text-3xl">home</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-[#111813] dark:text-white text-base font-medium leading-normal line-clamp-1">Down Payment for House</p>
+<p class="text-[#111813]/60 dark:text-white/60 text-sm font-normal leading-normal line-clamp-2">$15,000 / $50,000</p>
+</div>
+<div class="shrink-0 flex flex-col items-end gap-1">
+<p class="text-[#111813] dark:text-white text-sm font-medium leading-normal">30%</p>
+<div class="w-24 overflow-hidden rounded-full bg-[#dbe6df] dark:bg-white/10 h-2">
+<div class="h-full rounded-full bg-primary" style="width: 30%;"></div>
+</div>
+</div>
+</div>
+<!-- List Item 2: Dream Vacation -->
+<div class="flex items-center gap-4 bg-white dark:bg-background-dark/50 p-4 min-h-[72px] rounded-xl border border-black/5 dark:border-white/10">
+<div class="flex items-center justify-center rounded-lg bg-[#FFDDA2]/40 shrink-0 size-12">
+<span class="material-symbols-outlined text-[#FFA800] text-3xl">flight_takeoff</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-[#111813] dark:text-white text-base font-medium leading-normal line-clamp-1">Dream Vacation to Italy</p>
+<p class="text-[#111813]/60 dark:text-white/60 text-sm font-normal leading-normal line-clamp-2">$3,500 / $8,000</p>
+</div>
+<div class="shrink-0 flex flex-col items-end gap-1">
+<p class="text-[#111813] dark:text-white text-sm font-medium leading-normal">44%</p>
+<div class="w-24 overflow-hidden rounded-full bg-[#dbe6df] dark:bg-white/10 h-2">
+<div class="h-full rounded-full bg-[#FFA800]" style="width: 43.75%;"></div>
+</div>
+</div>
+</div>
+<!-- List Item 3: New Car -->
+<div class="flex items-center gap-4 bg-white dark:bg-background-dark/50 p-4 min-h-[72px] rounded-xl border border-black/5 dark:border-white/10">
+<div class="flex items-center justify-center rounded-lg bg-[#A2C2FF]/40 shrink-0 size-12">
+<span class="material-symbols-outlined text-[#4285F4] text-3xl">directions_car</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-[#111813] dark:text-white text-base font-medium leading-normal line-clamp-1">Next Car Fund</p>
+<p class="text-[#111813]/60 dark:text-white/60 text-sm font-normal leading-normal line-clamp-2">$18,250 / $25,000</p>
+</div>
+<div class="shrink-0 flex flex-col items-end gap-1">
+<p class="text-[#111813] dark:text-white text-sm font-medium leading-normal">73%</p>
+<div class="w-24 overflow-hidden rounded-full bg-[#dbe6df] dark:bg-white/10 h-2">
+<div class="h-full rounded-full bg-[#4285F4]" style="width: 73%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section Header for Completed Goals -->
+<h3 class="text-[#111813] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3 pt-8">Completed Goals</h3>
+<!-- Completed Goals List -->
+<div class="space-y-3 pb-28">
+<!-- Completed Goal 1 -->
+<div class="flex items-center gap-4 bg-white dark:bg-background-dark/50 p-4 min-h-[72px] rounded-xl border border-black/5 dark:border-white/10 opacity-70">
+<div class="flex items-center justify-center rounded-lg bg-[#C2A2FF]/40 shrink-0 size-12">
+<span class="material-symbols-outlined text-[#8E44AD] text-3xl">school</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<p class="text-[#111813] dark:text-white text-base font-medium leading-normal line-clamp-1">Pay Off Student Loan</p>
+<p class="text-[#111813]/60 dark:text-white/60 text-sm font-normal leading-normal line-clamp-2">Goal Achieved!</p>
+</div>
+<div class="shrink-0">
+<div class="flex items-center justify-center size-8 bg-primary rounded-full">
+<span class="material-symbols-outlined text-black text-xl">check</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-6 right-6 z-20">
+<button class="flex items-center justify-center w-16 h-16 bg-primary rounded-full shadow-lg text-black hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-4xl">add</span>
+</button>
+</div>
+</div>
+</body></html>
