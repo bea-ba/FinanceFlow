@@ -1,0 +1,133 @@
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface AddIncomeModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess: () => void;
+}
+
+export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModalProps) => {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    category: "salary",
+    amount: "",
+    description: "",
+    transaction_date: new Date().toISOString().split('T')[0]
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please sign in to add income");
+        return;
+      }
+
+      const { error } = await supabase.from('transactions').insert([{
+        user_id: session.user.id,
+        type: 'income' as const,
+        category: formData.category as "salary" | "freelance" | "gift" | "other_income",
+        amount: parseFloat(formData.amount),
+        description: formData.description,
+        transaction_date: formData.transaction_date
+      }]);
+
+      if (error) throw error;
+
+      toast.success("Income added successfully");
+      onOpenChange(false);
+      onSuccess();
+      setFormData({
+        category: "salary",
+        amount: "",
+        description: "",
+        transaction_date: new Date().toISOString().split('T')[0]
+      });
+    } catch (error) {
+      console.error('Error adding income:', error);
+      toast.error("Failed to add income");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Manual Income</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="category">Income Source</Label>
+            <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="salary">Salary</SelectItem>
+                <SelectItem value="freelance">Freelance</SelectItem>
+                <SelectItem value="gift">Gift</SelectItem>
+                <SelectItem value="other_income">Other Income</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="amount">Amount ($)</Label>
+            <Input
+              id="amount"
+              type="number"
+              step="0.01"
+              required
+              value={formData.amount}
+              onChange={(e) => setFormData({...formData, amount: e.target.value})}
+              placeholder="0.00"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              required
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              placeholder="e.g., Monthly salary, Project payment"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="date">Date</Label>
+            <Input
+              id="date"
+              type="date"
+              required
+              value={formData.transaction_date}
+              onChange={(e) => setFormData({...formData, transaction_date: e.target.value})}
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading} className="flex-1">
+              {loading ? "Adding..." : "Add Income"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
