@@ -106,7 +106,7 @@ export const IncomeList = () => {
       case 'freelance':
         return AppIcons.financial.wallet;
       default:
-        return AppIcons.financial.dollarSign;
+        return AppIcons.financial.money;
     }
   };
 

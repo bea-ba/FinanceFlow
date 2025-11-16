@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { LoginForm } from "./LoginForm";
@@ -13,6 +13,11 @@ interface AuthFormProps {
 
 export const AuthForm = ({ initialTab = "login", onBack }: AuthFormProps) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup" | "forgot">(initialTab);
+
+  // Update active tab when initialTab prop changes
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   return (
     <div className="w-full max-w-md">
