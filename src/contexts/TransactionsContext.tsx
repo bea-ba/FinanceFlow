@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { parseLocalDate } from "@/lib/utils";
@@ -101,8 +101,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all transactions
-  const refreshTransactions = async () => {
+  // Fetch all transactions (memoized to prevent unnecessary re-renders)
+  const refreshTransactions = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -126,7 +126,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // No dependencies - function is stable
 
   // Initial fetch
   useEffect(() => {
@@ -373,8 +373,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     };
   }, [transactions]);
 
-  // Add transaction (Optimistic UI with Balance Change)
-  const addTransaction = async (transaction: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">) => {
+  // Add transaction (Optimistic UI with Balance Change) - memoized
+  const addTransaction = useCallback(async (transaction: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error("Please sign in");
@@ -421,10 +421,10 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to add transaction");
       throw error;
     }
-  };
+  }, [calculatedData.balance, refreshTransactions]);
 
-  // Update transaction (Optimistic UI with Balance Change)
-  const updateTransaction = async (id: string, transaction: Partial<Omit<Transaction, "id" | "user_id">>) => {
+  // Update transaction (Optimistic UI with Balance Change) - memoized
+  const updateTransaction = useCallback(async (id: string, transaction: Partial<Omit<Transaction, "id" | "user_id">>) => {
     // Store original for rollback
     const originalTransaction = transactions.find(t => t.id === id);
     if (!originalTransaction) return;
@@ -470,10 +470,10 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to update transaction");
       throw error;
     }
-  };
+  }, [transactions, calculatedData.balance, refreshTransactions]);
 
-  // Delete transaction (Optimistic UI with Undo)
-  const deleteTransaction = async (id: string) => {
+  // Delete transaction (Optimistic UI with Undo) - memoized
+  const deleteTransaction = useCallback(async (id: string) => {
     // Store deleted transaction for rollback and undo
     const deletedTransaction = transactions.find(t => t.id === id);
     if (!deletedTransaction) return;
@@ -544,17 +544,21 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to delete transaction");
       throw error;
     }
-  };
+  }, [transactions, calculatedData.balance, refreshTransactions]);
 
-  const value: TransactionsContextValue = {
-    transactions,
-    loading,
-    ...calculatedData,
-    refreshTransactions,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction,
-  };
+  // Memoize the context value to prevent unnecessary re-renders
+  const value: TransactionsContextValue = useMemo(
+    () => ({
+      transactions,
+      loading,
+      ...calculatedData,
+      refreshTransactions,
+      addTransaction,
+      updateTransaction,
+      deleteTransaction,
+    }),
+    [transactions, loading, calculatedData, refreshTransactions, addTransaction, updateTransaction, deleteTransaction]
+  );
 
   return (
     <TransactionsContext.Provider value={value}>
