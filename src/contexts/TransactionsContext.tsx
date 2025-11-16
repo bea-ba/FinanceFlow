@@ -124,6 +124,43 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     refreshTransactions();
   }, []);
 
+  // Realtime subscription for live updates
+  useEffect(() => {
+    let subscription: any;
+
+    const setupRealtimeSubscription = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Subscribe to changes in transactions table for current user
+      subscription = supabase
+        .channel('transactions-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+            schema: 'public',
+            table: 'transactions',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            // Refresh transactions when any change occurs
+            refreshTransactions();
+          }
+        )
+        .subscribe();
+    };
+
+    setupRealtimeSubscription();
+
+    // Cleanup subscription on unmount
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
+    };
+  }, []);
+
   // Calculated data using useMemo for performance
   const calculatedData = useMemo(() => {
     const now = new Date();
