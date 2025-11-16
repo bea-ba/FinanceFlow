@@ -327,15 +327,28 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     };
   }, [transactions]);
 
-  // Add transaction
+  // Add transaction (Optimistic UI)
   const addTransaction = async (transaction: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error("Please sign in");
-        return;
-      }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please sign in");
+      return;
+    }
 
+    // Optimistic update: create temporary transaction
+    const tempId = `temp-${Date.now()}`;
+    const optimisticTransaction: Transaction = {
+      id: tempId,
+      user_id: user.id,
+      ...transaction,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    // Immediately update UI
+    setTransactions(prev => [optimisticTransaction, ...prev]);
+
+    try {
       const { error } = await supabase.from("transactions").insert([{
         user_id: user.id,
         ...transaction,
@@ -344,16 +357,28 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       if (error) throw error;
 
       toast.success(`${transaction.type === "income" ? "Income" : "Expense"} added successfully`);
+      // Refresh to get real ID and server data
       await refreshTransactions();
     } catch (error) {
+      // Rollback optimistic update
+      setTransactions(prev => prev.filter(t => t.id !== tempId));
       console.error("Error adding transaction:", error);
       toast.error("Failed to add transaction");
       throw error;
     }
   };
 
-  // Update transaction
+  // Update transaction (Optimistic UI)
   const updateTransaction = async (id: string, transaction: Partial<Omit<Transaction, "id" | "user_id">>) => {
+    // Store original for rollback
+    const originalTransaction = transactions.find(t => t.id === id);
+    if (!originalTransaction) return;
+
+    // Optimistic update: immediately update in state
+    setTransactions(prev => prev.map(t =>
+      t.id === id ? { ...t, ...transaction, updated_at: new Date().toISOString() } : t
+    ));
+
     try {
       const { error } = await supabase
         .from("transactions")
@@ -362,18 +387,28 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       if (error) throw error;
 
-      const transactionType = transactions.find(t => t.id === id)?.type;
-      toast.success(`${transactionType === "income" ? "Income" : "Expense"} updated successfully`);
+      toast.success(`${originalTransaction.type === "income" ? "Income" : "Expense"} updated successfully`);
       await refreshTransactions();
     } catch (error) {
+      // Rollback optimistic update
+      setTransactions(prev => prev.map(t =>
+        t.id === id ? originalTransaction : t
+      ));
       console.error("Error updating transaction:", error);
       toast.error("Failed to update transaction");
       throw error;
     }
   };
 
-  // Delete transaction
+  // Delete transaction (Optimistic UI)
   const deleteTransaction = async (id: string) => {
+    // Store deleted transaction for rollback
+    const deletedTransaction = transactions.find(t => t.id === id);
+    if (!deletedTransaction) return;
+
+    // Optimistic update: immediately remove from state
+    setTransactions(prev => prev.filter(t => t.id !== id));
+
     try {
       const { error } = await supabase
         .from("transactions")
@@ -382,10 +417,13 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
       if (error) throw error;
 
-      const transactionType = transactions.find(t => t.id === id)?.type;
-      toast.success(`${transactionType === "income" ? "Income" : "Expense"} deleted`);
+      toast.success(`${deletedTransaction.type === "income" ? "Income" : "Expense"} deleted`);
       await refreshTransactions();
     } catch (error) {
+      // Rollback optimistic update
+      setTransactions(prev => [...prev, deletedTransaction].sort(
+        (a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+      ));
       console.error("Error deleting transaction:", error);
       toast.error("Failed to delete transaction");
       throw error;
