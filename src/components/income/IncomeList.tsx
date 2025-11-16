@@ -195,6 +195,34 @@ export const IncomeList = () => {
         <CardContent className="space-y-4">
           {/* Filters */}
           <div className="flex flex-col gap-3">
+            {hasActiveFilters && (
+              <div className="flex items-center gap-2 text-xs bg-primary/5 px-3 py-2 rounded-lg border border-primary/20">
+                <span className="text-primary font-medium">
+                  🔍 {[
+                    searchTerm && 'Search',
+                    categoryFilter !== 'all' && 'Category',
+                    minAmount && 'Min amount',
+                    maxAmount && 'Max amount'
+                  ].filter(Boolean).length} {[
+                    searchTerm && 'Search',
+                    categoryFilter !== 'all' && 'Category',
+                    minAmount && 'Min amount',
+                    maxAmount && 'Max amount'
+                  ].filter(Boolean).length === 1 ? 'filter' : 'filters'} active
+                </span>
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setCategoryFilter("all");
+                    setMinAmount("");
+                    setMaxAmount("");
+                  }}
+                  className="ml-auto text-primary hover:text-primary/80 font-medium"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
