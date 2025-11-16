@@ -108,13 +108,17 @@ export const SpendingChart = () => {
   }
 
   return (
-    <Card className="p-4 border-border">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Monthly Spending</h3>
+    <Card className="p-6 border-border">
+      <h3 className="text-xl font-semibold text-foreground mb-6">Where your money goes</h3>
       
-      <div className="space-y-4">
-        {spending.map((item) => (
-          <div key={item.category}>
-            <div className="flex items-center justify-between mb-2">
+      <div className="space-y-5">
+        {spending.map((item, index) => (
+          <div 
+            key={item.category}
+            className="group"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <div className="flex items-center justify-between mb-2.5">
               <span className="text-sm font-medium text-foreground capitalize">
                 {categoryLabels[item.category] || item.category.replace(/_/g, " ")}
               </span>
@@ -122,16 +126,18 @@ export const SpendingChart = () => {
                 ${item.amount.toFixed(2)}
               </span>
             </div>
-            <Progress 
-              value={item.percentage} 
-              className="h-2"
-              style={{
-                // @ts-ignore
-                "--progress-background": item.color
-              }}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {item.percentage.toFixed(1)}% of total expenses
+            <div className="relative">
+              <Progress 
+                value={item.percentage} 
+                className="h-2.5"
+                style={{
+                  // @ts-ignore
+                  "--progress-background": item.color
+                }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {item.percentage.toFixed(1)}% of your spending
             </p>
           </div>
         ))}
