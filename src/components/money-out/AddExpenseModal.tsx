@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import { suggestCategory, getCategoryLabel } from "@/lib/categoryHints";
 
 interface Transaction {
   id: string;
@@ -38,6 +39,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
   const [loading, setLoading] = useState(false);
   const [showFutureDateConfirm, setShowFutureDateConfirm] = useState(false);
   const [showLargeAmountConfirm, setShowLargeAmountConfirm] = useState(false);
+  const [hintDismissed, setHintDismissed] = useState(false);
   const [formData, setFormData] = useState({
     category: "other_expense",
     amount: "",
@@ -65,6 +67,19 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
       });
     }
   }, [editTransaction, open]);
+
+  // Smart category suggestion based on description
+  const suggestedCategory = useMemo(() => {
+    if (!formData.description || hintDismissed || editTransaction) return null;
+    const suggestion = suggestCategory(formData.description, 'expense');
+    // Only suggest if different from current category
+    return suggestion && suggestion !== formData.category ? suggestion : null;
+  }, [formData.description, formData.category, hintDismissed, editTransaction]);
+
+  // Reset hint dismissed when description changes significantly
+  useEffect(() => {
+    setHintDismissed(false);
+  }, [formData.description]);
 
   const saveExpense = async () => {
     setLoading(true);
@@ -211,6 +226,29 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess, editTransaction
               />
               {parseFloat(formData.amount) > 500 && !formData.description && (
                 <p className="text-xs text-amber-600">💡 Tip: Adding a description helps track large expenses</p>
+              )}
+              {suggestedCategory && (
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground">💡 Looks like</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData({...formData, category: suggestedCategory});
+                      setHintDismissed(true);
+                    }}
+                    className="px-2 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {getCategoryLabel(suggestedCategory, 'expense')}
+                  </button>
+                  <span className="text-muted-foreground">?</span>
+                  <button
+                    type="button"
+                    onClick={() => setHintDismissed(true)}
+                    className="ml-auto text-muted-foreground hover:text-foreground"
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
 
