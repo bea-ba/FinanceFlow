@@ -54,6 +54,13 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Shadows with primary color glow */
+    --shadow-soft: 0 2px 8px -2px hsl(210 14% 12% / 0.08);
+    --shadow-card: 0 4px 16px -4px hsl(210 14% 12% / 0.1);
+    --shadow-glow: 0 4px 20px -4px hsl(var(--primary) / 0.15);
+    --shadow-elevated: 0 8px 24px -8px hsl(210 14% 12% / 0.12), 0 0 0 1px hsl(var(--border));
+
+
     /* Chart Colors - Vibrant palette for data visualization */
     --chart-1: 211 100% 50%; /* Blue */
     --chart-2: 142 76% 36%; /* Green */
@@ -111,6 +118,13 @@ All colors MUST be HSL.
     --border: 210 12% 20%;
     --input: 210 12% 16%;
     --ring: 142 89% 50%;
+
+    /* Shadows for dark mode */
+    --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+    --shadow-card: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
+    --shadow-glow: 0 4px 20px -4px hsl(var(--primary) / 0.25);
+    --shadow-elevated: 0 8px 24px -8px hsl(0 0% 0% / 0.5), 0 0 0 1px hsl(var(--border));
+
 
     /* Chart Colors - Same vibrant palette for dark mode */
     --chart-1: 211 100% 50%; /* Blue */

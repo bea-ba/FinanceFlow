@@ -91,7 +91,7 @@ export const SummaryCards = () => {
         return (
           <Card 
             key={card.title} 
-            className="group relative overflow-hidden p-3 sm:p-6 border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden p-3 sm:p-6 border-border hover:[box-shadow:var(--shadow-glow)] transition-all duration-300 hover:-translate-y-1"
           >
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-2 sm:mb-4">
