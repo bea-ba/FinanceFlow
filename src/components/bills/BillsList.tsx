@@ -12,7 +12,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Calendar, MoreVertical, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Plus, Search, Calendar, MoreVertical, Trash2, Loader2 } from "lucide-react";
 import { AddBillModal } from "./AddBillModal";
 import { BillsEmptyState } from "@/components/shared/empty-states";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -39,6 +49,8 @@ export const BillsList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -93,17 +105,30 @@ export const BillsList = () => {
     setFilteredBills(filtered);
   };
 
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('bills')
-      .update({ is_active: false })
-      .eq('id', id);
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
+  };
 
-    if (error) {
-      toast.error("Failed to delete bill");
-    } else {
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('bills')
+        .update({ is_active: false })
+        .eq('id', deleteId);
+
+      if (error) throw error;
+
       toast.success("Bill deleted");
       fetchBills();
+    } catch (error) {
+      toast.error("Failed to delete bill");
+      console.error(error);
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
     }
   };
 
@@ -315,6 +340,30 @@ export const BillsList = () => {
         onOpenChange={setShowAddModal}
         onSuccess={fetchBills}
       />
+
+      <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Bill</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this bill? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {deleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
