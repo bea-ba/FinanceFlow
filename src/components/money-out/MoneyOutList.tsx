@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, startOfDay, endOfDay } from "date-fns";
 import { AppIcons } from "@/config/icons";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import { getCategoryIcon, getCategoryColor } from "@/config/categoryIcons";
 import Fuse from "fuse.js";
 
 interface Expense {
@@ -240,24 +241,6 @@ export const MoneyOutList = () => {
     setIsDuplicateMode(false);
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'groceries':
-        return AppIcons.financial.balance;
-      case 'dining':
-        return AppIcons.financial.money;
-      case 'transport':
-        return AppIcons.financial.creditCard;
-      case 'utilities':
-        return AppIcons.financial.balance;
-      case 'entertainment':
-        return AppIcons.analytics.activity;
-      case 'shopping':
-        return AppIcons.financial.creditCard;
-      default:
-        return AppIcons.financial.expense;
-    }
-  };
 
   const formatCategoryName = (category: string) => {
     const names: Record<string, string> = {
@@ -562,14 +545,16 @@ export const MoneyOutList = () => {
             <div className="space-y-3">
               {filteredExpenses.map((expense) => {
                 const Icon = getCategoryIcon(expense.category);
+                const colorClass = getCategoryColor(expense.category);
+
                 return (
                   <div
                     key={expense.id}
                     className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:shadow-card transition-all"
                   >
                     {/* Icon */}
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-coral-tint flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-warning" />
+                    <div className={`flex-shrink-0 p-3 rounded-xl ${colorClass}`}>
+                      <Icon className="h-5 w-5" />
                     </div>
 
                     {/* Details */}

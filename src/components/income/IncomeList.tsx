@@ -28,6 +28,7 @@ import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, st
 import { toast } from "sonner";
 import { AppIcons } from "@/config/icons";
 import { useTransactions } from "@/contexts/TransactionsContext";
+import { getCategoryIcon, getCategoryColor } from "@/config/categoryIcons";
 import Fuse from "fuse.js";
 
 interface Transaction {
@@ -240,16 +241,6 @@ export const IncomeList = () => {
     setIsDuplicateMode(false);
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'salary':
-        return AppIcons.financial.income;
-      case 'freelance':
-        return AppIcons.financial.balance;
-      default:
-        return AppIcons.financial.money;
-    }
-  };
 
   // Show empty state if no transactions at all
   if (!loading && incomeTransactions.length === 0) {
@@ -534,14 +525,16 @@ export const IncomeList = () => {
             <div className="space-y-3">
               {filteredTransactions.map((transaction) => {
                 const Icon = getCategoryIcon(transaction.category);
+                const colorClass = getCategoryColor(transaction.category);
+
                 return (
                   <div
                     key={transaction.id}
                     className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:shadow-card transition-all"
                   >
                     {/* Icon */}
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-mint-tint flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-primary" />
+                    <div className={`flex-shrink-0 p-3 rounded-xl ${colorClass}`}>
+                      <Icon className="h-5 w-5" />
                     </div>
 
                     {/* Details */}

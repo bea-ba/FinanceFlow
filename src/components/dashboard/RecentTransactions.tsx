@@ -1,53 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import {
-  ShoppingBag,
-  Utensils,
-  Car,
-  Zap,
-  Film,
-  Heart,
-  GraduationCap,
-  Briefcase,
-  Gift,
-  MoreHorizontal,
-  ArrowDownCircle,
-  ArrowUpCircle
-} from "lucide-react";
+import { ArrowUpCircle, MoreHorizontal } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
-
-const categoryIcons: Record<string, any> = {
-  salary: Briefcase,
-  freelance: ArrowDownCircle,
-  gift: Gift,
-  other_income: MoreHorizontal,
-  groceries: ShoppingBag,
-  dining: Utensils,
-  transport: Car,
-  utilities: Zap,
-  entertainment: Film,
-  shopping: ShoppingBag,
-  health: Heart,
-  education: GraduationCap,
-  other_expense: MoreHorizontal,
-};
-
-const categoryColors: Record<string, string> = {
-  salary: "bg-primary/10 text-primary",
-  freelance: "bg-success/10 text-success",
-  gift: "bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400",
-  groceries: "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400",
-  dining: "bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400",
-  transport: "bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
-  utilities: "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400",
-  entertainment: "bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400",
-  shopping: "bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400",
-  health: "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400",
-  education: "bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400",
-  other_income: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
-  other_expense: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
-};
+import { categoryIcons, categoryColors } from "@/config/categoryIcons";
 
 export const RecentTransactions = () => {
   const navigate = useNavigate();

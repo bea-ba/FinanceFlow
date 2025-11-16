@@ -5,7 +5,7 @@ import {
   Minus,
   Sparkles,
   User,
-  
+
   // Financial
   Wallet,
   DollarSign,
@@ -15,14 +15,14 @@ import {
   TrendingUp,
   TrendingDown,
   CreditCard,
-  
+
   // Charts & Analytics
   PieChart,
   BarChart,
   Activity,
   Target,
   Brain,
-  
+
   // Actions
   Search,
   Pencil,
@@ -33,23 +33,34 @@ import {
   FileSpreadsheet,
   File,
   Settings,
-  
+
   // Communication
   Bell,
   Mail,
   MessageCircle,
-  
+
   // Time
   Calendar,
   CalendarRange,
   CalendarIcon,
-  
+
   // Status
   CheckCircle,
   CheckCircle2,
   AlertCircle,
   Lightbulb,
-  
+
+  // Category Icons
+  Briefcase,
+  Gift,
+  MoreHorizontal,
+  ShoppingBag,
+  Utensils,
+  Car,
+  Film,
+  Heart,
+  GraduationCap,
+
   // UI
   ArrowLeft,
   ArrowRight,
@@ -107,7 +118,26 @@ export const AppIcons = {
     ai: Sparkles,
     brain: Brain,
   },
-  
+
+  // Transaction Categories
+  categories: {
+    // Income categories
+    salary: Briefcase,
+    freelance: ArrowDownCircle,
+    gift: Gift,
+    otherIncome: MoreHorizontal,
+    // Expense categories
+    groceries: ShoppingBag,
+    dining: Utensils,
+    transport: Car,
+    utilities: Zap,
+    entertainment: Film,
+    shopping: ShoppingBag,
+    health: Heart,
+    education: GraduationCap,
+    otherExpense: MoreHorizontal,
+  },
+
   // Actions
   actions: {
     add: Plus,
