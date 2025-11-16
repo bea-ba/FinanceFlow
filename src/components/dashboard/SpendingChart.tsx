@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
+import { formatCurrency } from "@/lib/utils";
 
 interface CategorySpending {
   category: string;
@@ -135,7 +136,7 @@ export const SpendingChart = () => {
                 {categoryLabels[item.category] || item.category.replace(/_/g, " ")}
               </span>
               <span className="text-sm font-semibold text-foreground">
-                €{item.amount.toFixed(2)}
+                €{formatCurrency(item.amount)}
               </span>
             </div>
             <div className="relative">
@@ -149,7 +150,7 @@ export const SpendingChart = () => {
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1.5">
-              {item.percentage.toFixed(1)}% of my spending
+              {formatCurrency(item.percentage, 1)}% of my spending
             </p>
           </div>
         ))}

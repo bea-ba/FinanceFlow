@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { TrendingUp } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 export const IncomeVsExpenses = () => {
   // Mockup data - last 6 months
@@ -34,7 +35,7 @@ export const IncomeVsExpenses = () => {
                 borderRadius: '16px',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
               }}
-              formatter={(value: number) => `$€{value.toFixed(2)}`}
+              formatter={(value: number) => `€${formatCurrency(value)}`}
             />
             <Legend />
             <Bar dataKey="income" fill="hsl(var(--primary))" name="Income" radius={[8, 8, 0, 0]} />

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppIcons } from "@/config/icons";
+import { formatCurrency } from "@/lib/utils";
 
 export const IncomeSummary = () => {
   const [monthlyTotal, setMonthlyTotal] = useState(0);
@@ -70,7 +71,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                €{monthlyTotal.toFixed(2)}
+                €{formatCurrency(monthlyTotal)}
               </p>
             )}
           </CardContent>
@@ -90,7 +91,7 @@ export const IncomeSummary = () => {
               <div className="animate-pulse h-10 bg-muted rounded" />
             ) : (
               <p className="text-4xl font-bold text-primary">
-                €{yearlyTotal.toFixed(2)}
+                €{formatCurrency(yearlyTotal)}
               </p>
             )}
           </CardContent>

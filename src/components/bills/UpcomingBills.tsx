@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AppIcons } from "@/config/icons";
 import { format, differenceInDays, addDays } from "date-fns";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 interface UpcomingBill {
   id: string;
@@ -123,7 +124,7 @@ export const UpcomingBills = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <p className="text-lg font-bold">€{Number(bill.amount).toFixed(2)}</p>
+                <p className="text-lg font-bold">€{formatCurrency(Number(bill.amount))}</p>
                 <Button
                   size="sm"
                   variant="outline"

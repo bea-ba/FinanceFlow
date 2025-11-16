@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PieChart } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface IncomeSource {
   category: string;
@@ -80,7 +81,7 @@ export const IncomeSourceBreakdown = () => {
               <div className="flex justify-between items-center">
                 <span className="font-medium">{source.category}</span>
                 <span className="text-sm text-muted-foreground">
-                  €{source.total.toFixed(2)} ({source.percentage.toFixed(1)}%)
+                  €{formatCurrency(source.total)} ({formatCurrency(source.percentage, 1)}%)
                 </span>
               </div>
               <Progress value={source.percentage} className="h-2" />

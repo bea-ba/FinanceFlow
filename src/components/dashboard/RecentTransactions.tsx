@@ -16,7 +16,7 @@ import {
   ArrowDownCircle,
   ArrowUpCircle
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 
 interface Transaction {
   id: string;
@@ -162,7 +162,7 @@ export const RecentTransactions = () => {
                 "font-semibold text-base whitespace-nowrap",
                 isIncome ? "text-success" : "text-destructive"
               )}>
-                {isIncome ? "+" : "-"}€{Number(transaction.amount).toFixed(2)}
+                {isIncome ? "+" : "-"}€{formatCurrency(Number(transaction.amount))}
               </p>
             </div>
           );
