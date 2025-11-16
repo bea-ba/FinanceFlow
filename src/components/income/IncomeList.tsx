@@ -11,6 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus, Search, ArrowUpDown, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { AddIncomeModal } from "./AddIncomeModal";
 import { IncomeEmptyState } from "@/components/shared/empty-states";
@@ -35,6 +45,7 @@ export const IncomeList = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchIncomeTransactions();
@@ -97,11 +108,13 @@ export const IncomeList = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
-  const handleDelete = async (id: string) => {
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+
     const { error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', id);
+      .eq('id', deleteId);
 
     if (error) {
       toast.error("Failed to delete income");
@@ -111,6 +124,11 @@ export const IncomeList = () => {
       // Dispatch event to refresh all components
       window.dispatchEvent(new Event('transaction-added'));
     }
+    setDeleteId(null);
+  };
+
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -272,6 +290,23 @@ export const IncomeList = () => {
         onOpenChange={setShowAddModal}
         onSuccess={fetchIncomeTransactions}
       />
+
+      <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Income Transaction</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this income transaction? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

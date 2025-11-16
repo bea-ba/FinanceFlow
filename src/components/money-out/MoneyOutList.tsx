@@ -11,6 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus, Search, MoreVertical, Trash2, ArrowUpDown } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
 import { SpendingEmptyState } from "@/components/shared/empty-states";
@@ -35,6 +45,7 @@ export const MoneyOutList = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchExpenses();
@@ -100,11 +111,13 @@ export const MoneyOutList = () => {
     setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
-  const handleDelete = async (id: string) => {
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+
     const { error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', id);
+      .eq('id', deleteId);
 
     if (error) {
       toast.error("Failed to delete expense");
@@ -114,6 +127,11 @@ export const MoneyOutList = () => {
       // Dispatch event to refresh all components
       window.dispatchEvent(new Event('transaction-added'));
     }
+    setDeleteId(null);
+  };
+
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -303,6 +321,23 @@ export const MoneyOutList = () => {
         onOpenChange={setIsAddModalOpen}
         onSuccess={fetchExpenses}
       />
+
+      <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Expense Transaction</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this expense transaction? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
