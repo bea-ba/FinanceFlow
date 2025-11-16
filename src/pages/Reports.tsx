@@ -10,10 +10,10 @@ import { DateRangeFilter } from "@/components/reports/DateRangeFilter";
 const Reports = () => {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 w-full overflow-x-hidden">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
-          <div className="flex gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <DateRangeFilter />
             <ExportReports />
           </div>

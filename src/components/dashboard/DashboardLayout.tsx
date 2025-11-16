@@ -8,9 +8,9 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-20 overflow-x-hidden">
       <DashboardHeader />
-      <main className="px-4 pt-4">
+      <main className="px-4 pt-4 max-w-7xl mx-auto">
         {children}
       </main>
       <BottomNav />

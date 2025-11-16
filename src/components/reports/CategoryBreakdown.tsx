@@ -26,15 +26,15 @@ export const CategoryBreakdown = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={350}>
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              outerRadius={80}
+              label={false}
+              outerRadius={90}
               fill="#8884d8"
               dataKey="value"
             >
@@ -52,6 +52,16 @@ export const CategoryBreakdown = () => {
                 `$${value.toFixed(2)} (${((value / total) * 100).toFixed(1)}%)`,
                 'Amount'
               ]}
+            />
+            <Legend 
+              layout="vertical" 
+              verticalAlign="middle" 
+              align="right"
+              wrapperStyle={{ fontSize: '12px', paddingLeft: '10px' }}
+              formatter={(value, entry: any) => {
+                const percent = ((entry.payload.value / total) * 100).toFixed(0);
+                return `${value} (${percent}%)`;
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
