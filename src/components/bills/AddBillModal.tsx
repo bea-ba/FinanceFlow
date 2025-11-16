@@ -40,14 +40,25 @@ export const AddBillModal = ({ open, onOpenChange, onSuccess }: AddBillModalProp
       const amount = parseFloat(formData.amount);
       const dueDay = parseInt(formData.dueDay);
 
-      // Calculate next due date
+      // Calculate next due date safely (handle months with fewer days)
       const today = new Date();
-      let nextDueDate = new Date(today.getFullYear(), today.getMonth(), dueDay);
+
+      // Helper function to get safe due date for a given month
+      const getSafeDueDate = (year: number, month: number, day: number): Date => {
+        // Get the last day of the target month
+        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+        // Clamp the due day to the last valid day of the month
+        const safeDueDay = Math.min(day, lastDayOfMonth);
+        return new Date(year, month, safeDueDay);
+      };
+
+      let nextDueDate = getSafeDueDate(today.getFullYear(), today.getMonth(), dueDay);
 
       // If the due day this month has passed, use next month
       if (nextDueDate < today) {
-        nextDueDate = new Date(today.getFullYear(), today.getMonth() + 1, dueDay);
+        nextDueDate = getSafeDueDate(today.getFullYear(), today.getMonth() + 1, dueDay);
       }
+
 
       // Validate using Zod schema
       const validationResult = billSchema.safeParse({
