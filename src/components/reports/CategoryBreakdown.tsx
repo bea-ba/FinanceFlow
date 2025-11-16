@@ -11,8 +11,8 @@ export const CategoryBreakdown = () => {
     { name: "Utilities", value: 425.48, color: "hsl(var(--chart-4))" },
     { name: "Entertainment", value: 387.90, color: "hsl(var(--chart-5))" },
     { name: "Shopping", value: 723.50, color: "hsl(142 76% 36%)" },
-    { name: "Health", value: 298.40, color: "hsl(197 37% 24%)" },
-    { name: "Education", value: 456.80, color: "hsl(43 74% 66%)" },
+    { name: "Health", value: 298.40, color: "hsl(197 37% 45%)" },
+    { name: "Education", value: 456.80, color: "hsl(43 96% 56%)" },
   ];
 
   const total = data.reduce((sum, item) => sum + item.value, 0);

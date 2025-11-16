@@ -54,6 +54,13 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Chart Colors - Vibrant palette for data visualization */
+    --chart-1: 211 100% 50%; /* Blue */
+    --chart-2: 142 76% 36%; /* Green */
+    --chart-3: 24 100% 62%; /* Orange */
+    --chart-4: 262 83% 58%; /* Purple */
+    --chart-5: 4 90% 58%; /* Red */
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 210 14% 12%;
     --sidebar-primary: 142 89% 50%;
@@ -104,6 +111,13 @@ All colors MUST be HSL.
     --border: 210 12% 20%;
     --input: 210 12% 16%;
     --ring: 142 89% 50%;
+
+    /* Chart Colors - Same vibrant palette for dark mode */
+    --chart-1: 211 100% 50%; /* Blue */
+    --chart-2: 142 76% 45%; /* Slightly brighter green for dark mode */
+    --chart-3: 24 100% 62%; /* Orange */
+    --chart-4: 262 83% 58%; /* Purple */
+    --chart-5: 4 90% 58%; /* Red */
 
     --sidebar-background: 150 40% 7%;
     --sidebar-foreground: 0 0% 98%;
