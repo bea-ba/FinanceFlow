@@ -55,16 +55,27 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        alert: {
+          DEFAULT: "hsl(var(--alert))",
+          foreground: "hsl(var(--alert-foreground))",
+        },
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
+        "sky-blue": "hsl(var(--sky-blue))",
+        "mint-tint": "hsl(var(--mint-tint))",
+        "blue-tint": "hsl(var(--blue-tint))",
+        "coral-tint": "hsl(var(--coral-tint))",
+        "yellow-tint": "hsl(var(--yellow-tint))",
+        "purple-tint": "hsl(var(--purple-tint))",
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",
           "3": "hsl(var(--chart-3))",
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
+          sky: "hsl(var(--chart-sky))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

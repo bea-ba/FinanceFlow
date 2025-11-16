@@ -8,78 +8,98 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* FinanceFlow Design System - Light Mode */
-    --background: 142 22% 97%; /* #f6f8f6 - Light greenish background */
-    --background-light: 142 22% 97%;
-    --foreground: 210 14% 12%; /* Deep slate text */
+    /* FinanceFlow Design System - Light Mode (PRD Aligned) */
+    /* Base Spacing Unit: 8px - All spacing derives from this */
+
+    /* Primary Foundation Colors */
+    --background: 210 20% 98%; /* #F8F9FA - Off-white background */
+    --background-light: 210 20% 98%;
+    --foreground: 210 100% 12%; /* #001F3F - Deep Navy primary text */
 
     --card: 0 0% 100%; /* White cards */
-    --card-foreground: 210 14% 12%;
+    --card-foreground: 210 100% 12%; /* Deep Navy */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 14% 12%;
+    --popover-foreground: 210 100% 12%;
 
-    /* Mint Green - Primary Brand Color */
-    --primary: 142 89% 50%; /* #13ec5b - Bright mint green */
-    --primary-foreground: 210 14% 12%; /* Dark text on mint */
+    /* Mint Green - PRIMARY SIGNATURE ACTION COLOR (PRD Critical) */
+    --primary: 162 100% 42%; /* #00D68F - Vibrant mint for all primary CTAs */
+    --primary-foreground: 210 100% 12%; /* Deep Navy text on mint */
 
-    --secondary: 210 16% 93%; /* Light gray backgrounds */
-    --secondary-foreground: 210 14% 12%;
+    /* Secondary Colors */
+    --secondary: 210 17% 93%; /* #E9ECEF - Light gray backgrounds */
+    --secondary-foreground: 210 100% 12%;
 
-    --muted: 210 16% 93%;
-    --muted-foreground: 215 14% 46%;
+    --muted: 210 17% 93%;
+    --muted-foreground: 210 11% 46%; /* #6C757D - Medium gray */
 
-    --accent: 142 89% 50%;
-    --accent-foreground: 210 14% 12%;
+    --accent: 162 100% 42%; /* Same as primary mint */
+    --accent-foreground: 210 100% 12%;
 
-    /* Success/Income - Positive Green */
-    --success: 142 71% 45%; /* #34C759 */
+    /* Success/Income - Vivid Green (PRD: #00E676) */
+    --success: 151 100% 45%; /* #00E676 - For checkmarks, completed states */
     --success-foreground: 0 0% 100%;
 
-    /* Alert/Warning - Coral/Orange */
-    --warning: 24 100% 62%; /* #F5A623 */
+    /* Warning - Coral/Salmon (PRD: #FF7F50) */
+    --warning: 16 100% 66%; /* #FF7F50 - Attention, important alerts */
     --warning-foreground: 0 0% 100%;
 
-    /* Destructive/Expense - Soft Red */
-    --destructive: 4 90% 58%; /* #FF3B30 */
+    /* Alert - Yellow/Orange (PRD: #FFB020) */
+    --alert: 38 100% 56%; /* #FFB020 - Caution without alarm */
+    --alert-foreground: 210 100% 12%;
+
+    /* Destructive - Red (PRD: #FF5252) */
+    --destructive: 0 100% 66%; /* #FF5252 - Disconnect, errors */
     --destructive-foreground: 0 0% 100%;
 
-    /* Information - Blue */
-    --info: 211 100% 50%; /* #007AFF */
+    /* Information/Secondary Action - Blue (PRD: #5B9BD5) */
+    --info: 207 60% 60%; /* #5B9BD5 - Secondary CTAs, links */
     --info-foreground: 0 0% 100%;
 
-    --border: 210 20% 91%;
-    --input: 210 20% 96%;
-    --ring: 142 89% 50%;
+    /* Data Visualization - Sky Blue (PRD: #87CEEB) */
+    --sky-blue: 197 71% 73%; /* #87CEEB - Charts, data elements */
 
-    --radius: 0.75rem;
+    /* UI Structure */
+    --border: 210 17% 93%; /* #E9ECEF - Light gray borders */
+    --input: 210 20% 98%; /* Light background for inputs */
+    --ring: 162 100% 42%; /* Mint green focus ring */
 
-    /* Shadows with primary color glow */
-    --shadow-soft: 0 2px 8px -2px hsl(210 14% 12% / 0.08);
-    --shadow-card: 0 4px 16px -4px hsl(210 14% 12% / 0.1);
-    --shadow-glow: 0 4px 20px -4px hsl(var(--primary) / 0.15);
-    --shadow-elevated: 0 8px 24px -8px hsl(210 14% 12% / 0.12), 0 0 0 1px hsl(var(--border));
+    /* Border Radius (PRD: 12-20px for friendly feel) */
+    --radius: 1rem; /* 16px base - soft, friendly corners */
 
+    /* Shadows (PRD: Subtle, never heavy) */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04); /* Default cards */
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08); /* Hover/focus */
+    --shadow-glow: 0 4px 12px rgba(0, 214, 143, 0.3); /* FAB mint glow */
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12); /* Modals */
+
+    /* Icon Background Tints (PRD Specification) */
+    --mint-tint: 162 70% 95%; /* #E8F8F5 - For green icons */
+    --blue-tint: 207 71% 94%; /* #E3F2FD - For blue icons */
+    --coral-tint: 16 100% 94%; /* #FFE8E0 - For alert icons */
+    --yellow-tint: 38 100% 95%; /* #FFF9E6 - For warning icons */
+    --purple-tint: 291 47% 95%; /* #F3E5F5 - For goal/achievement icons */
 
     /* Chart Colors - Vibrant palette for data visualization */
-    --chart-1: 211 100% 50%; /* Blue */
-    --chart-2: 142 76% 36%; /* Green */
-    --chart-3: 24 100% 62%; /* Orange */
+    --chart-1: 207 60% 60%; /* Blue #5B9BD5 */
+    --chart-2: 162 100% 42%; /* Mint Green #00D68F */
+    --chart-3: 16 100% 66%; /* Coral #FF7F50 */
     --chart-4: 262 83% 58%; /* Purple */
-    --chart-5: 4 90% 58%; /* Red */
+    --chart-5: 0 100% 66%; /* Red #FF5252 */
+    --chart-sky: 197 71% 73%; /* Sky Blue #87CEEB */
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 14% 12%;
-    --sidebar-primary: 142 89% 50%;
-    --sidebar-primary-foreground: 210 14% 12%;
-    --sidebar-accent: 210 16% 93%;
-    --sidebar-accent-foreground: 210 14% 12%;
-    --sidebar-border: 210 20% 91%;
-    --sidebar-ring: 142 89% 50%;
+    --sidebar-background: 210 20% 98%;
+    --sidebar-foreground: 210 100% 12%;
+    --sidebar-primary: 162 100% 42%;
+    --sidebar-primary-foreground: 210 100% 12%;
+    --sidebar-accent: 210 17% 93%;
+    --sidebar-accent-foreground: 210 100% 12%;
+    --sidebar-border: 210 17% 93%;
+    --sidebar-ring: 162 100% 42%;
   }
 
   .dark {
-    /* FinanceFlow Design System - Dark Mode */
+    /* FinanceFlow Design System - Dark Mode (PRD Aligned) */
     --background: 150 40% 7%; /* #102216 - Deep greenish black */
     --background-dark: 150 40% 7%;
     --foreground: 0 0% 98%; /* Near white text */
@@ -90,8 +110,8 @@ All colors MUST be HSL.
     --popover: 210 14% 12%;
     --popover-foreground: 0 0% 98%;
 
-    /* Mint Green stays bright in dark mode */
-    --primary: 142 89% 50%; /* #13ec5b */
+    /* Mint Green stays bright in dark mode - PRIMARY SIGNATURE COLOR */
+    --primary: 162 100% 42%; /* #00D68F - Same vibrant mint */
     --primary-foreground: 210 14% 12%;
 
     --secondary: 210 12% 16%;
@@ -100,47 +120,65 @@ All colors MUST be HSL.
     --muted: 210 12% 16%;
     --muted-foreground: 215 14% 56%;
 
-    --accent: 142 89% 50%;
+    --accent: 162 100% 42%; /* Same as primary mint */
     --accent-foreground: 210 14% 12%;
 
-    --success: 142 71% 45%;
+    /* Success/Income - Vivid Green */
+    --success: 151 100% 45%; /* #00E676 */
     --success-foreground: 0 0% 100%;
 
-    --warning: 24 100% 62%;
+    /* Warning - Coral */
+    --warning: 16 100% 66%; /* #FF7F50 */
     --warning-foreground: 0 0% 100%;
 
-    --destructive: 4 90% 58%;
+    /* Alert - Yellow/Orange */
+    --alert: 38 100% 56%; /* #FFB020 */
+    --alert-foreground: 210 100% 12%;
+
+    /* Destructive - Red */
+    --destructive: 0 100% 66%; /* #FF5252 */
     --destructive-foreground: 0 0% 100%;
 
-    --info: 211 100% 50%;
+    /* Information - Blue */
+    --info: 207 60% 60%; /* #5B9BD5 */
     --info-foreground: 0 0% 100%;
+
+    /* Data Visualization - Sky Blue */
+    --sky-blue: 197 71% 73%; /* #87CEEB */
 
     --border: 210 12% 20%;
     --input: 210 12% 16%;
-    --ring: 142 89% 50%;
+    --ring: 162 100% 42%; /* Mint green focus ring */
 
-    /* Shadows for dark mode */
-    --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
-    --shadow-card: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
-    --shadow-glow: 0 4px 20px -4px hsl(var(--primary) / 0.25);
-    --shadow-elevated: 0 8px 24px -8px hsl(0 0% 0% / 0.5), 0 0 0 1px hsl(var(--border));
+    /* Shadows for dark mode (stronger for visibility) */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 4px 12px rgba(0, 214, 143, 0.25);
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.5);
 
+    /* Icon Background Tints (darker for dark mode) */
+    --mint-tint: 162 50% 15%;
+    --blue-tint: 207 50% 15%;
+    --coral-tint: 16 50% 15%;
+    --yellow-tint: 38 50% 15%;
+    --purple-tint: 291 30% 15%;
 
-    /* Chart Colors - Same vibrant palette for dark mode */
-    --chart-1: 211 100% 50%; /* Blue */
-    --chart-2: 142 76% 45%; /* Slightly brighter green for dark mode */
-    --chart-3: 24 100% 62%; /* Orange */
+    /* Chart Colors - Same vibrant palette */
+    --chart-1: 207 60% 60%; /* Blue #5B9BD5 */
+    --chart-2: 162 100% 42%; /* Mint Green #00D68F */
+    --chart-3: 16 100% 66%; /* Coral #FF7F50 */
     --chart-4: 262 83% 58%; /* Purple */
-    --chart-5: 4 90% 58%; /* Red */
+    --chart-5: 0 100% 66%; /* Red #FF5252 */
+    --chart-sky: 197 71% 73%; /* Sky Blue #87CEEB */
 
     --sidebar-background: 150 40% 7%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 142 89% 50%;
+    --sidebar-primary: 162 100% 42%;
     --sidebar-primary-foreground: 210 14% 12%;
     --sidebar-accent: 210 12% 16%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 210 12% 20%;
-    --sidebar-ring: 142 89% 50%;
+    --sidebar-ring: 162 100% 42%;
   }
 }
 
