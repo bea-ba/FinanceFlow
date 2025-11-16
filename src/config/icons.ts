@@ -13,6 +13,7 @@ import {
   ArrowUpCircle,
   TrendingUp,
   TrendingDown,
+  CreditCard,
   
   // Charts & Analytics
   PieChart,
@@ -25,13 +26,16 @@ import {
   Pencil,
   Trash2,
   Download,
+  Upload,
   FileText,
   FileSpreadsheet,
   File,
+  Settings,
   
   // Communication
   Bell,
   Mail,
+  MessageCircle,
   
   // Time
   Calendar,
@@ -86,6 +90,7 @@ export const AppIcons = {
     expenseAlt: ArrowUpCircle,
     trendingUp: TrendingUp,
     trendingDown: TrendingDown,
+    creditCard: CreditCard,
   },
   
   // Analytics & Charts
@@ -105,6 +110,7 @@ export const AppIcons = {
     delete: Trash2,
     download: Download,
     export: Download,
+    upload: Upload,
   },
   
   // Files
@@ -118,6 +124,7 @@ export const AppIcons = {
   communication: {
     notification: Bell,
     email: Mail,
+    messageCircle: MessageCircle,
   },
   
   // Time & Calendar
@@ -151,6 +158,11 @@ export const AppIcons = {
     repeat: Repeat,
     camera: Camera,
     sort: ArrowUpDown,
+    sparkles: Sparkles,
+    settings: Settings,
+    upload: Upload,
+    download: Download,
+    creditCard: CreditCard,
   },
 } as const;
 

@@ -4,6 +4,8 @@ import { SmartConnections } from "@/components/profile/SmartConnections";
 import { AIPreferences } from "@/components/profile/AIPreferences";
 import { ThemeSettings } from "@/components/profile/ThemeSettings";
 import { AccountSettings } from "@/components/profile/AccountSettings";
+import { PremiumUpgrade } from "@/components/profile/PremiumUpgrade";
+import { SubscriptionPlan } from "@/components/profile/SubscriptionPlan";
 
 const Profile = () => {
   return (
@@ -21,6 +23,11 @@ const Profile = () => {
         </div>
         
         <ProfileHeader />
+        
+        {/* Premium subscription section */}
+        <PremiumUpgrade />
+        {/* Uncomment below when user has premium */}
+        {/* <SubscriptionPlan /> */}
         
         {/* Focus on automation and smart connections */}
         <SmartConnections />
