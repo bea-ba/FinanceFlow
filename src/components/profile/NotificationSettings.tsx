@@ -43,7 +43,7 @@ export const NotificationSettings = () => {
             Financial Alerts
           </h3>
 
-          <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-mint-tint/30 border border-primary/20">
+          <div className="flex items-center justify-between py-3 px-4 rounded-xl hover:bg-accent/50 transition-colors">
             <div className="space-y-0.5 flex-1">
               <Label htmlFor="bill-reminders" className="font-medium">Remind about bills</Label>
               <p className="text-sm text-muted-foreground">
