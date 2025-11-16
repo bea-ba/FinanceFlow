@@ -27,6 +27,7 @@ export const ImportMoneyOut = () => {
   return (
     <LockedFeature 
       tooltipText="Unlock Unlimited Imports with Premium"
+      featureName="Unlimited Bill Imports"
       showOverlay={false}
       badgePosition="top-right"
     >

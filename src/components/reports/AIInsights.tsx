@@ -37,6 +37,7 @@ export const AIInsights = () => {
   return (
     <LockedFeature 
       tooltipText="Unlock Advanced AI Insights with Premium"
+      featureName="Advanced AI Insights"
       showOverlay={true}
     >
       <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-transparent">
