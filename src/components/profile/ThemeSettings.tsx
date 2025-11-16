@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 import { toast } from "sonner";
 
 type Theme = "light" | "dark" | "system";
@@ -42,7 +42,7 @@ export const ThemeSettings = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Monitor className="h-5 w-5 text-primary" />
+          <AppIcons.ui.systemMode className="h-5 w-5 text-primary" />
           Theme Settings
         </CardTitle>
       </CardHeader>
@@ -52,7 +52,7 @@ export const ThemeSettings = () => {
             <RadioGroupItem value="light" id="light" />
             <Label htmlFor="light" className="flex items-center gap-3 flex-1 cursor-pointer">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-yellow-100">
-                <Sun className="h-5 w-5 text-yellow-600" />
+                <AppIcons.ui.lightMode className="h-5 w-5 text-yellow-600" />
               </div>
               <div className="space-y-0.5">
                 <p className="font-medium">Light Mode</p>
@@ -67,7 +67,7 @@ export const ThemeSettings = () => {
             <RadioGroupItem value="dark" id="dark" />
             <Label htmlFor="dark" className="flex items-center gap-3 flex-1 cursor-pointer">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800">
-                <Moon className="h-5 w-5 text-slate-200" />
+                <AppIcons.ui.darkMode className="h-5 w-5 text-slate-200" />
               </div>
               <div className="space-y-0.5">
                 <p className="font-medium">Dark Mode</p>
@@ -82,7 +82,7 @@ export const ThemeSettings = () => {
             <RadioGroupItem value="system" id="system" />
             <Label htmlFor="system" className="flex items-center gap-3 flex-1 cursor-pointer">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-yellow-100 to-slate-800">
-                <Monitor className="h-5 w-5 text-foreground" />
+                <AppIcons.ui.systemMode className="h-5 w-5 text-foreground" />
               </div>
               <div className="space-y-0.5">
                 <p className="font-medium">System Default</p>

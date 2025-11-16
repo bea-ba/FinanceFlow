@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 import { Button } from "@/components/ui/button";
 
 export const DashboardHeader = () => {
@@ -46,7 +46,7 @@ export const DashboardHeader = () => {
           <div className="h-10"></div>
         )}
         <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 transition-colors">
-          <Bell className="h-5 w-5" />
+          <AppIcons.communication.notification className="h-5 w-5" />
           <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full animate-pulse" />
         </Button>
       </div>

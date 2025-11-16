@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Calendar, DollarSign } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 import { Progress } from "@/components/ui/progress";
 
 export const SmartPredictions = () => {
@@ -29,7 +29,7 @@ export const SmartPredictions = () => {
       <CardHeader className="bg-gradient-to-br from-primary/10 to-transparent">
         <CardTitle className="flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/20">
-            <Brain className="h-5 w-5 text-primary" />
+            <AppIcons.analytics.brain className="h-5 w-5 text-primary" />
           </div>
           Smart Predictions
         </CardTitle>
@@ -46,7 +46,7 @@ export const SmartPredictions = () => {
                   {prediction.label}
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                  <Calendar className="h-3 w-3" />
+                  <AppIcons.time.calendar className="h-3 w-3" />
                   {prediction.date}
                 </p>
               </div>
@@ -67,7 +67,7 @@ export const SmartPredictions = () => {
 
         <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
           <div className="flex items-start gap-3">
-            <DollarSign className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+            <AppIcons.financial.money className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-foreground mb-1">
                 On track for a great month
