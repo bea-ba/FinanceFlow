@@ -86,7 +86,7 @@ export const RecentTransactions = () => {
   if (loading) {
     return (
       <Card className="p-4">
-        <h3 className="text-lg font-semibold mb-4">Recent Transactions</h3>
+        <h3 className="text-lg font-semibold mb-4">Recent activity</h3>
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse flex items-center gap-3">
@@ -109,9 +109,9 @@ export const RecentTransactions = () => {
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
           <TrendingDown className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold mb-2">No transactions yet</h3>
+        <h3 className="text-lg font-semibold mb-2">Nothing here yet</h3>
         <p className="text-sm text-muted-foreground">
-          Start tracking your finances by adding your first transaction
+          Add your first transaction to start tracking your flow
         </p>
       </Card>
     );
@@ -120,7 +120,7 @@ export const RecentTransactions = () => {
   return (
     <Card className="p-4 border-border">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
+        <h3 className="text-lg font-semibold text-foreground">Recent activity</h3>
         <button className="text-sm text-primary font-medium hover:underline">
           View All
         </button>

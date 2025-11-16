@@ -49,11 +49,11 @@ export const IncomeSummary = () => {
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="monthly">
           <Calendar className="mr-2 h-4 w-4" />
-          This Month
+          This month
         </TabsTrigger>
         <TabsTrigger value="yearly">
           <CalendarRange className="mr-2 h-4 w-4" />
-          This Year
+          This year
         </TabsTrigger>
       </TabsList>
       
@@ -62,7 +62,7 @@ export const IncomeSummary = () => {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Monthly Income
+              Money In this month
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -82,7 +82,7 @@ export const IncomeSummary = () => {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Yearly Income
+              Money In this year
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -95,7 +95,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
 
       if (error) throw error;
 
-      toast.success(`${data.type === "income" ? "Income" : "Expense"} added successfully!`);
+      toast.success(`${data.type === "income" ? "Money In" : "Money Out"} added!`);
       reset();
       onOpenChange(false);
       window.location.reload(); // Refresh to show new transaction
@@ -119,7 +119,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            New Transaction
+            Quick add
           </DialogTitle>
         </DialogHeader>
 
@@ -127,10 +127,10 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
           <Tabs value={transactionType} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="expense" className="data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive">
-                Expense
+                Money Out
               </TabsTrigger>
               <TabsTrigger value="income" className="data-[state=active]:bg-success/10 data-[state=active]:text-success">
-                Income
+                Money In
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -162,7 +162,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
               onValueChange={(value) => setValue("category", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="Pick a category" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (
@@ -192,7 +192,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="description">Note (optional)</Label>
             <Input
               id="description"
               placeholder="Add a note..."
@@ -211,7 +211,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
                 Adding...
               </>
             ) : (
-              "Add Transaction"
+              "Add it"
             )}
           </Button>
         </form>

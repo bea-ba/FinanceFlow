@@ -62,21 +62,21 @@ export const SummaryCards = () => {
 
   const cards = [
     {
-      title: "Total Balance",
+      title: "Your Balance",
       value: summary.balance,
       icon: DollarSign,
       color: "text-primary",
       bgColor: "bg-primary/10",
     },
     {
-      title: "Total Income",
+      title: "Money In",
       value: summary.totalIncome,
       icon: TrendingUp,
       color: "text-success",
       bgColor: "bg-success/10",
     },
     {
-      title: "Total Expenses",
+      title: "Money Out",
       value: summary.totalExpenses,
       icon: TrendingDown,
       color: "text-destructive",

@@ -17,7 +17,7 @@ export const AccountSettings = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      toast.success("Logged out successfully");
+      toast.success("You're logged out — see you soon!");
       navigate("/auth");
     } catch (error) {
       console.error('Error logging out:', error);
@@ -28,8 +28,8 @@ export const AccountSettings = () => {
   };
 
   const handleDeleteAccount = async () => {
-    toast.info("Account deletion feature coming soon!", {
-      description: "Please contact support to delete your account"
+    toast.info("Account deletion coming soon", {
+      description: "For now, reach out to support if you need to delete your account"
     });
   };
 
@@ -38,28 +38,28 @@ export const AccountSettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
-          Account Management
+          Account
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg border border-border">
           <div className="space-y-1">
-            <h3 className="font-medium">Sign Out</h3>
+            <h3 className="font-medium">Sign out</h3>
             <p className="text-sm text-muted-foreground">
-              Sign out from your account on this device
+              Log out from this device
             </p>
           </div>
           <Button variant="outline" onClick={handleLogout} disabled={loading}>
             <LogOut className="mr-2 h-4 w-4" />
-            {loading ? "Signing out..." : "Sign Out"}
+            {loading ? "Signing out..." : "Sign out"}
           </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg border border-destructive/20 bg-destructive/5">
           <div className="space-y-1">
-            <h3 className="font-medium text-destructive">Delete Account</h3>
+            <h3 className="font-medium text-destructive">Delete account</h3>
             <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all data
+              Permanently remove your account and all your data
             </p>
           </div>
           
@@ -72,15 +72,14 @@ export const AccountSettings = () => {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogTitle>This can't be undone</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your account
-                  and remove all your data from our servers including:
+                  Deleting your account will permanently remove all your data, including:
                   <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>All income and expense transactions</li>
+                    <li>All Money In and Money Out transactions</li>
                     <li>Bill reminders and recurring bills</li>
-                    <li>Financial reports and analytics</li>
-                    <li>Profile information and settings</li>
+                    <li>Reports and insights</li>
+                    <li>Your profile and settings</li>
                   </ul>
                 </AlertDialogDescription>
               </AlertDialogHeader>
