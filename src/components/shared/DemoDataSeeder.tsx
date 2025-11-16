@@ -14,6 +14,19 @@ export const DemoDataSeeder = () => {
   const [isSeeding, setIsSeeding] = useState(false);
   const { refreshTransactions } = useTransactions();
 
+  // Generate month names for the last 4 months dynamically
+  const getRecentMonths = () => {
+    const now = new Date();
+    const months = [];
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(date.toLocaleDateString('en-US', { month: 'long' }));
+    }
+    return months.join(', ');
+  };
+
+  const currentYear = new Date().getFullYear();
+
   const seedDemoData = async () => {
     setIsSeeding(true);
 
@@ -67,7 +80,7 @@ export const DemoDataSeeder = () => {
           <ul className="text-sm text-muted-foreground space-y-1 ml-4">
             <li>• Income from salary, freelance work, and other sources</li>
             <li>• Expenses across all categories (groceries, dining, transport, etc.)</li>
-            <li>• Realistic amounts and dates for November, October, September, and August 2024</li>
+            <li>• Realistic amounts and dates for {getRecentMonths()} {currentYear}</li>
           </ul>
         </div>
 
