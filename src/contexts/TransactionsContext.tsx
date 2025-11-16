@@ -88,6 +88,14 @@ interface TransactionsProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Rounds a number to 2 decimal places to avoid floating point precision errors
+ * Example: roundCurrency(0.1 + 0.2) returns 0.3 instead of 0.30000000000000004
+ */
+const roundCurrency = (value: number): number => {
+  return Math.round(value * 100) / 100;
+};
+
 export const TransactionsProvider = ({ children }: TransactionsProviderProps) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,46 +181,46 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     const incomeTransactions = transactions.filter(t => t.type === "income");
     const expenseTransactions = transactions.filter(t => t.type === "expense");
 
-    // Overall totals
-    const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-    const totalExpenses = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-    const balance = totalIncome - totalExpenses;
+    // Overall totals (with precision rounding)
+    const totalIncome = roundCurrency(incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0));
+    const totalExpenses = roundCurrency(expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0));
+    const balance = roundCurrency(totalIncome - totalExpenses);
 
-    // Monthly/Yearly income
-    const incomeMonthly = incomeTransactions
+    // Monthly/Yearly income (with precision rounding)
+    const incomeMonthly = roundCurrency(incomeTransactions
       .filter(t => new Date(t.transaction_date) >= monthStart)
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0));
 
-    const incomeYearly = incomeTransactions
+    const incomeYearly = roundCurrency(incomeTransactions
       .filter(t => new Date(t.transaction_date) >= yearStart)
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0));
 
-    // Monthly/Yearly expenses
-    const expenseMonthly = expenseTransactions
+    // Monthly/Yearly expenses (with precision rounding)
+    const expenseMonthly = roundCurrency(expenseTransactions
       .filter(t => new Date(t.transaction_date) >= monthStart)
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0));
 
-    const expenseYearly = expenseTransactions
+    const expenseYearly = roundCurrency(expenseTransactions
       .filter(t => new Date(t.transaction_date) >= yearStart)
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+      .reduce((sum, t) => sum + Number(t.amount), 0));
 
-    // Income breakdown by category
+    // Income breakdown by category (with precision rounding)
     const incomeCategoryTotals = incomeTransactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
       return acc;
     }, {} as Record<string, number>);
 
     const incomeBreakdown: CategoryBreakdown[] = Object.entries(incomeCategoryTotals)
       .map(([category, total]) => ({
         category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
-        total,
-        percentage: totalIncome > 0 ? (total / totalIncome) * 100 : 0,
+        total: roundCurrency(total),
+        percentage: roundCurrency(totalIncome > 0 ? (total / totalIncome) * 100 : 0),
       }))
       .sort((a, b) => b.total - a.total);
 
-    // Expense breakdown by category
+    // Expense breakdown by category (with precision rounding)
     const expenseCategoryTotals = expenseTransactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
       return acc;
     }, {} as Record<string, number>);
 
@@ -231,8 +239,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     const expenseBreakdown: CategoryBreakdown[] = Object.entries(expenseCategoryTotals)
       .map(([category, total]) => ({
         category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
-        total,
-        percentage: totalExpenses > 0 ? (total / totalExpenses) * 100 : 0,
+        total: roundCurrency(total),
+        percentage: roundCurrency(totalExpenses > 0 ? (total / totalExpenses) * 100 : 0),
         color: categoryColors[category],
       }))
       .sort((a, b) => b.total - a.total);
@@ -243,41 +251,41 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Recent 10 transactions
     const recentTransactions = transactions.slice(0, 10);
 
-    // Reports-specific calculations (Monthly)
-    const netSavingsMonthly = incomeMonthly - expenseMonthly;
-    const savingsRateMonthly = incomeMonthly > 0 ? (netSavingsMonthly / incomeMonthly) * 100 : 0;
+    // Reports-specific calculations (Monthly) (with precision rounding)
+    const netSavingsMonthly = roundCurrency(incomeMonthly - expenseMonthly);
+    const savingsRateMonthly = roundCurrency(incomeMonthly > 0 ? (netSavingsMonthly / incomeMonthly) * 100 : 0);
 
-    // Monthly income breakdown
+    // Monthly income breakdown (with precision rounding)
     const monthlyIncomeTransactions = incomeTransactions.filter(
       t => new Date(t.transaction_date) >= monthStart
     );
     const monthlyIncomeCategoryTotals = monthlyIncomeTransactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
       return acc;
     }, {} as Record<string, number>);
 
     const incomeBreakdownMonthly: CategoryBreakdown[] = Object.entries(monthlyIncomeCategoryTotals)
       .map(([category, total]) => ({
         category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
-        total,
-        percentage: incomeMonthly > 0 ? (total / incomeMonthly) * 100 : 0,
+        total: roundCurrency(total),
+        percentage: roundCurrency(incomeMonthly > 0 ? (total / incomeMonthly) * 100 : 0),
       }))
       .sort((a, b) => b.total - a.total);
 
-    // Monthly expense breakdown
+    // Monthly expense breakdown (with precision rounding)
     const monthlyExpenseTransactions = expenseTransactions.filter(
       t => new Date(t.transaction_date) >= monthStart
     );
     const monthlyExpenseCategoryTotals = monthlyExpenseTransactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      acc[t.category] = roundCurrency((acc[t.category] || 0) + Number(t.amount));
       return acc;
     }, {} as Record<string, number>);
 
     const expenseBreakdownMonthly: CategoryBreakdown[] = Object.entries(monthlyExpenseCategoryTotals)
       .map(([category, total]) => ({
         category: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, " "),
-        total,
-        percentage: expenseMonthly > 0 ? (total / expenseMonthly) * 100 : 0,
+        total: roundCurrency(total),
+        percentage: roundCurrency(expenseMonthly > 0 ? (total / expenseMonthly) * 100 : 0),
         color: categoryColors[category],
       }))
       .sort((a, b) => b.total - a.total);
@@ -287,30 +295,30 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       ? { category: expenseBreakdownMonthly[0].category, amount: expenseBreakdownMonthly[0].total }
       : null;
 
-    // Daily trends for current month
+    // Daily trends for current month (with precision rounding)
     const dailyIncome: Record<string, number> = {};
     const dailyExpenses: Record<string, number> = {};
 
     monthlyIncomeTransactions.forEach(t => {
       const day = new Date(t.transaction_date).getDate().toString();
-      dailyIncome[day] = (dailyIncome[day] || 0) + Number(t.amount);
+      dailyIncome[day] = roundCurrency((dailyIncome[day] || 0) + Number(t.amount));
     });
 
     monthlyExpenseTransactions.forEach(t => {
       const day = new Date(t.transaction_date).getDate().toString();
-      dailyExpenses[day] = (dailyExpenses[day] || 0) + Number(t.amount);
+      dailyExpenses[day] = roundCurrency((dailyExpenses[day] || 0) + Number(t.amount));
     });
 
     const allDays = new Set([...Object.keys(dailyIncome), ...Object.keys(dailyExpenses)]);
     const dailyTrendsMonthly: DailyTrend[] = Array.from(allDays)
       .map(day => ({
         day,
-        income: dailyIncome[day] || 0,
-        expenses: dailyExpenses[day] || 0,
+        income: roundCurrency(dailyIncome[day] || 0),
+        expenses: roundCurrency(dailyExpenses[day] || 0),
       }))
       .sort((a, b) => parseInt(a.day) - parseInt(b.day));
 
-    // Monthly trends for last 6 months
+    // Monthly trends for last 6 months (with precision rounding)
     const monthlyTrends: MonthlyTrend[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthDate = new Date(currentYear, currentMonth - i, 1);
@@ -318,19 +326,19 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       const monthStartDate = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
       const monthEndDate = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
 
-      const monthIncome = incomeTransactions
+      const monthIncome = roundCurrency(incomeTransactions
         .filter(t => {
           const tDate = new Date(t.transaction_date);
           return tDate >= monthStartDate && tDate <= monthEndDate;
         })
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum, t) => sum + Number(t.amount), 0));
 
-      const monthExpenses = expenseTransactions
+      const monthExpenses = roundCurrency(expenseTransactions
         .filter(t => {
           const tDate = new Date(t.transaction_date);
           return tDate >= monthStartDate && tDate <= monthEndDate;
         })
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum, t) => sum + Number(t.amount), 0));
 
       monthlyTrends.push({
         month: monthName,
@@ -387,9 +395,9 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Immediately update UI
     setTransactions(prev => [optimisticTransaction, ...prev]);
 
-    // Calculate balance change
-    const balanceChange = transaction.type === "income" ? transaction.amount : -transaction.amount;
-    const newBalance = oldBalance + balanceChange;
+    // Calculate balance change (with precision rounding)
+    const balanceChange = roundCurrency(transaction.type === "income" ? transaction.amount : -transaction.amount);
+    const newBalance = roundCurrency(oldBalance + balanceChange);
 
     try {
       const { error } = await supabase.from("transactions").insert([{
@@ -422,15 +430,15 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
     const oldBalance = calculatedData.balance;
 
-    // Calculate balance change from the update
+    // Calculate balance change from the update (with precision rounding)
     const oldAmount = originalTransaction.amount;
     const newAmount = transaction.amount ?? originalTransaction.amount;
     const transactionType = transaction.type ?? originalTransaction.type;
 
-    const oldEffect = originalTransaction.type === "income" ? oldAmount : -oldAmount;
-    const newEffect = transactionType === "income" ? newAmount : -newAmount;
-    const balanceChange = newEffect - oldEffect;
-    const newBalance = oldBalance + balanceChange;
+    const oldEffect = roundCurrency(originalTransaction.type === "income" ? oldAmount : -oldAmount);
+    const newEffect = roundCurrency(transactionType === "income" ? newAmount : -newAmount);
+    const balanceChange = roundCurrency(newEffect - oldEffect);
+    const newBalance = roundCurrency(oldBalance + balanceChange);
 
     // Optimistic update: immediately update in state
     setTransactions(prev => prev.map(t =>
@@ -474,8 +482,8 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     // Optimistic update: immediately remove from state
     setTransactions(prev => prev.filter(t => t.id !== id));
 
-    // Calculate balance change
-    const balanceChange = deletedTransaction.type === "income" ? -deletedTransaction.amount : deletedTransaction.amount;
+    // Calculate balance change (with precision rounding)
+    const balanceChange = roundCurrency(deletedTransaction.type === "income" ? -deletedTransaction.amount : deletedTransaction.amount);
     let undoClicked = false;
     let deleteExecuted = false;
 
