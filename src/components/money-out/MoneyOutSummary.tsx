@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUpCircle, Calendar, CalendarRange } from "lucide-react";
+import { AppIcons } from "@/config/icons";
 
 export const MoneyOutSummary = () => {
   const [monthlyTotal, setMonthlyTotal] = useState(0);
@@ -48,11 +48,11 @@ export const MoneyOutSummary = () => {
     <Tabs defaultValue="monthly" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="monthly">
-          <Calendar className="mr-2 h-4 w-4" />
+          <AppIcons.time.calendar className="mr-2 h-4 w-4" />
           This month
         </TabsTrigger>
         <TabsTrigger value="yearly">
-          <CalendarRange className="mr-2 h-4 w-4" />
+          <AppIcons.time.calendarRange className="mr-2 h-4 w-4" />
           This year
         </TabsTrigger>
       </TabsList>
@@ -61,7 +61,7 @@ export const MoneyOutSummary = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <ArrowUpCircle className="h-5 w-5 text-destructive" />
+              <AppIcons.financial.expense className="h-5 w-5 text-destructive" />
               Money Out this month
             </CardTitle>
           </CardHeader>
@@ -81,7 +81,7 @@ export const MoneyOutSummary = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <ArrowUpCircle className="h-5 w-5 text-destructive" />
+              <AppIcons.financial.expense className="h-5 w-5 text-destructive" />
               Money Out this year
             </CardTitle>
           </CardHeader>
