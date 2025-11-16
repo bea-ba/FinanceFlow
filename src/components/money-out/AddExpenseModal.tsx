@@ -63,7 +63,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Expense</DialogTitle>
+          <DialogTitle>Add expense manually</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -73,7 +73,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
               required
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="e.g., Grocery shopping, Netflix subscription"
+              placeholder="e.g., Weekly groceries, Netflix subscription"
             />
           </div>
 
@@ -131,7 +131,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? "Adding..." : "Add Expense"}
+              {loading ? "Adding..." : "Add expense"}
             </Button>
           </div>
         </form>

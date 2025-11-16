@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 export const ImportFromDrive = () => {
   const handleImportClick = () => {
-    toast.info("Google Drive import will connect to your account and scan for invoices", {
-      description: "AI will automatically extract income data from your documents",
+    toast.info("Let's connect to your Google Drive", {
+      description: "We'll scan for invoices and extract your income data automatically",
     });
   };
 
@@ -15,7 +15,7 @@ export const ImportFromDrive = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          Primary Import Method
+          Easiest Way to Track Income
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -24,10 +24,10 @@ export const ImportFromDrive = () => {
             <Upload className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold mb-1">Import from Google Drive</h3>
+            <h3 className="font-semibold mb-1">Connect Google Drive</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Connect your Google Drive account and our AI will automatically scan for invoices, 
-              extract income data, and organize everything for you. No manual entry needed!
+              Link your Google Drive and we'll find your invoices automatically. Our AI reads them, 
+              pulls out the important stuff, and keeps everything organized. Zero manual work!
             </p>
             <Button onClick={handleImportClick} className="w-full sm:w-auto">
               <FileText className="mr-2 h-4 w-4" />
@@ -39,13 +39,13 @@ export const ImportFromDrive = () => {
         <div className="rounded-lg bg-muted/50 p-4 border border-border">
           <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            AI-Powered Features
+            What happens automatically
           </h4>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Automatic invoice detection in your Drive</li>
-            <li>• Smart data extraction (amounts, dates, clients)</li>
-            <li>• Review and edit extracted data before importing</li>
-            <li>• Bulk import multiple invoices at once</li>
+            <li>• Finds all invoices in your Drive</li>
+            <li>• Reads amounts, dates, and client names</li>
+            <li>• Shows you everything before it's added</li>
+            <li>• Imports multiple invoices in one go</li>
           </ul>
         </div>
       </CardContent>

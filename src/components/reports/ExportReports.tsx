@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 export const ExportReports = () => {
   const handleExport = (format: string) => {
-    toast.success(`Exporting report as ${format.toUpperCase()}...`, {
-      description: "Your download will begin shortly"
+    toast.success(`Preparing your ${format.toUpperCase()} export...`, {
+      description: "Your download will start shortly"
     });
   };
 

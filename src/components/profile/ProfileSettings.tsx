@@ -54,7 +54,7 @@ export const ProfileSettings = () => {
 
       if (error) throw error;
 
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated!");
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error("Failed to update profile");
@@ -68,18 +68,18 @@ export const ProfileSettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5 text-primary" />
-          Profile Information
+          Profile info
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="full_name">Full Name</Label>
+            <Label htmlFor="full_name">Your name</Label>
             <Input
               id="full_name"
               value={formData.full_name}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              placeholder="Enter your full name"
+              placeholder="What should we call you?"
             />
           </div>
 
@@ -93,7 +93,7 @@ export const ProfileSettings = () => {
               className="bg-muted cursor-not-allowed"
             />
             <p className="text-xs text-muted-foreground">
-              Email cannot be changed
+              Can't change your email here
             </p>
           </div>
 

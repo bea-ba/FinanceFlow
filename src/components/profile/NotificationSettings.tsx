@@ -28,15 +28,15 @@ export const NotificationSettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-primary" />
-          Notification Preferences
+          Notifications
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="bill-reminders">Bill Reminders</Label>
+            <Label htmlFor="bill-reminders">Remind me about bills</Label>
             <p className="text-sm text-muted-foreground">
-              Get notified about upcoming bills
+              We'll let you know when bills are coming up
             </p>
           </div>
           <Switch
@@ -48,9 +48,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="income-alerts">Income Alerts</Label>
+            <Label htmlFor="income-alerts">Notify me about new income</Label>
             <p className="text-sm text-muted-foreground">
-              Notifications when new income is detected
+              Get a heads up when income is detected
             </p>
           </div>
           <Switch
@@ -62,9 +62,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="weekly-reports">Weekly Reports</Label>
+            <Label htmlFor="weekly-reports">Send me weekly summaries</Label>
             <p className="text-sm text-muted-foreground">
-              Receive weekly financial summary
+              A gentle weekly check-in on your flow
             </p>
           </div>
           <Switch
@@ -76,9 +76,9 @@ export const NotificationSettings = () => {
 
         <div className="flex items-center justify-between py-2">
           <div className="space-y-0.5">
-            <Label htmlFor="budget-alerts">Budget Alerts</Label>
+            <Label htmlFor="budget-alerts">Alert me about spending</Label>
             <p className="text-sm text-muted-foreground">
-              Alert when approaching budget limits
+              A friendly nudge when you're getting close to limits
             </p>
           </div>
           <Switch
@@ -89,13 +89,13 @@ export const NotificationSettings = () => {
         </div>
 
         <div className="border-t pt-4 mt-4">
-          <h3 className="font-medium mb-4">Delivery Methods</h3>
+          <h3 className="font-medium mb-4">How to reach you</h3>
           
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <Label htmlFor="email-notif">Email Notifications</Label>
+              <Label htmlFor="email-notif">Email</Label>
               <p className="text-sm text-muted-foreground">
-                Receive notifications via email
+                Send notifications to your email
               </p>
             </div>
             <Switch
@@ -107,9 +107,9 @@ export const NotificationSettings = () => {
 
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <Label htmlFor="push-notif">Push Notifications</Label>
+              <Label htmlFor="push-notif">Push notifications</Label>
               <p className="text-sm text-muted-foreground">
-                Receive push notifications on mobile
+                Get push alerts on your phone
               </p>
             </div>
             <Switch

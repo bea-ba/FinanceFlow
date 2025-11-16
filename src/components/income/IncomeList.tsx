@@ -80,10 +80,10 @@ export const IncomeList = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>All Income</CardTitle>
+            <CardTitle>Your income history</CardTitle>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Manual Income
+              Add manually
             </Button>
           </div>
         </CardHeader>
@@ -92,7 +92,7 @@ export const IncomeList = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search income..."
+                placeholder="Search your income..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -123,7 +123,7 @@ export const IncomeList = () => {
               ))}
             </div>
           ) : filteredTransactions.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No income found</p>
+            <p className="text-muted-foreground text-center py-8">No income here yet — try importing or adding manually</p>
           ) : (
             <div className="space-y-3">
               {filteredTransactions.map((transaction) => (

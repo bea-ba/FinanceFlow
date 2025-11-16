@@ -65,11 +65,11 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Manual Income</DialogTitle>
+          <DialogTitle>Add income manually</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category">Income Source</Label>
+            <Label htmlFor="category">Where from?</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
               <SelectTrigger>
                 <SelectValue />
@@ -103,7 +103,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
               required
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="e.g., Monthly salary, Project payment"
+              placeholder="e.g., Freelance project, monthly paycheck"
             />
           </div>
 
@@ -123,7 +123,7 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? "Adding..." : "Add Income"}
+              {loading ? "Adding..." : "Add income"}
             </Button>
           </div>
         </form>

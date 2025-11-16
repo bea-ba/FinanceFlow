@@ -12,7 +12,7 @@ const Reports = () => {
     <DashboardLayout>
       <div className="space-y-6 w-full overflow-x-hidden">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-foreground">Financial Reports</h1>
+          <h1 className="text-3xl font-bold text-foreground">Your Flow</h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <DateRangeFilter />
             <ExportReports />
