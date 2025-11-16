@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Sparkles, Mail, Camera } from "lucide-react";
+import { ArrowUpCircle, FileText, Sparkles, Mail, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 export const ImportMoneyOut = () => {
@@ -34,7 +34,7 @@ export const ImportMoneyOut = () => {
         {/* Google Drive Import */}
         <div className="flex items-start gap-3">
           <div className="rounded-full bg-primary/10 p-3">
-            <Upload className="h-6 w-6 text-primary" />
+            <ArrowUpCircle className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold mb-1">Connect Google Drive</h3>

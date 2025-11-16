@@ -1,11 +1,11 @@
-import { Home, TrendingUp, Receipt, BarChart3, User } from "lucide-react";
+import { Waves, ArrowDownCircle, ArrowUpCircle, BarChart3, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { icon: Home, label: "Flow", path: "/" },
-  { icon: TrendingUp, label: "Money In", path: "/income" },
-  { icon: Receipt, label: "Money Out", path: "/money-out" },
+  { icon: Waves, label: "Flow", path: "/" },
+  { icon: ArrowDownCircle, label: "Money In", path: "/income" },
+  { icon: ArrowUpCircle, label: "Money Out", path: "/money-out" },
   { icon: BarChart3, label: "Insights", path: "/reports" },
   { icon: User, label: "Profile", path: "/profile" },
 ];

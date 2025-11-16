@@ -127,10 +127,14 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
           <Tabs value={transactionType} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="expense" className="data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive">
-                Money Out
+                <span className="flex items-center gap-1.5">
+                  Money Out
+                </span>
               </TabsTrigger>
               <TabsTrigger value="income" className="data-[state=active]:bg-success/10 data-[state=active]:text-success">
-                Money In
+                <span className="flex items-center gap-1.5">
+                  Money In
+                </span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
