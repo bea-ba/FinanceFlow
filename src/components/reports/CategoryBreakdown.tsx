@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartSkeleton } from "@/components/ui/skeleton-loaders";
-import { Target } from "lucide-react";
+import { Target, ChevronDown } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useTransactions } from "@/contexts/TransactionsContext";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 interface CategoryData {
   name: string;
@@ -26,6 +28,8 @@ const CATEGORY_COLORS = [
 
 export const CategoryBreakdown = () => {
   const { incomeBreakdownMonthly, expenseBreakdownMonthly, loading } = useTransactions();
+  const [incomeDetailsOpen, setIncomeDetailsOpen] = useState(false);
+  const [expenseDetailsOpen, setExpenseDetailsOpen] = useState(false);
 
   if (loading) {
     return <ChartSkeleton />;
@@ -75,7 +79,13 @@ export const CategoryBreakdown = () => {
     return null;
   };
 
-  const renderCategorySection = (data: CategoryData[], title: string, emptyMessage: string) => {
+  const renderCategorySection = (
+    data: CategoryData[],
+    title: string,
+    emptyMessage: string,
+    isOpen: boolean,
+    setIsOpen: (open: boolean) => void
+  ) => {
     if (data.length === 0) {
       return (
         <div className="text-center py-8">
@@ -131,6 +141,40 @@ export const CategoryBreakdown = () => {
             />
           </PieChart>
         </ResponsiveContainer>
+
+        {/* Collapsible Detailed List */}
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger className="flex items-center gap-2 w-full justify-center py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <span>{isOpen ? "Hide" : "Show"} detailed breakdown</span>
+            <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-4">
+            <div className="space-y-2">
+              {chartData.map((category, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 rounded-xl bg-accent/30 hover:bg-accent/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 flex-1">
+                    <div
+                      className="w-4 h-4 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <span className="font-medium text-sm">{category.name}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-semibold">
+                      €{formatCurrency(category.value)}
+                    </span>
+                    <span className="text-sm text-muted-foreground w-12 text-right">
+                      {category.percentage}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     );
   };
@@ -146,12 +190,24 @@ export const CategoryBreakdown = () => {
       <CardContent className="space-y-8">
         {/* Income Section */}
         <div className="pb-6 border-b border-border">
-          {renderCategorySection(incomeData, "Income by Source", "No income data for this month")}
+          {renderCategorySection(
+            incomeData,
+            "Income by Source",
+            "No income data for this month",
+            incomeDetailsOpen,
+            setIncomeDetailsOpen
+          )}
         </div>
 
         {/* Expense Section */}
         <div>
-          {renderCategorySection(expenseData, "Expenses by Category", "No expense data for this month")}
+          {renderCategorySection(
+            expenseData,
+            "Expenses by Category",
+            "No expense data for this month",
+            expenseDetailsOpen,
+            setExpenseDetailsOpen
+          )}
         </div>
       </CardContent>
     </Card>
