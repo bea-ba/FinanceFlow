@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Sparkles, Shield } from "lucide-react";
+import { TrendingUp, Sparkles, Shield, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface WelcomeLandingProps {
   onGetStarted: () => void;
   onSignIn: () => void;
+  onTryDemo: () => void;
 }
 
-export const WelcomeLanding = ({ onGetStarted, onSignIn }: WelcomeLandingProps) => {
+export const WelcomeLanding = ({ onGetStarted, onSignIn, onTryDemo }: WelcomeLandingProps) => {
   return (
     <div className="min-h-screen w-full bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-2xl text-center">
@@ -85,6 +86,25 @@ export const WelcomeLanding = ({ onGetStarted, onSignIn }: WelcomeLandingProps) 
           >
             Already have an account? <span className="underline">Sign In</span>
           </button>
+
+          <div className="relative flex items-center justify-center py-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50"></div>
+            </div>
+            <div className="relative bg-background px-4">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">Or</span>
+            </div>
+          </div>
+
+          <Button
+            onClick={onTryDemo}
+            variant="outline"
+            size="lg"
+            className="w-full max-w-md h-12 border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5 text-foreground font-medium text-base rounded-xl"
+          >
+            <Eye className="mr-2 h-5 w-5 text-primary" />
+            Try Demo (No Signup Required)
+          </Button>
         </motion.div>
 
         {/* Footer */}

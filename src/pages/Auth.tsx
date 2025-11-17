@@ -4,12 +4,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { WelcomeLanding } from "@/components/auth/WelcomeLanding";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { useDemoMode } from "@/contexts/DemoModeContext";
+import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { enterDemoMode } = useDemoMode();
   const [user, setUser] = useState<User | null>(null);
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [initialTab, setInitialTab] = useState<"login" | "signup">("signup");
+
+  const handleTryDemo = () => {
+    enterDemoMode();
+    toast.success("Welcome to Demo Mode! Explore FinanceFlow with sample data", {
+      description: "Sign up anytime to save your real data",
+    });
+    navigate("/");
+  };
 
   useEffect(() => {
     const checkSessionAndRedirect = async (session: any) => {
@@ -69,6 +80,7 @@ const Auth = () => {
           setInitialTab("login");
           setShowAuthForm(true);
         }}
+        onTryDemo={handleTryDemo}
       />
     );
   }

@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, useMemo, useCallback, R
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { parseLocalDate, withTimeout } from "@/lib/utils";
+import { useDemoMode } from "@/contexts/DemoModeContext";
+import { getMockTransactions } from "@/lib/mockData";
 
 // Types
 export interface Transaction {
@@ -98,12 +100,22 @@ const roundCurrency = (value: number): number => {
 };
 
 export const TransactionsProvider = ({ children }: TransactionsProviderProps) => {
+  const { isDemoMode } = useDemoMode();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch all transactions (memoized to prevent unnecessary re-renders)
   const refreshTransactions = useCallback(async () => {
     try {
+      // In demo mode, serve mock data immediately
+      if (isDemoMode) {
+        // Simulate network delay for realistic UX
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        setTransactions(getMockTransactions());
+        setLoading(false);
+        return;
+      }
+
       const { data: { user } } = await withTimeout(
         supabase.auth.getUser(),
         10000,
@@ -136,15 +148,18 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
     } finally {
       setLoading(false);
     }
-  }, []); // No dependencies - function is stable
+  }, [isDemoMode]); // Add isDemoMode as dependency
 
   // Initial fetch
   useEffect(() => {
     refreshTransactions();
   }, [refreshTransactions]);
 
-  // Realtime subscription for live updates
+  // Realtime subscription for live updates (skip in demo mode)
   useEffect(() => {
+    // Don't set up realtime in demo mode
+    if (isDemoMode) return;
+
     let subscription: any;
 
     const setupRealtimeSubscription = async () => {
@@ -178,7 +193,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
         supabase.removeChannel(subscription);
       }
     };
-  }, [refreshTransactions]);
+  }, [isDemoMode, refreshTransactions]);
 
   // Calculated data using useMemo for performance
   const calculatedData = useMemo(() => {
@@ -385,6 +400,18 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
 
   // Add transaction (Optimistic UI with Balance Change) - memoized
   const addTransaction = useCallback(async (transaction: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">) => {
+    // In demo mode, show conversion prompt
+    if (isDemoMode) {
+      toast.error("Sign up to add transactions", {
+        description: "Create a free account to save your data and track your finances",
+        action: {
+          label: "Sign Up",
+          onClick: () => window.location.href = "/auth",
+        },
+      });
+      return;
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error("Please sign in");
@@ -431,10 +458,22 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to add transaction");
       throw error;
     }
-  }, [calculatedData.balance, refreshTransactions]);
+  }, [isDemoMode, calculatedData.balance, refreshTransactions]);
 
   // Update transaction (Optimistic UI with Balance Change) - memoized
   const updateTransaction = useCallback(async (id: string, transaction: Partial<Omit<Transaction, "id" | "user_id">>) => {
+    // In demo mode, show conversion prompt
+    if (isDemoMode) {
+      toast.error("Sign up to edit transactions", {
+        description: "Create a free account to save your data and track your finances",
+        action: {
+          label: "Sign Up",
+          onClick: () => window.location.href = "/auth",
+        },
+      });
+      return;
+    }
+
     // Store original for rollback
     const originalTransaction = transactions.find(t => t.id === id);
     if (!originalTransaction) return;
@@ -480,10 +519,22 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to update transaction");
       throw error;
     }
-  }, [transactions, calculatedData.balance, refreshTransactions]);
+  }, [isDemoMode, transactions, calculatedData.balance, refreshTransactions]);
 
   // Delete transaction (Optimistic UI) - memoized
   const deleteTransaction = useCallback(async (id: string) => {
+    // In demo mode, show conversion prompt
+    if (isDemoMode) {
+      toast.error("Sign up to delete transactions", {
+        description: "Create a free account to save your data and track your finances",
+        action: {
+          label: "Sign Up",
+          onClick: () => window.location.href = "/auth",
+        },
+      });
+      return;
+    }
+
     // Store deleted transaction for rollback
     const deletedTransaction = transactions.find(t => t.id === id);
     if (!deletedTransaction) return;
@@ -522,7 +573,7 @@ export const TransactionsProvider = ({ children }: TransactionsProviderProps) =>
       toast.error("Failed to delete transaction");
       throw error;
     }
-  }, [transactions, calculatedData.balance, refreshTransactions]);
+  }, [isDemoMode, transactions, calculatedData.balance, refreshTransactions]);
 
   // Memoize the context value to prevent unnecessary re-renders
   const value: TransactionsContextValue = useMemo(

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { lazy, Suspense } from "react";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { DemoModeProvider } from "@/contexts/DemoModeContext";
 import { TransactionsProvider } from "@/contexts/TransactionsContext";
 
 // Critical routes - loaded immediately for fast initial render
@@ -46,28 +47,30 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <TransactionsProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <PageTransition>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/income" element={<Income />} />
-                  <Route path="/money-out" element={<MoneyOut />} />
-                  <Route path="/bills" element={<Bills />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/profile" element={<Profile />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </PageTransition>
-          </BrowserRouter>
-        </TransactionsProvider>
+        <DemoModeProvider>
+          <TransactionsProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <PageTransition>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/income" element={<Income />} />
+                    <Route path="/money-out" element={<MoneyOut />} />
+                    <Route path="/bills" element={<Bills />} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/profile" element={<Profile />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </PageTransition>
+            </BrowserRouter>
+          </TransactionsProvider>
+        </DemoModeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>
