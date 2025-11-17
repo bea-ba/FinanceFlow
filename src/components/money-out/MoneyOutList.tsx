@@ -46,7 +46,9 @@ export const MoneyOutList = () => {
 
     if (error) {
       toast.error("Failed to load expenses");
-      console.error(error);
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
     } else {
       setExpenses(data || []);
     }

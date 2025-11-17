@@ -54,7 +54,9 @@ export const AddIncomeModal = ({ open, onOpenChange, onSuccess }: AddIncomeModal
         transaction_date: new Date().toISOString().split('T')[0]
       });
     } catch (error) {
-      console.error('Error adding income:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error adding income:', error);
+      }
       toast.error("Failed to add income");
     } finally {
       setLoading(false);

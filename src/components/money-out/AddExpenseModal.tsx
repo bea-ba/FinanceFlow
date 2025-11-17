@@ -44,7 +44,9 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
 
     if (error) {
       toast.error("Failed to add expense");
-      console.error(error);
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
     } else {
       toast.success("Expense added successfully");
       onOpenChange(false);

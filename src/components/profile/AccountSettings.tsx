@@ -20,7 +20,9 @@ export const AccountSettings = () => {
       toast.success("You're logged out — see you soon!");
       navigate("/auth");
     } catch (error) {
-      console.error('Error logging out:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error logging out:', error);
+      }
       toast.error("Failed to log out");
     } finally {
       setLoading(false);
