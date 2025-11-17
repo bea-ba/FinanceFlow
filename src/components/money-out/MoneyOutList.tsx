@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Pencil, Trash2, Download } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
+import { EditExpenseModal } from "./EditExpenseModal";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -24,6 +25,8 @@ export const MoneyOutList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -69,6 +72,11 @@ export const MoneyOutList = () => {
     }
 
     setFilteredExpenses(filtered);
+  };
+
+  const handleEdit = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -218,7 +226,7 @@ export const MoneyOutList = () => {
                           size="icon"
                           variant="ghost"
                           className="h-8 w-8"
-                          onClick={() => toast.info("Edit functionality coming soon")}
+                          onClick={() => handleEdit(expense)}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -244,6 +252,13 @@ export const MoneyOutList = () => {
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         onSuccess={fetchExpenses}
+      />
+
+      <EditExpenseModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSuccess={fetchExpenses}
+        expense={selectedExpense}
       />
     </>
   );
