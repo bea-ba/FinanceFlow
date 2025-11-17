@@ -9,6 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Calendar } from "lucide-react";
 
 const transactionSchema = z.object({
   type: z.enum(["income", "expense"]),
@@ -60,6 +70,8 @@ const expenseCategories = [
 export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [transactionType, setTransactionType] = useState<"income" | "expense">("expense");
+  const [showFutureDateWarning, setShowFutureDateWarning] = useState(false);
+  const [pendingData, setPendingData] = useState<TransactionFormData | null>(null);
 
   const {
     register,
@@ -78,7 +90,15 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
 
   const selectedCategory = watch("category");
 
-  const onSubmit = async (data: TransactionFormData) => {
+  const isFutureDate = (dateString: string): boolean => {
+    const selectedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    return selectedDate > today;
+  };
+
+  const saveTransaction = async (data: TransactionFormData) => {
     setIsLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -104,6 +124,32 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onSubmit = async (data: TransactionFormData) => {
+    // Check if date is in the future
+    if (isFutureDate(data.transaction_date)) {
+      setPendingData(data);
+      setShowFutureDateWarning(true);
+      return;
+    }
+
+    // If not future date, save directly
+    await saveTransaction(data);
+  };
+
+  const handleConfirmFutureDate = async () => {
+    setShowFutureDateWarning(false);
+    if (pendingData) {
+      await saveTransaction(pendingData);
+      setPendingData(null);
+    }
+  };
+
+  const handleEditDate = () => {
+    setShowFutureDateWarning(false);
+    setPendingData(null);
+    // Focus stays on modal so user can edit the date
   };
 
   const handleTabChange = (value: string) => {
@@ -220,6 +266,38 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
           </Button>
         </form>
       </DialogContent>
+
+      {/* Future Date Warning Dialog */}
+      <AlertDialog open={showFutureDateWarning} onOpenChange={setShowFutureDateWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-warning" />
+              Future date selected
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You've selected a date in the future. This transaction will be recorded for{" "}
+              <span className="font-semibold">
+                {pendingData?.transaction_date && new Date(pendingData.transaction_date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </span>.
+              {" "}Are you sure this is correct?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleEditDate}>
+              Edit Date
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmFutureDate}>
+              Add Anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };
