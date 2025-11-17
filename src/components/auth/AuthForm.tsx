@@ -45,7 +45,14 @@ export const AuthForm = () => {
 
       {/* Footer Text */}
       <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
-        By continuing, you agree to our Terms & Privacy Policy
+        By continuing, you agree to our{" "}
+        <a href="/terms" className="text-primary hover:underline">
+          Terms of Service
+        </a>
+        {" "}and{" "}
+        <a href="/privacy" className="text-primary hover:underline">
+          Privacy Policy
+        </a>
       </p>
     </div>
   );
