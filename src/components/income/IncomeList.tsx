@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, ArrowUpDown } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, Search, ArrowUpDown, AlertCircle } from "lucide-react";
 import { AddIncomeModal } from "./AddIncomeModal";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface Transaction {
   id: string;
@@ -20,6 +22,7 @@ export const IncomeList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -34,19 +37,39 @@ export const IncomeList = () => {
   }, [transactions, searchTerm, categoryFilter, sortOrder]);
 
   const fetchIncomeTransactions = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    try {
+      setError(null);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoading(false);
+        return;
+      }
 
-    const { data } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('type', 'income')
-      .order('transaction_date', { ascending: false });
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('type', 'income')
+        .order('transaction_date', { ascending: false });
 
-    if (data) {
-      setTransactions(data);
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setTransactions(data);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load income transactions";
+      setError(errorMessage);
+      toast.error("Failed to load income", {
+        description: errorMessage
+      });
+      if (import.meta.env.DEV) {
+        console.error("Error fetching income transactions:", err);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const applyFiltersAndSort = () => {
@@ -116,7 +139,17 @@ export const IncomeList = () => {
             </Button>
           </div>
 
-          {loading ? (
+          {error ? (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>{error}</span>
+                <Button variant="outline" size="sm" onClick={fetchIncomeTransactions}>
+                  Retry
+                </Button>
+              </AlertDescription>
+            </Alert>
+          ) : loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
                 <div key={i} className="animate-pulse h-20 bg-muted rounded" />

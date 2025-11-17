@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppIcons } from "@/config/icons";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 interface SummaryData {
   totalIncome: number;
@@ -16,22 +20,33 @@ export const SummaryCards = () => {
     balance: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchSummary = async () => {
+  const fetchSummary = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-      const { data: transactions } = await supabase
+      const { data: transactions, error: fetchError } = await supabase
         .from("transactions")
         .select("type, amount")
         .eq("user_id", user.id);
+
+      if (fetchError) {
+        throw fetchError;
+      }
 
       if (transactions) {
         const income = transactions
           .filter((t) => t.type === "income")
           .reduce((sum, t) => sum + Number(t.amount), 0);
-        
+
         const expenses = transactions
           .filter((t) => t.type === "expense")
           .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -42,9 +57,21 @@ export const SummaryCards = () => {
           balance: income - expenses,
         });
       }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load financial summary";
+      setError(errorMessage);
+      toast.error("Failed to load summary", {
+        description: errorMessage
+      });
+      if (import.meta.env.DEV) {
+        console.error("Error fetching summary:", err);
+      }
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchSummary();
   }, []);
 
@@ -56,6 +83,23 @@ export const SummaryCards = () => {
             <div className="h-20 bg-muted rounded" />
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mb-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error}</span>
+            <Button variant="outline" size="sm" onClick={fetchSummary}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
