@@ -12,6 +12,12 @@ const Index = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleTransactionAdded = () => {
+    // Increment key to trigger component remount and data refresh
+    setRefreshKey(prev => prev + 1);
+  };
 
   useEffect(() => {
     // Check current session
@@ -68,16 +74,16 @@ const Index = () => {
         </div>
 
         {/* Summary Cards */}
-        <SummaryCards />
-        
+        <SummaryCards key={`summary-${refreshKey}`} />
+
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentTransactions />
-          <SpendingChart />
+          <RecentTransactions key={`transactions-${refreshKey}`} />
+          <SpendingChart key={`chart-${refreshKey}`} />
         </div>
       </div>
 
-      <QuickActions />
+      <QuickActions onTransactionAdded={handleTransactionAdded} />
     </DashboardLayout>
   );
 };

@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AddTransactionModal } from "./AddTransactionModal";
 
-export const QuickActions = () => {
+interface QuickActionsProps {
+  onTransactionAdded?: () => void;
+}
+
+export const QuickActions = ({ onTransactionAdded }: QuickActionsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -16,9 +20,10 @@ export const QuickActions = () => {
         <AppIcons.actions.add className="h-6 w-6" />
       </Button>
 
-      <AddTransactionModal 
+      <AddTransactionModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
+        onSuccess={onTransactionAdded}
       />
     </>
   );
