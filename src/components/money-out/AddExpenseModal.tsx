@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+
+type TransactionCategory = Database["public"]["Enums"]["transaction_category"];
 
 interface AddExpenseModalProps {
   open: boolean;
@@ -36,7 +39,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onSuccess }: AddExpenseMod
     const { error } = await supabase.from('transactions').insert([{
       user_id: session.user.id,
       type: 'expense' as const,
-      category: formData.category as any,
+      category: formData.category as TransactionCategory,
       amount: parseFloat(formData.amount),
       description: formData.description,
       transaction_date: formData.date

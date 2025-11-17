@@ -13,7 +13,8 @@ export function useAppIcon() {
    * @returns The Lucide icon component
    */
   const getIcon = (category: AppIconCategory, name: string): LucideIcon => {
-    return (AppIcons[category] as any)[name] || AppIcons.ui.loading;
+    const categoryIcons = AppIcons[category] as Record<string, LucideIcon>;
+    return categoryIcons[name] || AppIcons.ui.loading;
   };
 
   return {

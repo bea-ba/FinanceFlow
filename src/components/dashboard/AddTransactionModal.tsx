@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2, Calendar } from "lucide-react";
+
+type TransactionCategory = Database["public"]["Enums"]["transaction_category"];
 
 const transactionSchema = z.object({
   type: z.enum(["income", "expense"]),
@@ -107,7 +110,7 @@ export const AddTransactionModal = ({ open, onOpenChange }: AddTransactionModalP
       const { error } = await supabase.from("transactions").insert([{
         user_id: user.id,
         type: data.type,
-        category: data.category as any,
+        category: data.category as TransactionCategory,
         amount: parseFloat(data.amount),
         description: data.description || null,
         transaction_date: data.transaction_date,
