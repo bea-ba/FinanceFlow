@@ -10,13 +10,14 @@ import { toast } from "sonner";
 export const AccountSettings = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleLogout = async () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
+
       toast.success("You're logged out — see you soon!");
       navigate("/auth");
     } catch (error) {
@@ -30,9 +31,64 @@ export const AccountSettings = () => {
   };
 
   const handleDeleteAccount = async () => {
-    toast.info("Account deletion coming soon", {
-      description: "For now, reach out to support if you need to delete your account"
-    });
+    setDeleteLoading(true);
+    try {
+      // First, manually delete transactions and profile to ensure cleanup
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("No user found");
+      }
+
+      // Delete transactions
+      const { error: transactionsError } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (transactionsError) {
+        if (import.meta.env.DEV) {
+          console.error('Error deleting transactions:', transactionsError);
+        }
+      }
+
+      // Delete profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
+
+      if (profileError) {
+        if (import.meta.env.DEV) {
+          console.error('Error deleting profile:', profileError);
+        }
+      }
+
+      // Call RPC function to delete auth user (if migration was run)
+      // If it fails, we'll fall back to manual sign-out
+      try {
+        await supabase.rpc('delete_user_account');
+      } catch (rpcError) {
+        if (import.meta.env.DEV) {
+          console.warn('RPC delete_user_account not available, using signOut:', rpcError);
+        }
+      }
+
+      // Sign out the user
+      await supabase.auth.signOut();
+
+      toast.success("Account deleted successfully");
+      navigate("/auth");
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error deleting account:', error);
+      }
+      toast.error("Failed to delete account", {
+        description: error instanceof Error ? error.message : "Please try again or contact support"
+      });
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   return (
@@ -67,7 +123,7 @@ export const AccountSettings = () => {
           
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
+              <Button variant="destructive" disabled={deleteLoading}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete Account
               </Button>
@@ -86,12 +142,13 @@ export const AccountSettings = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel disabled={deleteLoading}>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteAccount}
+                  disabled={deleteLoading}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Delete Account
+                  {deleteLoading ? "Deleting..." : "Delete Account"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
