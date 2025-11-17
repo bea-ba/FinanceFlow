@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { TransactionsProvider, useTransactions } from '../TransactionsContext';
+import { DemoModeProvider } from '../DemoModeContext';
 import { supabase } from '@/integrations/supabase/client';
 import { mockTransaction, mockUser } from '@/test/utils';
+import { ReactNode } from 'react';
 
 // Mock Supabase
 vi.mock('@/integrations/supabase/client', () => ({
@@ -26,6 +28,15 @@ vi.mock('sonner', () => ({
     error: vi.fn(),
   },
 }));
+
+// Create wrapper that includes DemoModeProvider
+const createWrapper = () => {
+  return ({ children }: { children: ReactNode }) => (
+    <DemoModeProvider>
+      <TransactionsProvider>{children}</TransactionsProvider>
+    </DemoModeProvider>
+  );
+};
 
 describe('TransactionsContext', () => {
   beforeEach(() => {
@@ -66,7 +77,7 @@ describe('TransactionsContext', () => {
 
     it('should provide context value when used inside provider', () => {
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       expect(result.current).toBeDefined();
@@ -93,7 +104,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -111,7 +122,7 @@ describe('TransactionsContext', () => {
       });
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -135,7 +146,7 @@ describe('TransactionsContext', () => {
       const { toast } = await import('sonner');
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -159,7 +170,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -195,7 +206,7 @@ describe('TransactionsContext', () => {
       const { toast } = await import('sonner');
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -238,7 +249,7 @@ describe('TransactionsContext', () => {
       const { toast } = await import('sonner');
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -284,7 +295,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -330,7 +341,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -372,7 +383,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
@@ -403,7 +414,7 @@ describe('TransactionsContext', () => {
       } as any);
 
       const { result } = renderHook(() => useTransactions(), {
-        wrapper: TransactionsProvider,
+        wrapper: createWrapper(),
       });
 
       await waitFor(() => {
