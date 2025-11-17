@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Plus, Search, Pencil, Trash2, Download } from "lucide-react";
 import { AddExpenseModal } from "./AddExpenseModal";
 import { EditExpenseModal } from "./EditExpenseModal";
@@ -80,16 +81,30 @@ export const MoneyOutList = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from('transactions')
-      .delete()
-      .eq('id', id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("You must be logged in");
+        return;
+      }
 
-    if (error) {
-      toast.error("Failed to delete expense");
-    } else {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.user.id); // Ensure user owns the transaction
+
+      if (error) {
+        throw error;
+      }
+
       toast.success("Expense deleted");
       fetchExpenses();
+    } catch (error) {
+      toast.error("Failed to delete expense");
+      if (import.meta.env.DEV) {
+        console.error("Error deleting expense:", error);
+      }
     }
   };
 
@@ -230,14 +245,34 @@ export const MoneyOutList = () => {
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => handleDelete(expense.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this expense?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete "{expense.description}" (${Number(expense.amount).toFixed(2)}) from your records. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(expense.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete Expense
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </div>
